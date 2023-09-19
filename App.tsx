@@ -5,8 +5,9 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
+import SplashScreen from 'react-native-splash-screen';
 import {
   SafeAreaView,
   ScrollView,
@@ -24,6 +25,8 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import mainTheme from './src/assets/colors';
+import LoginScreen from './src/screens/LoginScreen';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -31,6 +34,7 @@ type SectionProps = PropsWithChildren<{
 
 function Section({children, title}: SectionProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+
   return (
     <View style={styles.sectionContainer}>
       <Text
@@ -62,12 +66,17 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  // side effect: hide splash screen
+  useEffect(() => {
+    StatusBar.setBackgroundColor(mainTheme.background);
+    StatusBar.setBarStyle('dark-content');
+    SplashScreen.hide();
+  }, []);
+
+  return <LoginScreen />;
+
   return (
     <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
