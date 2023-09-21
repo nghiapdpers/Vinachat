@@ -6,6 +6,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import CreateAccount from './src/screens/CreateAccount';
 import Friends from './src/screens/Friends';
 import { firstCallAPI } from './src/apis/initApp';
+import { StatusBar } from 'react-native';
+import SplashScreen from 'react-native-splash-screen';
+import mainTheme from './src/assets/colors';
+import LoginScreen from './src/screens/LoginScreen';
 
 const Stack = createStackNavigator();
 
@@ -18,15 +22,15 @@ const App = () => {
     })
   }, [])
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="CreateAccount" component={CreateAccount} />
-        <Stack.Screen name="Friends" component={Friends} />
-      </Stack.Navigator>
-    </NavigationContainer >
-  )
+  // side effect: hide splash screen
+  useEffect(() => {
+    StatusBar.setBackgroundColor(mainTheme.background);
+    StatusBar.setBarStyle('dark-content');
+    SplashScreen.hide();
+  }, []);
+
+  return <LoginScreen />;
+
 }
 
 export default App;

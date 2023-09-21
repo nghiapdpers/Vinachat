@@ -1,13 +1,21 @@
-import React from "react"
-import { Text, TouchableOpacity } from "react-native"
-import styles from "./styles"
+import React from 'react';
+import { Text, TouchableOpacity } from 'react-native';
+import styles from './styles';
 
-const Button = ({ title, style, onPress, styleText, disabled }: { title: string, style: any, onPress: any, styleText: any, disabled: boolean }) => {
-    return (
-        <TouchableOpacity disabled={disabled} onPress={onPress} style={[styles.container, style]}>
-            <Text style={[styles.title, styleText]}>{title}</Text>
-        </TouchableOpacity>
-    )
-}
+const Button = ({
+  title,
+  style,
+  onPress,
+}: {
+  title: string;
+  style: any;
+  onPress: any;
+}) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
+      <Text style={styles.title}>{title}</Text>
+    </TouchableOpacity>
+  );
+};
 
-export default React.memo(Button)
+export default React.memo(Button);
