@@ -4,6 +4,7 @@ const mainTheme = {
   lowerFillLogo: '#9BCFDD',
   white: '#ffffff',
   text: '#000000',
+  green: '#2F9A48'
 };
 
 export default mainTheme;

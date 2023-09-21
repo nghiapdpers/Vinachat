@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "768134085782",
+    "project_id": "mobile-app-chat-1fc28",
+    "storage_bucket": "mobile-app-chat-1fc28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768134085782:android:b66d7b6ff7d0dd9304d6b7",
+        "android_client_info": {
+          "package_name": "com.vinachat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABpaBU7A1Cc7I38kFmh9HqdvPCxYj2v88"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
