@@ -1,11 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
     SafeAreaView,
     Text,
     StatusBar,
-    Modal,
     View,
-    TextInput,
     Alert,
 } from 'react-native';
 import styles from './styes';
@@ -26,8 +24,8 @@ type SignUpScreenProps = {
 };
 const CreateAccount: React.FC<SignUpScreenProps> = ({ navigation }) => {
 
-    const { apiInit } = useSelector((state) => state.postReducers)
-    console.log(apiInit);
+    const { apiInit } = useSelector((state: any) => state.postReducers)
+    // console.log(apiInit);
 
 
     const [isChecked, setIsChecked] = useState(false)
@@ -66,10 +64,12 @@ const CreateAccount: React.FC<SignUpScreenProps> = ({ navigation }) => {
             </Text>
 
             <Input
+                onChange={undefined}
+                value={undefined}
                 style={{ marginTop: 16 }}
                 title="Phone Number"
                 keyboardType="number-pad"
-                typePassword={false}
+                secureText={false}
             />
             <Input
                 style={{ marginTop: 16 }}
@@ -77,7 +77,7 @@ const CreateAccount: React.FC<SignUpScreenProps> = ({ navigation }) => {
                 keyboardType="default"
                 value={isFirstName}
                 onChange={(text: string) => setIsFirstName(text)}
-                typePassword={false}
+                secureText={false}
             />
             <Input
                 style={{ marginTop: 16 }}
@@ -85,14 +85,14 @@ const CreateAccount: React.FC<SignUpScreenProps> = ({ navigation }) => {
                 keyboardType="default"
                 value={isLastName}
                 onChange={(text: string) => setIsLastName(text)}
-                typePassword={false}
+                secureText={false}
 
             />
             <Input
                 style={{ marginTop: 16 }}
                 title="Password"
                 keyboardType="default"
-                typePassword={true}
+                secureText={true}
                 value={isPassword}
                 onChange={(text: string) => setIsPassword(text)}
             />
@@ -103,6 +103,7 @@ const CreateAccount: React.FC<SignUpScreenProps> = ({ navigation }) => {
             </View>
 
             <Button
+                disable={false}
                 title="Register"
                 onPress={() => Register()}
                 style={{ marginTop: 16 }}

@@ -2,8 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import { setApiInit } from '../redux/actions'
 import store from '../redux/store'
-// import store from '../redux/store'
-// import { setApiData } from '../redux/actions'
 
 // Tạo form data truyền vào appname
 const BODY_DATA_INIT = ({ appName }: { appName: any }) => {
@@ -33,7 +31,7 @@ export const firstCallAPI = async ({ appName }: { appName: any }) => {
             apiKeyLocal = await AsyncStorage.setItem('apiKey', apiKey);
         }
 
-        console.log(data);
+        // console.log(data);
 
         store.dispatch(setApiInit(data))
         return data;

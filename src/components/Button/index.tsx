@@ -6,13 +6,15 @@ const Button = ({
   title,
   style,
   onPress,
+  disable
 }: {
   title: string;
   style: any;
   onPress: any;
+  disable: boolean
 }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
+    <TouchableOpacity disabled={disable} onPress={onPress} style={[styles.container, style]}>
       <Text style={styles.title}>{title}</Text>
     </TouchableOpacity>
   );

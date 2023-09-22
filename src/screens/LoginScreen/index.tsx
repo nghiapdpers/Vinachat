@@ -11,15 +11,26 @@ import styles from './styles';
 import Input from '../../components/Input';
 import TextButton from '../../components/TextButton';
 import Button from '../../components/Button';
-import {screen} from '../../assets/images';
+import { screen } from '../../assets/images';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-export default function LoginScreen() {
+type RootStackParamList = {
+  LoginScreen: undefined;
+  SignUp: undefined;
+};
+
+type LoginScreenProps = {
+  navigation: StackNavigationProp<RootStackParamList, 'LoginScreen'>;
+};
+
+
+export default function LoginScreen({ navigation }: LoginScreenProps) {
   return (
     <Pressable
       onPress={() => {
         Keyboard.dismiss();
       }}
-      style={{flex: 1}}>
+      style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>login</Text>
 
@@ -47,6 +58,7 @@ export default function LoginScreen() {
 
           <View style={styles.signInView}>
             <Button
+              disable={false}
               title={'Sign in'}
               style={styles.signInButton}
               onPress={undefined}
@@ -64,7 +76,7 @@ export default function LoginScreen() {
 
           <View style={styles.registerView}>
             <Text style={styles.registerText}>Don't have an account?</Text>
-            <TextButton text="Sign up!" />
+            <TextButton onPress={() => navigation.navigate('SignUp')} text="Sign up!" />
           </View>
         </View>
 

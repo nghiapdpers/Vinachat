@@ -10,8 +10,11 @@ import { StatusBar } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import mainTheme from './src/assets/colors';
 import LoginScreen from './src/screens/LoginScreen';
+import { Provider } from 'react-redux'
+import store from './src/redux/store';
 
 const Stack = createStackNavigator();
+
 
 const App = () => {
 
@@ -29,8 +32,31 @@ const App = () => {
     SplashScreen.hide();
   }, []);
 
-  return <LoginScreen />;
-
+  return (
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name='LoginScreen' component={LoginScreen} />
+          <Stack.Screen name='SignUp' component={SignUp} />
+          <Stack.Screen name='CreateAccount' component={CreateAccount} />
+          <Stack.Screen name='Friends' component={Friends} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
+  )
 }
 
 export default App;
+
+interface RootStackParamList {
+  LoginScreen: any,
+  SignUp: any,
+  CreateAccount: any,
+  Friends: any,
+}
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList { }
+  }
+}
