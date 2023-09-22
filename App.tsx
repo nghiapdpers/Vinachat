@@ -6,10 +6,9 @@ import CreateAccount from './src/screens/CreateAccount';
 import Friends from './src/screens/Friends';
 import { firstCallAPI } from './src/apis/initApp';
 import { StatusBar } from 'react-native';
-import SplashScreen from 'react-native-splash-screen';
 import React, { useState, useEffect } from "react";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Image, StyleSheet, View, Dimensions, SafeAreaView } from 'react-native'
+import { Image, StyleSheet, View, Platform, SafeAreaView } from 'react-native'
 import HomeScreen from "../Vinachat/src/screens/HomeScreen";
 import LoginScreen from "../Vinachat/src/screens/LoginScreen";
 import AccountScreen from "./src/screens/AccountScreen";
@@ -17,6 +16,7 @@ import MessageScreen from "./src/screens/MessageScreen";
 import SearchScreen from "./src/screens/SearchScreen";
 import { screen } from "./src/assets/images";
 import mainTheme from "./src/assets/colors";
+import SplashScreen from 'react-native-splash-screen'
 // Khi vào app sẽ tiến hành call API truyền vào appName để lấy domain và APIKey
 
 
@@ -35,8 +35,10 @@ export default function App() {
 
   // side effect: hide splash screen
   useEffect(() => {
-    StatusBar.setBackgroundColor(mainTheme.background);
-    StatusBar.setBarStyle('dark-content');
+    if(Platform.OS === 'android'){
+      StatusBar.setBackgroundColor(mainTheme.background);
+      StatusBar.setBarStyle('dark-content');
+    }
     SplashScreen.hide();
   }, []);
 
