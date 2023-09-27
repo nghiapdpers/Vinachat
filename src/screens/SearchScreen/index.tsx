@@ -19,7 +19,7 @@ export default function SearchScreen() {
                     <View style={styles.flexboxInput}>
                         <TextInput style={styles.Textinput} placeholder="Search..." />
                     </View>
-                    <TouchableOpacity style={styles.flexboxsearchIcon}>
+                    <TouchableOpacity style={styles.flexboxsearchIcon} onPress={() => {navigation.navigate('ScanQrCode')}}>
                         <Image style={styles.searchIcon} source={screen.home.qrcode} />
                     </TouchableOpacity>
                 </View>

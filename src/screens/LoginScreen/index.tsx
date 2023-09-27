@@ -11,15 +11,17 @@ import styles from './styles';
 import Input from '../../components/Input';
 import TextButton from '../../components/TextButton';
 import Button from '../../components/Button';
-import {screen} from '../../assets/images';
+import { screen } from '../../assets/images';
+import { useNavigation } from '@react-navigation/core';
 
 export default function LoginScreen() {
+  const navigation = useNavigation();
   return (
     <Pressable
       onPress={() => {
         Keyboard.dismiss();
       }}
-      style={{flex: 1}}>
+      style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>login</Text>
 
@@ -49,7 +51,7 @@ export default function LoginScreen() {
             <Button
               title={'Sign in'}
               style={styles.signInButton}
-              onPress={undefined}
+              onPress={() => { navigation.navigate('BottomScreen') }}
             />
 
             <TouchableOpacity>
@@ -64,7 +66,9 @@ export default function LoginScreen() {
 
           <View style={styles.registerView}>
             <Text style={styles.registerText}>Don't have an account?</Text>
-            <TextButton text="Sign up!" />
+            <TouchableOpacity onPress={() => { navigation.navigate('SignUp')}}>
+              <TextButton text="Sign up!" />
+            </TouchableOpacity>
           </View>
         </View>
 

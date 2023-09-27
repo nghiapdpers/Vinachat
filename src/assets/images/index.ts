@@ -37,6 +37,11 @@ export const screen = {
     voicechat : require('./Screen/MessageScreen/microphone.png'),
     picture : require('./Screen/MessageScreen/picture.png'),
     emoji :require('./Screen/MessageScreen/emoji.png')
+  },
+  qrcode : {
+    download : require('./Screen/QRCode/download.png'),
+    share : require('./Screen/QRCode/share.png'),
+    changeQR : require('./Screen/QRCode/refresh.png')
   }
 };
 

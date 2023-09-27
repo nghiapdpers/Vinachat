@@ -9,20 +9,20 @@ PODS:
     - React-Core (= 0.72.4)
     - React-jsi (= 0.72.4)
     - ReactCommon/turbomodule/core (= 0.72.4)
-  - Firebase/Auth (10.14.0):
+  - Firebase/Auth (10.15.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (~> 10.14.0)
-  - Firebase/CoreOnly (10.14.0):
-    - FirebaseCore (= 10.14.0)
+    - FirebaseAuth (~> 10.15.0)
+  - Firebase/CoreOnly (10.15.0):
+    - FirebaseCore (= 10.15.0)
   - FirebaseAppCheckInterop (10.15.0)
-  - FirebaseAuth (10.14.0):
+  - FirebaseAuth (10.15.0):
     - FirebaseAppCheckInterop (~> 10.0)
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
     - GoogleUtilities/Environment (~> 7.8)
     - GTMSessionFetcher/Core (< 4.0, >= 2.1)
     - RecaptchaInterop (~> 100.0)
-  - FirebaseCore (10.14.0):
+  - FirebaseCore (10.15.0):
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/Logger (~> 7.8)
@@ -45,7 +45,7 @@ PODS:
   - "GoogleUtilities/NSData+zlib (7.11.5)"
   - GoogleUtilities/Reachability (7.11.5):
     - GoogleUtilities/Logger
-  - GTMSessionFetcher/Core (3.1.1)
+  - GTMSessionFetcher/Core (2.3.0)
   - hermes-engine (0.72.4):
     - hermes-engine/Pre-built (= 0.72.4)
   - hermes-engine/Pre-built (0.72.4)
@@ -465,25 +465,28 @@ PODS:
     - React-jsi (= 0.72.4)
     - React-logger (= 0.72.4)
     - React-perflogger (= 0.72.4)
-  - RealmJS (12.1.0):
+  - RealmJS (12.2.0):
     - React
   - RecaptchaInterop (100.0.0)
   - RNCAsyncStorage (1.19.3):
     - React-Core
-  - RNCClipboard (1.11.2):
+  - RNCClipboard (1.12.1):
     - React-Core
   - RNCMaskedView (0.2.9):
     - React-Core
-  - RNFBApp (18.4.0):
-    - Firebase/CoreOnly (= 10.14.0)
+  - RNFBApp (18.5.0):
+    - Firebase/CoreOnly (= 10.15.0)
     - React-Core
-  - RNFBAuth (18.4.0):
-    - Firebase/Auth (= 10.14.0)
+  - RNFBAuth (18.5.0):
+    - Firebase/Auth (= 10.15.0)
     - React-Core
     - RNFBApp
   - RNGestureHandler (2.13.1):
     - React-Core
-  - RNReanimated (3.5.3):
+  - RNQrGenerator (1.3.1):
+    - React
+    - ZXingObjC
+  - RNReanimated (3.5.1):
     - DoubleConversion
     - FBLazyVector
     - glog
@@ -515,8 +518,13 @@ PODS:
   - RNScreens (3.25.0):
     - React-Core
     - React-RCTImage
+  - RNSVG (13.14.0):
+    - React-Core
   - SocketRocket (0.6.1)
   - Yoga (1.14.0)
+  - ZXingObjC (3.6.5):
+    - ZXingObjC/All (= 3.6.5)
+  - ZXingObjC/All (3.6.5)
 
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
@@ -568,8 +576,10 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNQrGenerator (from `../node_modules/rn-qr-generator`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -586,6 +596,7 @@ SPEC REPOS:
     - PromisesObjC
     - RecaptchaInterop
     - SocketRocket
+    - ZXingObjC
 
 EXTERNAL SOURCES:
   boost:
@@ -683,10 +694,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/auth"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNQrGenerator:
+    :path: "../node_modules/rn-qr-generator"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -695,15 +710,15 @@ SPEC CHECKSUMS:
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 5d4a3b7f411219a45a6d952f77d2c0a6c9989da5
   FBReactNativeSpec: 3fc2d478e1c4b08276f9dd9128f80ec6d5d85c1f
-  Firebase: 6c1bf3f534bc422d52af2e41fe0d50bf08b6b773
+  Firebase: 66043bd4579e5b73811f96829c694c7af8d67435
   FirebaseAppCheckInterop: a8c555b1c2db1d9445e6c3a08a848167ddb7eb51
-  FirebaseAuth: bd1ae3d28beb83bfe9247e50eb82688b683dd770
-  FirebaseCore: 6fc17ac9f03509d51c131298aacb3ee5698b4f02
+  FirebaseAuth: a55ec5f7f8a5b1c2dd750235c1bb419bfb642445
+  FirebaseCore: 2cec518b43635f96afe7ac3a9c513e47558abd2e
   FirebaseCoreInternal: 2f4bee5ed00301b5e56da0849268797a2dd31fb4
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   GoogleUtilities: 13e2c67ede716b8741c7989e26893d151b2b2084
-  GTMSessionFetcher: e8647203b65cee28c5f73d0f473d096653945e72
+  GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
   hermes-engine: 81191603c4eaa01f5e4ae5737a9efcf64756c7b2
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
@@ -741,19 +756,22 @@ SPEC CHECKSUMS:
   React-runtimescheduler: fe76d9246193a4545af98d4ef37d1aae1f72e3dc
   React-utils: 550fae00bb20830df2a33d8a06847362c4c76f0f
   ReactCommon: 78e46b7af6e98db9c2aad390d8294db33a88d791
-  RealmJS: 62267ccc7bec0b40dcd5a64cd63a21346648230c
+  RealmJS: a480cb21d4b0ba82c843c77c3a211770411eec75
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RNCAsyncStorage: c913ede1fa163a71cea118ed4670bbaaa4b511bb
-  RNCClipboard: 3f0451a8100393908bea5c5c5b16f96d45f30bfc
+  RNCClipboard: d77213bfa269013bf4b857b7a9ca37ee062d8ef1
   RNCMaskedView: 949696f25ec596bfc697fc88e6f95cf0c79669b6
-  RNFBApp: a0bc818210d2c452461842f7a0a4e456c11ed831
-  RNFBAuth: a304236349f219f95b5334977596253a04209fbf
+  RNFBApp: cc9384746945ac0eedd4759171a8abb4c4c5309d
+  RNFBAuth: cf84aa347759beb4356bf79a3092c954ecbc449a
   RNGestureHandler: 38aa38413896620338948fbb5c90579a7b1c3fde
-  RNReanimated: e037aac4d8b0055a399f5af065e8210f6c8cc900
+  RNQrGenerator: 90461ba3ca88c1d38ef73da50fade35d9648215d
+  RNReanimated: 99aa8c96151abbc2d7e737a56ec62aca709f0c92
   RNScreens: 85d3880b52d34db7b8eeebe2f1a0e807c05e69fa
+  RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
+  ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: b6f5e4afe622dd5f0d8edd13ce883410e6a9c64e
+PODFILE CHECKSUM: fd1ef223249ca314aa3bc6a7c7374151ac762b20
 
 COCOAPODS: 1.12.1
