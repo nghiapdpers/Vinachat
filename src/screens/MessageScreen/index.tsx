@@ -11,143 +11,97 @@ import {
   Platform,
   Image,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
-import styles from './styles';
+import React, {useCallback, useEffect, useState, useRef} from 'react';
 import Header from '../../components/Header';
+import EmojiKeyboard from '../../components/EmojiKeyboard';
+import styles from './styles';
 import {component, screen} from '../../assets/images';
 import mainTheme from '../../assets/colors';
 import GroupChat from '../../realm/GroupChat';
-import EmojiKeyboard from '../../components/EmojiKeyboard';
+import Message from '../../realm/Message';
+import User from '../../realm/User';
+import Realm from 'realm';
 
-const data = [
-  {
-    message_text: 'Hello ne',
-    from_id: 'tui',
-    time: '16/09/2023',
-  },
-  {
-    message_text: 'Hi',
-    from_id: 'ban',
-    time: '16/09/2023',
-  },
-  {
-    message_text: 'Lam bieng qua',
-    from_id: 'tui',
-    time: '20/09/2023',
-  },
-  {
-    message_text: 'An com ga k ?',
-    from_id: 'ban',
-    time: '20/09/2023',
-  },
-  {
-    message_text: 'Hello ne',
-    from_id: 'tui',
-    time: '16/09/2023',
-  },
-  {
-    message_text: 'Hi',
-    from_id: 'ban',
-    time: '16/09/2023',
-  },
-  {
-    message_text: 'Lam bieng qua',
-    from_id: 'tui',
-    time: '20/09/2023',
-  },
-  {
-    message_text: 'An com ga k ?',
-    from_id: 'ban',
-    time: '20/09/2023',
-  },
-  {
-    message_text: 'Hello ne',
-    from_id: 'tui',
-    time: '16/09/2023',
-  },
-  {
-    message_text: 'Hi',
-    from_id: 'ban',
-    time: '16/09/2023',
-  },
-  {
-    message_text: 'Lam bieng qua',
-    from_id: 'tui',
-    time: '20/09/2023',
-  },
-  {
-    message_text: 'An com ga k ?',
-    from_id: 'ban',
-    time: '20/09/2023',
-  },
-  {
-    message_text: 'Hello ne',
-    from_id: 'tui',
-    time: '16/09/2023',
-  },
-  {
-    message_text: 'Hi',
-    from_id: 'ban',
-    time: '16/09/2023',
-  },
-  {
-    message_text: 'Lam bieng qua',
-    from_id: 'tui',
-    time: '20/09/2023',
-  },
-  {
-    message_text: 'An com ga k ?',
-    from_id: 'ban',
-    time: '20/09/2023',
-  },
-];
-
-export default function MessageScreen() {
+export default function MessageScreen({route}: {route: any}) {
   const [emoPicker, setEmoPicker] = useState(false);
-
   const [value, setValue] = useState('');
+  const [testfromid, setTestFromId] = useState('1');
+  const [data, setData] = useState([]);
+  const ref = route?.params?.ref;
+  const yourRef = useRef(null);
 
-  const handleSendMessage = async (
-    group_id: any,
-    from_id: any,
-    message_text: any,
-    sent_time: any,
-  ) => {
-    const realm = await Realm.open({
-      schema: [GroupChat],
-    });
+  const FetchDataRealm = async () => {
     try {
-      realm.write(() => {
-        const message = realm.create('GroupChat', {
-          group_id: group_id,
-          from_id: from_id,
-          message_text: message_text,
-          sent_time: sent_time,
-        });
-        console.log(message);
-      });
-      console.log('Message written to Realm successfully!');
+      const realm = await Realm.open({schema: [GroupChat, User, Message]});
+      const specificGroup = realm
+        .objects('GroupChat')
+        .filtered(`ref = '${ref}'`)[0];
+      console.log(specificGroup);
+
+      if (specificGroup) {
+        const messages = specificGroup.message;
+        setData(messages);
+      } else {
+        console.log('Không tìm thấy nhóm với ref cụ thể:');
+      }
     } catch (error) {
-      console.log(error);
-    } finally {
-      realm.close();
+      console.log('LOIIIII', error);
     }
   };
 
+  const HandleSendMessage = async () => {
+    try {
+      const realm = await Realm.open({schema: [GroupChat, User, Message]});
+
+      realm.write(() => {
+        let groupChat = realm
+          .objects<GroupChat>('GroupChat')
+          .filtered(`ref = '${ref}'`)[0];
+        if (!groupChat) {
+          groupChat = realm.create<GroupChat>('GroupChat', {
+            ref: ref,
+            member: [],
+            message: [],
+          });
+        }
+
+        const newMessage = {
+          message_text: value,
+          from_user_id: testfromid,
+          sent_time: new Date().toISOString(),
+        };
+
+        groupChat.message.push(newMessage);
+      });
+
+      console.log('Message sent successfully');
+      FetchDataRealm();
+      setValue('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
+  useEffect(() => {
+    FetchDataRealm();
+  }, []);
+
+  useEffect(() => {}, [testfromid, data]);
+
   const renderItem = ({item}: {item: any}) => {
-    const MessageForm = item.from_id === 'tui';
+    const MessageFrom = item.from_user_id === testfromid;
 
     return (
       <View
         style={[
           styles.messageContainer,
-          {alignItems: MessageForm ? 'flex-end' : 'flex-start'},
+          {alignItems: MessageFrom ? 'flex-end' : 'flex-start'},
         ]}>
         <View
           style={[
             styles.borderMessage,
             {
-              backgroundColor: MessageForm
+              backgroundColor: MessageFrom
                 ? mainTheme.lowerFillLogo
                 : mainTheme.white,
             },
@@ -186,8 +140,41 @@ export default function MessageScreen() {
             IconOption1={screen.message.phonecall}
             IconOption2={screen.message.videocall}
             IconOption3={screen.message.list}
-            title={'Message'}
+            title={''}
           />
+        </View>
+        <View
+          style={{
+            height: 60,
+            backgroundColor: 'white',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginHorizontal: 40,
+          }}>
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              backgroundColor: 'red',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onPress={() => {
+              setTestFromId('1');
+            }}>
+            <Text>Tui</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              backgroundColor: 'blue',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onPress={() => {
+              setTestFromId('2');
+            }}>
+            <Text>Ban</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.bodyMessage}>
           <View style={styles.MessageView}>
@@ -196,6 +183,9 @@ export default function MessageScreen() {
               renderItem={renderItem}
               keyExtractor={(item, index) => index.toString()}
               showsVerticalScrollIndicator={false}
+              ref={yourRef}
+              onContentSizeChange={() => yourRef.current.scrollToEnd()}
+              onLayout={() => yourRef.current.scrollToEnd()}
             />
           </View>
           <View style={styles.MessageInput}>
@@ -212,7 +202,7 @@ export default function MessageScreen() {
                 />
                 <TouchableOpacity
                   style={styles.emoji}
-                  onPress={handleOpenEmoji}>
+                  onPress={HandleSendMessage}>
                   <Image
                     style={styles.iconemoji}
                     source={

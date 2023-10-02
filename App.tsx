@@ -17,9 +17,10 @@ import SearchScreen from './src/screens/SearchScreen';
 import {screen} from './src/assets/images';
 import mainTheme from './src/assets/colors';
 import SplashScreen from 'react-native-splash-screen';
-// Khi vào app sẽ tiến hành call API truyền vào appName để lấy domain và APIKey
-
-// side effect: hide splash screen
+import QrCode from './src/screens/AccountScreen/OptionAccount/QrCode';
+import ScanQrCode from './src/screens/SearchScreen/ScanQrCode';
+import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
+import 'react-native-reanimated';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -42,32 +43,34 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          gestureEnabled: true,
-          gestureDirection: 'horizontal',
-        }}>
-        <Stack.Screen
-          name="BottomScreen"
-          component={BottomScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="MessageScreen"
-          component={MessageScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SearchScreen"
-          component={SearchScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
+      <Stack.Navigator screenOptions={{
+        gestureEnabled: true,
+        gestureDirection: 'horizontal'
+      }}>
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="BottomScreen" component={BottomScreen} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="MessageScreen" component={MessageScreen} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="SearchScreen" component={SearchScreen} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="SignUp" component={SignUp} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="QrCode" component={QrCode} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="ScanQrCode" component={ScanQrCode} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="Biometrics" component={Biometrics} options={{
+          headerShown: false
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -79,6 +82,8 @@ function BottomScreen() {
   useEffect(() => {
     setFocusbottom('HomeScreen');
   }, []);
+
+
 
   return (
     <Tab.Navigator
@@ -111,62 +116,40 @@ function BottomScreen() {
         }}
         listeners={{
           focus: () => setFocusbottom('HomeScreen'),
-        }}
-      />
-      <Tab.Screen
-        name="LoginScreen"
-        component={LoginScreen}
-        options={{
-          tabBarIcon: () =>
-            focusbottom === 'LoginScreen' ? (
-              <View style={styles.borderFocus}>
-                <Image
-                  style={styles.imageIconBottom}
-                  resizeMode="contain"
-                  source={screen.bottomtab.friend}
-                />
-              </View>
-            ) : (
+        }} />
+      <Tab.Screen name="Friends" component={Friends} options={{
+        tabBarIcon: () => (
+          focusbottom === 'Friends' ? (
+            <View style={styles.borderFocus}>
               <Image
                 style={styles.imageIconBottom}
                 resizeMode="contain"
-                source={screen.bottomtab.friend}
-              />
-            ),
+                source={screen.bottomtab.friend}/>
+              </View>
+            ): null),
           tabBarLabel: () => null,
           headerShown: false,
         }}
         listeners={{
-          focus: () => setFocusbottom('LoginScreen'),
-        }}
-      />
-      <Tab.Screen
-        name="AccountScreen"
-        component={AccountScreen}
-        options={{
-          tabBarIcon: () =>
-            focusbottom === 'AccountScreen' ? (
-              <View style={styles.borderFocus}>
-                <Image
-                  style={styles.imageIconBottom}
-                  resizeMode="contain"
-                  source={screen.bottomtab.user}
-                />
-              </View>
-            ) : (
+          focus: () => setFocusbottom('Friends'),
+        }} />
+      <Tab.Screen name="AccountScreen" component={AccountScreen} options={{
+        tabBarIcon: () => (
+          focusbottom === 'AccountScreen' ? (
+            <View style={styles.borderFocus}>
               <Image
                 style={styles.imageIconBottom}
                 resizeMode="contain"
                 source={screen.bottomtab.user}
               />
-            ),
+            </View>
+            ): null),
           tabBarLabel: () => null,
           headerShown: false,
         }}
         listeners={{
           focus: () => setFocusbottom('AccountScreen'),
-        }}
-      />
+        }}/>
     </Tab.Navigator>
   );
 }

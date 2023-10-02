@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     bodyAccount: {
-        flex: 8,
+        flex: 7,
         alignItems: 'center',
         top: 20
     },
@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
     },
     bodyTopAccount: {
         flex: 5,
-        justifyContent :"center",
-        marginLeft : 20,
+        justifyContent: "center",
+        marginLeft: 20,
     },
     AvatarUser: {
         width: 70,
@@ -105,7 +105,25 @@ const styles = StyleSheet.create({
     textdescription: {
         fontSize: 14,
         color: "black",
-        opacity : 0.3
+        opacity: 0.3
+    },
+    botAccount: {
+        flex: 1,
+        width: WidthScreen,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    BorderSignOut: {
+        width: '75%',
+        height: '65%',
+        borderRadius: 25,
+        borderWidth: 1,
+        borderColor: mainTheme.logo,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    textbtnsignout : {
+        fontSize :20,
     }
 
 
