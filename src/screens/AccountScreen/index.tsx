@@ -4,6 +4,7 @@ import styles from "./styles";
 import Header from "../../components/Header";
 import { component, screen } from "../../assets/images";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const datauser = [
@@ -65,6 +66,11 @@ export default function AccountScreen() {
         )
     }
 
+    const Logout = async () => {
+        AsyncStorage.removeItem('@apikey')
+        navigation.navigate('LoginScreen')
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.topAccount}>
@@ -92,7 +98,7 @@ export default function AccountScreen() {
                 />
             </View>
             <View style={styles.botAccount}>
-                <TouchableOpacity style={styles.BorderSignOut} onPress={() => { navigation.navigate('LoginScreen') }}>
+                <TouchableOpacity style={styles.BorderSignOut} onPress={() => {Logout()}}>
                     <Text style={styles.textbtnsignout}>Đăng xuất</Text>
                 </TouchableOpacity>
             </View>

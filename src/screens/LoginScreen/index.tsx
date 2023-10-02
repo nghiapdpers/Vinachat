@@ -17,6 +17,7 @@ import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics'
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
+import axios from 'axios';
 
 export default function LoginScreen() {
   const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true })
@@ -29,6 +30,23 @@ export default function LoginScreen() {
     CheckSupported()
     SaveSupported(checkBiometrics)
   }, [checkBiometrics])
+
+  const FetchLogin = async () => {
+    try {
+      return await axios.post('http://127.0.0.1:5003/api/user/login', { mobile: '0147258369', password: '1234' }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 20000
+      }).then((resposne: any) => {
+        console.log(resposne.data);
+        AsyncStorage.setItem('@apikey', resposne.data.apiKey);
+        navigation.navigate("BottomScreen")
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleLoginBiometrics = async () => {
     try {
@@ -147,7 +165,7 @@ export default function LoginScreen() {
             <Button
               title={'Sign in'}
               style={styles.signInButton}
-              onPress={() => { handleSignIn() }}
+              onPress={() => { FetchLogin() }}
             />
 
             <TouchableOpacity onPress={() => handleLoginBiometrics()}>

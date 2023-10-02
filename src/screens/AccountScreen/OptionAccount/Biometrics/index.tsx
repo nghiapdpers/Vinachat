@@ -61,7 +61,6 @@ export default function Biometrics() {
                 if (success) {
                     await Keychain.setGenericPassword(mobile, password, {
                         service: `myKeychainService_${mobile}`,
-                        accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
                         accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
                     });
                     await AsyncStorage.setItem(`@isEnabled_${mobile}`, JSON.stringify(true));

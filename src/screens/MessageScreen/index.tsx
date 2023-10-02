@@ -9,6 +9,7 @@ import {
     Platform,
     Image,
     TextInput,
+    Keyboard,
 } from "react-native";
 import styles from "./styles";
 import Header from "../../components/Header";
@@ -81,6 +82,7 @@ export default function MessageScreen({ route }: { route: any }) {
     }, []);
 
 
+
     useEffect(() => {
     }, [testfromid, data]);
 
@@ -100,7 +102,7 @@ export default function MessageScreen({ route }: { route: any }) {
         <KeyboardAvoidingView
             style={styles.container}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-
+            keyboardVerticalOffset={0}
         >
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
