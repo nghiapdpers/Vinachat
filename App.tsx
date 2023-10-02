@@ -19,6 +19,7 @@ import mainTheme from "./src/assets/colors";
 import SplashScreen from 'react-native-splash-screen'
 import QrCode from './src/screens/AccountScreen/OptionAccount/QrCode';
 import ScanQrCode from './src/screens/SearchScreen/ScanQrCode';
+import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
 import 'react-native-reanimated';
 
 
@@ -68,6 +69,9 @@ export default function App() {
         <Stack.Screen name="ScanQrCode" component={ScanQrCode} options={{
           headerShown: false
         }} />
+        <Stack.Screen name="Biometrics" component={Biometrics} options={{
+          headerShown: false
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -79,6 +83,8 @@ function BottomScreen() {
   useEffect(() => {
     setFocusbottom('HomeScreen')
   }, [])
+
+
 
   return (
     <Tab.Navigator screenOptions={{

@@ -34,6 +34,13 @@ const datauser = [
         title: 'QR Code',
         description: '',
         navigation: 'QrCode'
+    },
+    {
+        id: 5,
+        icon: screen.login.faceid,
+        title: 'Xác thực TouchID/FaceID',
+        description: '',
+        navigation: 'Biometrics'
     }
 ]
 

@@ -11,6 +11,7 @@ export const component = {
 export const screen = {
   login: {
     fingerprint: require('./Screen/LoginScreen/fingerprint.png'),
+    faceid : require('./Screen/LoginScreen/face-id.png')
   },
   home : {
     search : require('./Screen/HomeScreen/search.png'),
