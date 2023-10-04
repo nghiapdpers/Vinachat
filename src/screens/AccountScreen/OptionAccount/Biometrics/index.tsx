@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Keychain from 'react-native-keychain';
 import ReactNativeBiometrics from 'react-native-biometrics'
 import LottieView from "lottie-react-native";
+import { useSelector } from "react-redux";
 
 export default function Biometrics() {
     const [isEnabled, setIsEnabled] = useState(false);
@@ -20,7 +21,9 @@ export default function Biometrics() {
     const [animation, setanimation] = useState(false);
 
     const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true })
-    const mobile = '0888190357';
+    const user = useSelector((state: any) => state?.user);
+    const userExternal = useSelector((state: any) => state?.userExternal);
+    const mobile = user?.data?.mobile ? user?.data?.mobile : userExternal?.data?.mobile;
 
     const onChangeSecureText = () => {
         setIsShown(!isShown);
@@ -54,6 +57,14 @@ export default function Biometrics() {
     };
 
 
+    const getUsernameAndPassword = async () => {
+        const username = await AsyncStorage.getItem('@UserRegisted_Biometrics');
+        console.log(username);
+
+    }
+
+    getUsernameAndPassword()
+
     const handleBiometric = () => {
         rnBiometrics.simplePrompt({ promptMessage: 'Confirm biometrics' })
             .then(async (resultObject: any) => {
@@ -65,7 +76,7 @@ export default function Biometrics() {
                     });
                     await AsyncStorage.setItem(`@isEnabled_${mobile}`, JSON.stringify(true));
                     await AsyncStorage.setItem(`@UserRegisted_Biometrics`, mobile);
-                        setanimation(true)
+                    setanimation(true)
                     setTimeout(() => {
                         setanimation(false)
                         setModalVisible(false);

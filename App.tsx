@@ -21,7 +21,7 @@ import { getData } from "./src/storage";
 import { LOCALSTORAGE } from "./src/storage/direct";
 import { actionLoginEnd, actionLoginExternalEnd } from "./src/redux/actions/userActions";
 import QrCode from './src/screens/AccountScreen/OptionAccount/QrCode';
-import ScanQrCode from './src/screens/SearchScreen/ScanQrCode';
+import ScanQrCode from './src/screens/ScanQrCode';
 import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
 import 'react-native-reanimated';
 

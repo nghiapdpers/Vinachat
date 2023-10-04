@@ -5,20 +5,8 @@ import { screen } from "../../assets/images";
 import datafriend from "./data";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { getData } from "../../storage";
-import { LOCALSTORAGE } from "../../storage/direct";
-import { actionLoginEnd } from "../../redux/actions/userActions";
 
 export default function HomeScreen() {
-
-    const distpach = useDispatch();
-    const api = useSelector((state: any) => state.app.api);
-
-    const message = useSelector((state: any) => state?.user?.register?.message);
-    const status = useSelector((state: any) => state?.user?.register?.status);
-    const user = useSelector((state: any) => state?.user);
-    // console.log('status:>>', status);
-    // console.log('user:>>', user);
 
     const [data, setData] = useState([]);
     const navigation = useNavigation();
@@ -41,8 +29,6 @@ export default function HomeScreen() {
         }
     }
 
-
-
     const Flatlistrender = ({ item }: { item: any }) => {
 
         const renderFriendActive = ({ item }: { item: any }) => {
@@ -57,8 +43,6 @@ export default function HomeScreen() {
         }
 
         const renderFriendMessage = ({ item }: { item: any }) => {
-            console.log(item);
-
             return (
                 <TouchableOpacity style={styles.BorderMessage} onPress={() => { navigation.navigate('MessageScreen', { ref: String(item.id) }) }}>
                     <View style={styles.MessageAvatar}>

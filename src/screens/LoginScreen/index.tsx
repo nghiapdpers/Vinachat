@@ -24,6 +24,24 @@ import * as Keychain from 'react-native-keychain';
 
 export default function LoginScreen() {
 
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const user = useSelector((state: any) => state?.user);
+  const userExternal = useSelector((state: any) => state?.userExternal);
+  const message = useSelector((state: any) => state?.user?.login?.message);
+  const messageExternal = useSelector((state: any) => state?.userExternal?.login?.message);
+  const loading = useSelector((state: any) => state.user?.loading);
+  const loadingExternal = useSelector((state: any) => state.userExternal?.loading);
+
+  const [isPhone, setIsPhone] = useState('');
+  const [isPassword, setIsPassword] = useState('');
+
+  // console.log('userLogin:>>', user);
+  // console.log('userExternalLogin:>>', userExternal);
+  // console.log('message:>>', message);
+  // console.log('messageExternal:>>', messageExternal);
+
   const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true })
   const [checkBiometrics, setcheckBiometrics] = useState('');
 
@@ -44,7 +62,9 @@ export default function LoginScreen() {
             });
             if (credentials) {
               const { password } = credentials;
-              console.log(mobile, password);
+              // Gọi action đang nhập
+              CheckPasswordIfNotExists(password)
+              dispatch(actionLoginStart(mobile, password));
             } else {
               console.log('No item found in Keychain with Touch ID.');
             }
@@ -105,24 +125,6 @@ export default function LoginScreen() {
   }
 
 
-  const navigation = useNavigation();
-  const dispatch = useDispatch();
-
-  const user = useSelector((state: any) => state?.user);
-  const userExternal = useSelector((state: any) => state?.userExternal);
-  const message = useSelector((state: any) => state?.user?.login?.message);
-  const messageExternal = useSelector((state: any) => state?.userExternal?.login?.message);
-  const loading = useSelector((state: any) => state.user?.loading);
-  const loadingExternal = useSelector((state: any) => state.userExternal?.loading);
-
-  const [isPhone, setIsPhone] = useState('');
-  const [isPassword, setIsPassword] = useState('');
-
-  // console.log('userLogin:>>', user);
-  // console.log('userExternalLogin:>>', userExternal);
-  // console.log('message:>>', message);
-  // console.log('messageExternal:>>', messageExternal);
-
   // Đăng nhập Default
   const handleLogin = () => {
     if (!isPhone || !isPassword) {
@@ -131,6 +133,7 @@ export default function LoginScreen() {
     }
     // Gọi action đang nhập
     dispatch(actionLoginStart(isPhone, isPassword));
+    CheckPasswordIfNotExists(isPassword)
   };
 
   // Đăng nhập với tài khoản Vinateks
@@ -140,6 +143,7 @@ export default function LoginScreen() {
       return;
     }
     // Gọi action đang nhập
+    CheckPasswordIfNotExists(isPassword)
     dispatch(actionLoginExternalStart(isPhone, isPassword));
   }
 
