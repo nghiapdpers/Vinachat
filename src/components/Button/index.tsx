@@ -1,21 +1,28 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import styles from './styles';
 
 const Button = ({
   title,
   style,
   onPress,
-  disable
+  disable,
+  styleText,
+  loading = false
 }: {
   title: string;
-  style: any;
+  style?: any;
   onPress: any;
-  disable: boolean
+  disable?: boolean
+  styleText?: any
+  loading?: boolean
 }) => {
   return (
     <TouchableOpacity disabled={disable} onPress={onPress} style={[styles.container, style]}>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={[styles.title, styleText]}>{title}</Text>
+      {loading ? (
+        <ActivityIndicator size='large' style={{ marginLeft: 8 }} />
+      ) : null}
     </TouchableOpacity>
   );
 };

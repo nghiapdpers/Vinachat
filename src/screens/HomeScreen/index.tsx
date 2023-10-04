@@ -4,15 +4,28 @@ import { Image, SafeAreaView, Text, View, TouchableOpacity, FlatList } from "rea
 import { screen } from "../../assets/images";
 import datafriend from "./data";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { getData } from "../../storage";
+import { LOCALSTORAGE } from "../../storage/direct";
+import { actionLoginEnd } from "../../redux/actions/userActions";
 
 export default function HomeScreen() {
+
+    const distpach = useDispatch();
+    const api = useSelector((state: any) => state.app.api);
+
+    const message = useSelector((state: any) => state?.user?.register?.message);
+    const status = useSelector((state: any) => state?.user?.register?.status);
+    const user = useSelector((state: any) => state?.user);
+    // console.log('status:>>', status);
+    // console.log('user:>>', user);
+
     const [data, setData] = useState([]);
     const navigation = useNavigation();
 
     useEffect(() => {
         setData([datafriend]);
     }, [])
-
 
     const getFirstLetters = (inputString: any) => {
         const words = inputString.trim().split(' ');
@@ -27,6 +40,8 @@ export default function HomeScreen() {
             return firstLetter + lastLetter; // Kết hợp chữ cái đầu tiên của từ đầu tiên và từ cuối cùng
         }
     }
+
+
 
     const Flatlistrender = ({ item }: { item: any }) => {
 
@@ -85,7 +100,7 @@ export default function HomeScreen() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.logoText}>Vinachat</Text>
-                <TouchableOpacity style={styles.searchBorder} onPress={() => { navigation.navigate('SearchScreen')}}>
+                <TouchableOpacity style={styles.searchBorder} onPress={() => { navigation.navigate('SearchScreen') }}>
                     <Image style={styles.searchIcon} source={screen.home.search} />
                 </TouchableOpacity>
             </View>

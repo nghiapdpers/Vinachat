@@ -16,8 +16,6 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import OtpInputs from 'react-native-otp-inputs';
 import { useNavigation } from '@react-navigation/native';
 
-
-
 const SignUp = () => {
 
     const navigation = useNavigation()
@@ -77,7 +75,7 @@ const SignUp = () => {
                 const res = await confirm.confirm(otp);
                 console.log('res:>>', res);
                 setIsShowCODE(false);
-                navigation.navigate('CreateAccount');
+                navigation.navigate('CreateAccount', { phone: isPhone });
                 setIsPhone('')
             } catch (error) {
                 console.log('error:>>', error);
@@ -91,6 +89,7 @@ const SignUp = () => {
 
     // Gửi lại mã OTP
     const resendOTP = async (phone: string) => {
+        setIsSecond(59)
         try {
             // Send OTP
             await signInWithPhoneNumber(phone);
@@ -168,7 +167,6 @@ const SignUp = () => {
 
 
                         <Button
-                            disable={false}
                             onPress={() => verifyCode()}
                             style={{ position: 'absolute', bottom: 16 }}
                             title="Verify"
@@ -188,20 +186,24 @@ const SignUp = () => {
             </Text>
 
             <Input
+                disableInput={isSendingOTP ? false : true}
                 style={{ marginTop: 16 }}
                 title="Phone Number"
                 value={isPhone}
                 onChange={(text: string) => setIsPhone(text)}
                 keyboardType="phone-pad"
+                autoFocus={true}
             />
 
             <Button
-                title={isSendingOTP ? 'Send OTP ...' : 'Send OTP'}
+                styleText={{}}
+                title={'Send OTP'}
                 onPress={() =>
                     sendOTP(isPhone)
                 }
                 style={{ marginTop: 16 }}
                 disable={isSendingOTP}
+                loading={isSendingOTP ? true : false}
             />
 
         </SafeAreaView >

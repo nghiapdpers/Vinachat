@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     topAccount: {
+        marginTop: 16,
         flex: 2,
         backgroundColor: mainTheme.white,
         width: WidthScreen * 0.95,
@@ -23,10 +24,20 @@ const styles = StyleSheet.create({
         flex: 5,
         flexDirection: 'row',
     },
+    buttonLogout: {
+        marginTop: 12,
+        alignItems: 'flex-start',
+        width: '100%',
+        paddingHorizontal: 16
+    },
+    textLogout: {
+        fontSize: 16,
+        color: mainTheme.logo
+    },
     bodyTopAccount: {
         flex: 5,
-        justifyContent :"center",
-        marginLeft : 20,
+        justifyContent: "center",
+        marginLeft: 20,
     },
     AvatarUser: {
         width: 70,
@@ -105,7 +116,7 @@ const styles = StyleSheet.create({
     textdescription: {
         fontSize: 14,
         color: "black",
-        opacity : 0.3
+        opacity: 0.3
     }
 
 

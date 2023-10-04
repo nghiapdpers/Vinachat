@@ -48,12 +48,12 @@ const dataRequest = [
     {
         id: 1,
         name: 'Nghia Pham',
-        image: 'https://assets.dryicons.com/uploads/icon/preview/7805/icon_grid_1x_39f0ea11-1cfa-4903-8c39-221b37318018.png'
+        image: 'https://m.media-amazon.com/images/S/pv-target-images/ae4816cade1a5b7f29787d0b89610132c72c7747041481c6619b9cc3302c0101.jpg',
     },
     {
         id: 2,
         name: 'Nghia Pham',
-        image: 'https://assets.dryicons.com/uploads/icon/preview/7805/icon_grid_1x_39f0ea11-1cfa-4903-8c39-221b37318018.png'
+        image: 'https://m.media-amazon.com/images/S/pv-target-images/ae4816cade1a5b7f29787d0b89610132c72c7747041481c6619b9cc3302c0101.jpg',
     },
 ]
 
@@ -61,6 +61,7 @@ const Friends = () => {
 
     return (
         <SafeAreaView style={styles.container}>
+
             <StatusBar
                 animated={true}
                 backgroundColor={mainTheme.background}
@@ -70,7 +71,6 @@ const Friends = () => {
                 textLeft='Friends' />
 
             <Text style={styles.title}>Request</Text>
-
 
             {dataRequest?.map((item) => {
                 return (

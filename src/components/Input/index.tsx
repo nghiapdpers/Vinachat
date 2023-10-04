@@ -10,14 +10,19 @@ const Input = ({
   style,
   keyboardType,
   secureText = false,
+  disableInput = true,
+  autoFocus = false
 }: {
   title: string;
   value: any;
   onChange: any;
-  style: any;
+  style?: any;
   keyboardType: any;
   secureText?: boolean;
+  disableInput?: boolean;
+  autoFocus?: boolean;
 }) => {
+
   const [isShown, setIsShown] = useState(false);
 
   // event handler: show/hide show password button press
@@ -33,7 +38,9 @@ const Input = ({
         value={value}
         onChangeText={onChange}
         keyboardType={keyboardType}
-        secureTextEntry={!isShown}
+        secureTextEntry={secureText && !isShown}
+        editable={disableInput}
+        autoFocus={autoFocus}
       />
       {secureText && (
         <TouchableOpacity

@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     icon: {
         width: 60,
         height: 60,
-        borderRadius: 15
+        borderRadius: 180
     }
 })
 
