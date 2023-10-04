@@ -20,6 +20,10 @@ import SplashScreen from 'react-native-splash-screen';
 import { getData } from "./src/storage";
 import { LOCALSTORAGE } from "./src/storage/direct";
 import { actionLoginEnd, actionLoginExternalEnd } from "./src/redux/actions/userActions";
+import QrCode from './src/screens/AccountScreen/OptionAccount/QrCode';
+import ScanQrCode from './src/screens/SearchScreen/ScanQrCode';
+import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
+import 'react-native-reanimated';
 
 
 const Tab = createBottomTabNavigator();
@@ -79,9 +83,11 @@ export default function App() {
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="Friends" component={Friends} />
+        <Stack.Screen name="QrCode" component={QrCode} />
+        <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
+        <Stack.Screen name="Biometrics" component={Biometrics} />
       </Stack.Navigator>
     </NavigationContainer>
-
   );
 }
 
@@ -91,6 +97,8 @@ function BottomScreen() {
   useEffect(() => {
     setFocusbottom('HomeScreen')
   }, [])
+
+
 
   return (
     <Tab.Navigator

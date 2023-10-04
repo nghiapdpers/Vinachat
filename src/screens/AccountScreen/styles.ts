@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     bodyAccount: {
-        flex: 8,
+        flex: 7,
         alignItems: 'center',
         top: 20
     },
@@ -118,8 +118,6 @@ const styles = StyleSheet.create({
         color: "black",
         opacity: 0.3
     }
-
-
 })
 
 export default styles;

@@ -47,7 +47,7 @@ export default function HomeScreen() {
 
         const renderFriendActive = ({ item }: { item: any }) => {
             return (
-                <TouchableOpacity style={styles.viewfriendActive} onPress={() => { navigation.navigate('MessageScreen') }}>
+                <TouchableOpacity style={styles.viewfriendActive} onPress={() => { navigation.navigate('MessageScreen', { ref: String(item.id) }) }}>
                     <View style={styles.borderfriendActive}>
                         <Text>{getFirstLetters(item.name)}</Text>
                     </View>
@@ -57,8 +57,10 @@ export default function HomeScreen() {
         }
 
         const renderFriendMessage = ({ item }: { item: any }) => {
+            console.log(item);
+
             return (
-                <TouchableOpacity style={styles.BorderMessage} onPress={() => { navigation.navigate('MessageScreen') }}>
+                <TouchableOpacity style={styles.BorderMessage} onPress={() => { navigation.navigate('MessageScreen', { ref: String(item.id) }) }}>
                     <View style={styles.MessageAvatar}>
                         <View style={styles.borderfriendActive}>
                             <Text>{getFirstLetters(item.name)}</Text>
