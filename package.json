@@ -28,7 +28,11 @@
     "react-redux": "^8.1.2",
     "redux": "^4.2.1",
     "redux-observable": "^2.0.0",
-    "react-native-splash-screen": "^3.3.0"
+    "@react-navigation/bottom-tabs": "^6.5.8",
+    "@realm/react": "^0.6.0",
+    "react-native-reanimated": "^3.5.3",
+    "react-native-splash-screen": "^3.3.0",
+    "realm": "^12.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

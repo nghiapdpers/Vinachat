@@ -1,21 +1,37 @@
-import React from "react"
-import { View, Text, Image } from 'react-native'
-import styles from "./styles"
+import { Image, SafeAreaView, Text, View, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import styles from "./styles";
+import { useNavigation } from "@react-navigation/native";
 
-const Header = ({ textLeft, textCenter, iconRight, style }: { textLeft: string, textCenter: string, iconRight: any, style: any }) => {
+const Header = ({ Iconback, text, status, IconOption1, IconOption2, IconOption3, title }: any) => {
+    const navigation = useNavigation();
     return (
-        <View style={[styles.container, style]}>
-            {textLeft ? (
-                <Text style={styles.text}>{textLeft}</Text>
-            ) : null}
-            {textCenter ? (
-                <Text style={styles.text}>{textCenter}</Text>
-            ) : null}
-            {iconRight ? (
-                <Image style={{ width: 25, height: 25 }} source={iconRight} />
-            ) : null}
-        </View>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.flexboxBackText}>
+                <TouchableOpacity onPress={() => { navigation.goBack() }}>
+                    <Image style={styles.iconHeader} source={Iconback} />
+                </TouchableOpacity>
+                <View style={{marginLeft : 5}}>
+                    <Text style={styles.Username}>{text}</Text>
+                    <Text style={styles.textActive}>{status}</Text>
+                </View>
+            </View>
+            <View style={styles.flexboxTitle}>
+                <Text style={styles.textTitle}>{title}</Text>
+            </View>
+            <View style={styles.flexboxOption}>
+                <TouchableOpacity>
+                    <Image style={styles.iconHeader} source={IconOption1} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Image style={styles.iconHeader} source={IconOption2} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Image style={styles.iconHeader} source={IconOption3} />
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
     )
 }
 
-export default React.memo(Header)
+export default React.memo(Header);
