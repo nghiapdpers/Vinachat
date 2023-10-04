@@ -43,6 +43,10 @@ export const screen = {
     download : require('./Screen/QRCode/download.png'),
     share : require('./Screen/QRCode/share.png'),
     changeQR : require('./Screen/QRCode/refresh.png')
+  },
+  creategroupchat : {
+    camera : require('./Screen/CreateGroupChat/camera.png'),
+    remove : require('./Screen/CreateGroupChat/remove.png')
   }
 };
 

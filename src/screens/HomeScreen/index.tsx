@@ -69,7 +69,7 @@ export default function HomeScreen() {
                 />
                 <View style={styles.createGroup}>
                     <Text style={styles.texttitleMessage}>Message</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => {navigation.navigate('CreateGroupChat')}}>
                         <Image style={styles.createGroupIcon} source={screen.home.creategroup} />
                     </TouchableOpacity>
                 </View>

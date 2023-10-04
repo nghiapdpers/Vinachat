@@ -14,7 +14,7 @@ export default function SearchScreen() {
 
     const FetchSearch = async () => {
         try {
-            AsyncStorage.getItem('@apikey', async (error: any, data: any) => {
+            // AsyncStorage.getItem('@apikey', async (error: any, data: any) => {
                 return await axios.post('http://127.0.0.1:5003/api/user/search', { keyword: value }, {
                     headers: {
                         'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ export default function SearchScreen() {
                 }).then((resposne: any) => {
                     setData(resposne.data.data)
                 })
-            })
+            // })
 
         } catch (error) {
             console.log(error);

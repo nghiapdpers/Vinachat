@@ -90,8 +90,7 @@ export default function AccountScreen() {
         await removeData(LOCALSTORAGE.user)
         await removeData(LOCALSTORAGE.userExternal)
         await removeData(LOCALSTORAGE.apikey)
-        navigation.navigate('LoginScreen')
-    }
+        }
 
     return (
         <>

@@ -10,6 +10,9 @@ import mainTheme from '../../assets/colors';
 import Header from '../../components/Header';
 import CardRequest from '../../components/CardRequest';
 import CardFriends from '../../components/CardFriends';
+import firestore from '@react-native-firebase/firestore'
+
+firestore().useEmulator('localhost',8080)
 
 const dataFriends = [
     {
@@ -58,7 +61,7 @@ const dataRequest = [
 ]
 
 const Friends = () => {
-
+    firestore().collection('users').get().then((response : any) => console.log(response.docs))
     return (
         <SafeAreaView style={styles.container}>
 

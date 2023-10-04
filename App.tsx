@@ -23,7 +23,12 @@ import { actionLoginEnd, actionLoginExternalEnd } from "./src/redux/actions/user
 import QrCode from './src/screens/AccountScreen/OptionAccount/QrCode';
 import ScanQrCode from './src/screens/ScanQrCode';
 import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
+import CreateGroupChat from './src/screens/CreateGroupChat';
 import 'react-native-reanimated';
+import { RealmProvider } from "@realm/react";
+import GroupChat from "./src/realm/GroupChat";
+import Message from "./src/realm/Message";
+import User from "./src/realm/User";
 
 
 const Tab = createBottomTabNavigator();
@@ -68,26 +73,28 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          gestureEnabled: true,
-          gestureDirection: 'horizontal',
-          headerShown: false,
-        }}>
-        <Stack.Screen name="Home" component={isC ? BottomScreen : LoginScreen} />
-        <Stack.Screen name="BottomScreen" component={BottomScreen} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="MessageScreen" component={MessageScreen} />
-        <Stack.Screen name="SearchScreen" component={SearchScreen} />
-        <Stack.Screen name="CreateAccount" component={CreateAccount} />
-        <Stack.Screen name="Friends" component={Friends} />
-        <Stack.Screen name="QrCode" component={QrCode} />
-        <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
-        <Stack.Screen name="Biometrics" component={Biometrics} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <RealmProvider schema={[GroupChat, Message, User]}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            gestureEnabled: true,
+            gestureDirection: 'horizontal',
+            headerShown: false,
+          }}>
+          <Stack.Screen name="Home" component={isC ? BottomScreen : LoginScreen} />
+          <Stack.Screen name="BottomScreen" component={BottomScreen} />
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="MessageScreen" component={MessageScreen} />
+          <Stack.Screen name="SearchScreen" component={SearchScreen} />
+          <Stack.Screen name="CreateAccount" component={CreateAccount} />
+          <Stack.Screen name="Friends" component={Friends} />
+          <Stack.Screen name="QrCode" component={QrCode} />
+          <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
+          <Stack.Screen name="Biometrics" component={Biometrics} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </RealmProvider>
   );
 }
 
