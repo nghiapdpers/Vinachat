@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "768134085782",
-    "project_id": "mobile-app-chat-1fc28",
-    "storage_bucket": "mobile-app-chat-1fc28.appspot.com"
+    "project_number": "149243845056",
+    "firebase_url": "https://itestcloudfunction-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "itestcloudfunction",
+    "storage_bucket": "itestcloudfunction.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:768134085782:android:b66d7b6ff7d0dd9304d6b7",
+        "mobilesdk_app_id": "1:149243845056:android:3f4a77e890481c9e991025",
         "android_client_info": {
           "package_name": "com.vinachat"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyABpaBU7A1Cc7I38kFmh9HqdvPCxYj2v88"
+          "current_key": "AIzaSyDkob00GO8uKyEB07nwifclDig4WkAO5-o"
         }
       ],
       "services": {

@@ -7,53 +7,61 @@ import {
   Pressable,
   Keyboard,
 } from 'react-native';
+import {useState, useEffect} from 'react';
 import styles from './styles';
 import Input from '../../components/Input';
 import TextButton from '../../components/TextButton';
 import Button from '../../components/Button';
-import { screen } from '../../assets/images';
-import { useNavigation } from '@react-navigation/core';
-import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics'
-import { useEffect, useState } from 'react';
+import {screen} from '../../assets/images';
+import {useNavigation} from '@react-navigation/core';
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
 
 export default function LoginScreen() {
-  const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true })
+  const rnBiometrics = new ReactNativeBiometrics({
+    allowDeviceCredentials: true,
+  });
   const navigation = useNavigation();
   const [checkBiometrics, setcheckBiometrics] = useState('');
-  const [mobile, setmobile] = useState('0888190357')
-  const [password, setpassword] = useState('')
+  const [mobile, setmobile] = useState('0123456789');
+  const [password, setpassword] = useState('');
 
   useEffect(() => {
-    CheckSupported()
-    SaveSupported(checkBiometrics)
-  }, [checkBiometrics])
+    CheckSupported();
+    SaveSupported(checkBiometrics);
+  }, [checkBiometrics]);
 
   const handleLoginBiometrics = async () => {
     try {
-      rnBiometrics.simplePrompt({ promptMessage: 'Confirm biometrics' })
+      rnBiometrics
+        .simplePrompt({promptMessage: 'Confirm biometrics'})
         .then(async (resultObject: any) => {
-          const storedMobile: any = await AsyncStorage.getItem('@UserRegisted_Biometrics');
+          const storedMobile: any = await AsyncStorage.getItem(
+            '@UserRegisted_Biometrics',
+          );
+
+          console.log(resultObject);
           if (storedMobile) {
             const mobile = storedMobile;
+            console.log(mobile);
             const credentials = await Keychain.getGenericPassword({
               service: `myKeychainService_${mobile}`,
             });
             if (credentials) {
-              const { password } = credentials;
+              console.log(credentials);
+              const {password} = credentials;
               console.log(mobile, password);
             } else {
               console.log('No item found in Keychain with Touch ID.');
             }
           }
         })
-        .catch(() => {
-          console.log('biometrics failed')
-        })
+        .catch(err => {
+          console.log('biometrics failed', err);
+        });
     } catch (error) {
       console.log(error);
-
     }
   };
 
@@ -64,28 +72,29 @@ export default function LoginScreen() {
         await AsyncStorage.setItem('@PasswordUser', newPassword);
         console.log('Password set successfully:', newPassword);
       } else {
-        console.log('Password is the same as existing password:', existingPassword);
+        console.log(
+          'Password is the same as existing password:',
+          existingPassword,
+        );
       }
     } catch (error) {
       console.error('Error setting password:', error);
     }
   };
 
-
   const CheckSupported = async () => {
-    rnBiometrics.isSensorAvailable()
-      .then((resultObject) => {
-        const { available, biometryType } = resultObject
-        if (available && biometryType === BiometryTypes.TouchID) {
-          setcheckBiometrics('TouchID is supported')
-        } else if (available && biometryType === BiometryTypes.FaceID) {
-          setcheckBiometrics('FaceID is supported')
-        } else if (available && biometryType === BiometryTypes.Biometrics) {
-          console.log('Biometrics is supported')
-        } else {
-          console.log('Biometrics not supported')
-        }
-      })
+    rnBiometrics.isSensorAvailable().then(resultObject => {
+      const {available, biometryType} = resultObject;
+      if (available && biometryType === BiometryTypes.TouchID) {
+        setcheckBiometrics('TouchID is supported');
+      } else if (available && biometryType === BiometryTypes.FaceID) {
+        setcheckBiometrics('FaceID is supported');
+      } else if (available && biometryType === BiometryTypes.Biometrics) {
+        setcheckBiometrics('Biometrics is supported');
+      } else {
+        console.log('Biometrics not supported');
+      }
+    });
   };
 
   const SaveSupported = async (newisSupported: any) => {
@@ -95,29 +104,31 @@ export default function LoginScreen() {
         await AsyncStorage.setItem('@isSupported', newisSupported);
         console.log('Biometrics set successfully:', newisSupported);
       } else {
-        console.log('Biometrics  is the same as existing password:', existingSupported);
+        console.log(
+          'Biometrics  is the same as existing password:',
+          existingSupported,
+        );
       }
     } catch (error) {
       console.error('Error setting Biometrics :', error);
     }
-  }
+  };
 
   const handleSignIn = async () => {
     try {
-      CheckPasswordIfNotExists(password)
-      navigation.navigate("BottomScreen")
+      CheckPasswordIfNotExists(password);
+      navigation.navigate('BottomScreen');
     } catch (error) {
       console.log(error);
     }
-  }
-
+  };
 
   return (
     <Pressable
       onPress={() => {
         Keyboard.dismiss();
       }}
-      style={{ flex: 1 }}>
+      style={{flex: 1}}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>login</Text>
 
@@ -125,14 +136,14 @@ export default function LoginScreen() {
           <Input
             title={'Phone'}
             value={mobile}
-            onChange={text => setmobile(text)}
+            onChange={setmobile}
             style={undefined}
             keyboardType={'phone-pad'}
           />
           <Input
             title={'Password'}
             value={password}
-            onChange={text => setpassword(text)}
+            onChange={setpassword}
             style={undefined}
             keyboardType={'default'}
             secureText
@@ -147,12 +158,19 @@ export default function LoginScreen() {
             <Button
               title={'Sign in'}
               style={styles.signInButton}
-              onPress={() => { handleSignIn() }}
+              onPress={() => {
+                handleSignIn();
+              }}
             />
 
-            <TouchableOpacity onPress={() => handleLoginBiometrics()}>
+            <TouchableOpacity onPress={handleLoginBiometrics}>
               <Image
-                source={checkBiometrics === 'TouchID is supported' ? screen.login.fingerprint : screen.login.faceid}
+                source={
+                  checkBiometrics === 'TouchID is supported' ||
+                  checkBiometrics === 'Biometrics is supported'
+                    ? screen.login.fingerprint
+                    : screen.login.faceid
+                }
                 style={styles.fingerprintImage}
               />
             </TouchableOpacity>
@@ -162,7 +180,10 @@ export default function LoginScreen() {
 
           <View style={styles.registerView}>
             <Text style={styles.registerText}>Don't have an account?</Text>
-            <TouchableOpacity onPress={() => { navigation.navigate('SignUp') }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('SignUp');
+              }}>
               <TextButton text="Sign up!" />
             </TouchableOpacity>
           </View>
