@@ -1,7 +1,7 @@
 import { StyleSheet, Dimensions } from "react-native";
 const { height: HeightScreen } = Dimensions.get('window');
 const { width: WidthScreen } = Dimensions.get('window');
-import mainTheme from "../../../assets/colors";
+import mainTheme from "../../assets/colors";
 
 const styles = StyleSheet.create({
   container: {
@@ -35,9 +35,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 335,
     left: 0,
-    right : 0,
+    right: 0,
     top: 215,
-    bottom:0
+    bottom: 0
   }
 
 

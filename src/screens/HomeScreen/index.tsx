@@ -11,6 +11,7 @@ import {
 import {screen} from '../../assets/images';
 import datafriend from './data';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
 
 export default function HomeScreen() {
   const [data, setData] = useState([]);

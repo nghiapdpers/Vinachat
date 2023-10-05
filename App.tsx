@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 
@@ -6,21 +7,22 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import CreateAccount from './src/screens/CreateAccount';
 import Friends from './src/screens/Friends';
-import {firstCallAPI} from './src/apis/initApp';
-import {StatusBar, Text} from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Image, StyleSheet, View, Platform, SafeAreaView} from 'react-native';
-import HomeScreen from '../Vinachat/src/screens/HomeScreen';
-import LoginScreen from '../Vinachat/src/screens/LoginScreen';
-import AccountScreen from './src/screens/AccountScreen';
-import MessageScreen from './src/screens/MessageScreen';
-import SearchScreen from './src/screens/SearchScreen';
-import {screen} from './src/assets/images';
-import mainTheme from './src/assets/colors';
+import {Image, StyleSheet, View, Platform, StatusBar, Text} from 'react-native';
+import LoginScreen from './src/screens/LoginScreen';
+import { useDispatch, useSelector } from 'react-redux'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import HomeScreen from "../Vinachat/src/screens/HomeScreen";
+import AccountScreen from "./src/screens/AccountScreen";
+import MessageScreen from "./src/screens/MessageScreen";
+import SearchScreen from "./src/screens/SearchScreen";
+import { screen } from "./src/assets/images";
+import mainTheme from "./src/assets/colors";
 import SplashScreen from 'react-native-splash-screen';
+import { getData } from "./src/storage";
+import { LOCALSTORAGE } from "./src/storage/direct";
+import { actionLoginEnd, actionLoginExternalEnd } from "./src/redux/actions/userActions";
 import QrCode from './src/screens/AccountScreen/OptionAccount/QrCode';
-import ScanQrCode from './src/screens/SearchScreen/ScanQrCode';
+import ScanQrCode from './src/screens/ScanQrCode';
 import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
 import 'react-native-reanimated';
 
@@ -31,11 +33,33 @@ const Stack = createStackNavigator();
 firestore().useEmulator('localhost', 8080);
 
 export default function App() {
-  // useEffect(() => {
-  //   firstCallAPI({
-  //     appName: 'khttest',
-  //   });
-  // }, []);
+
+  const dispatch = useDispatch()
+
+  const [isC, setC] = useState(false);
+
+  // Lấy dữ liệu dưới local và nạp lên Redux
+  const getApiKey = async () => {
+    const [res, resExternal] = await Promise.all([
+      getData(LOCALSTORAGE.user),
+      getData(LOCALSTORAGE.userExternal)
+    ]);
+
+    if (res) {
+      setC(true);
+      dispatch(actionLoginEnd(res));
+    }
+
+    if (resExternal) {
+      setC(true);
+      dispatch(actionLoginExternalEnd(resExternal));
+    }
+
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 100)
+  }
+
 
   // side effect: hide splash screen
   useEffect(() => {
@@ -43,7 +67,7 @@ export default function App() {
       StatusBar.setBackgroundColor(mainTheme.background);
       StatusBar.setBarStyle('dark-content');
     }
-    SplashScreen.hide();
+    getApiKey()
   }, []);
 
   return (
@@ -52,63 +76,19 @@ export default function App() {
         screenOptions={{
           gestureEnabled: true,
           gestureDirection: 'horizontal',
+          headerShown: false,
         }}>
-        <Stack.Screen
-          name="LoginScreen"
-          component={LoginScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="BottomScreen"
-          component={BottomScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="MessageScreen"
-          component={MessageScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SearchScreen"
-          component={SearchScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="QrCode"
-          component={QrCode}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="ScanQrCode"
-          component={ScanQrCode}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Biometrics"
-          component={Biometrics}
-          options={{
-            headerShown: false,
-          }}
-        />
+        <Stack.Screen name="Home" component={isC ? BottomScreen : LoginScreen} />
+        <Stack.Screen name="BottomScreen" component={BottomScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="MessageScreen" component={MessageScreen} />
+        <Stack.Screen name="SearchScreen" component={SearchScreen} />
+        <Stack.Screen name="CreateAccount" component={CreateAccount} />
+        <Stack.Screen name="Friends" component={Friends} />
+        <Stack.Screen name="QrCode" component={QrCode} />
+        <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
+        <Stack.Screen name="Biometrics" component={Biometrics} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -237,10 +217,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 60,
     backgroundColor: mainTheme.background,
+    padding: 10
+
   },
   activeLabel: {
     color: mainTheme.logo,
     fontSize: 13,
     fontWeight: '600',
   },
-});
+})
+
+export type RootStackParamList = {
+  BottomScreen: any,
+  MessageScreen: any,
+  SearchScreen: any,
+  SignUp: any,
+  CreateAccount: any,
+  Friends: any,
+  LoginScreen: any,
+};
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList { }
+  }
+}

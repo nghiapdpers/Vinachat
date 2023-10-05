@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { View, Text, SafeAreaView, StyleSheet, Linking } from "react-native";
 // import { Camera, useCameraDevices } from "react-native-vision-camera";
 import { Svg, Defs, Mask, Rect } from "react-native-svg";
-import mainTheme from "../../../assets/colors";
+import mainTheme from "../../assets/colors";
 import { useNavigation } from "@react-navigation/native";
 import styles from "./styles";
-import Header from "../../../components/Header";
-import { component } from "../../../assets/images";
+import Header from "../../components/Header";
+import { component } from "../../assets/images";
 
 export default function ScanQrCode() {
     const [hasPermission, setHasPermission] = useState(false);

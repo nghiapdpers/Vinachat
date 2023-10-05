@@ -45,6 +45,10 @@ const styles = StyleSheet.create({
         borderColor: "#03DAC6",
         color: mainTheme.text
     },
+    textResentOTP: {
+        fontSize: 16,
+        marginLeft: 4
+    }
 })
 
 export default styles; 

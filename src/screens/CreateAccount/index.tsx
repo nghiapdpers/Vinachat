@@ -1,11 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     SafeAreaView,
     Text,
     StatusBar,
-    Modal,
     View,
-    TextInput,
     Alert,
 } from 'react-native';
 import styles from './styes';
@@ -13,44 +11,86 @@ import mainTheme from '../../assets/colors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import CheckBox from '../../components/CheckBox';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useSelector } from 'react-redux';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionClearUser, actionRegisterStart } from '../../redux/actions/userActions';
 
-type RootStackParamList = {
-    SignUp: undefined;
-    Friends: undefined;
-};
+const CreateAccount = () => {
 
-type SignUpScreenProps = {
-    navigation: StackNavigationProp<RootStackParamList, 'SignUp'>;
-};
-const CreateAccount: React.FC<SignUpScreenProps> = ({ navigation }) => {
+    const dispatch = useDispatch()
+    const route = useRoute();
+    const navigation = useNavigation();
+    const { phone } = route?.params || {};
 
-    const { apiInit } = useSelector((state) => state.postReducers)
-    console.log(apiInit);
-
+    const user = useSelector((state: any) => state?.user);
+    const userExternal = useSelector((state: any) => state?.userExternal);
+    const isRegisted = useSelector((state: any) => state?.user?.register?.status);
+    const message = useSelector((state: any) => state?.user?.register?.message);
+    // Dữ liệu tài khoản khttest
+    const dataUserExternal = useSelector((state: any) => state?.userExternal?.data);
 
     const [isChecked, setIsChecked] = useState(false)
-    const [isFirstName, setIsFirstName] = useState('')
-    const [isLastName, setIsLastName] = useState('')
+    const [isPhone, setIsPhone] = useState(dataUserExternal ? dataUserExternal?.mobile : phone)
+    const [isFullName, setIsFullName] = useState(dataUserExternal ? dataUserExternal?.fullname : '')
     const [isPassword, setIsPassword] = useState('')
+
+    // Get vinateks_id từ Redux
+    const vid = dataUserExternal?.vinateks_id ? dataUserExternal?.vinateks_id : '';
+
+    console.log('userLogin:>>', user);
+    console.log('userExternalLogin:>>', userExternal);
+    console.log('dataUserExternal:>>', dataUserExternal);
+
+    console.log('isPhone:>>', isPhone);
+    console.log('isFullName:>>', isFullName);
+    console.log('isPassword:>>', isPassword);
+    console.log('vid:>>', vid);
 
     // Check Agree with Terms and Conditions
     const toggleCheckBox = () => {
         setIsChecked(!isChecked);
     };
 
+    // handle Register with button
     const Register = () => {
-        if (!isFirstName || !isLastName || !isPassword) {
+        if (!isFullName || !isPhone || !isPassword) {
             Alert.alert('Thông báo', 'Vui lòng điền đầy đủ thông tin.')
+            return;
+        }
+        if (isPassword?.length < 6) {
+            Alert.alert('Thông báo', 'Mật khẩu phải từ 6 kí tự trở lên.')
             return;
         }
         if (!isChecked) {
             Alert.alert('Thông báo', 'Bạn chưa đồng ý với điều khoản dịch vụ.')
             return;
         }
-        navigation.navigate('Friends')
+        dispatch(actionRegisterStart(isPhone, isFullName, isPassword, vid));
+        setIsFullName('')
+        setIsPhone('')
+        setIsPassword('')
     }
+
+    useEffect(() => {
+        if (isRegisted) {
+            navigation.navigate('BottomScreen')
+            return;
+        }
+
+        if (message) {
+            Alert.alert('Thông báo', message,
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            dispatch(actionClearUser)
+                        },
+                    }
+                ])
+        }
+    }, [isRegisted, message])
+
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -59,40 +99,31 @@ const CreateAccount: React.FC<SignUpScreenProps> = ({ navigation }) => {
                 backgroundColor={mainTheme.background}
             />
 
-            <Text
-                style={styles.title}
-            >
-                Create Account
-            </Text>
+            <Text style={styles.title}>Create Account</Text>
 
             <Input
+                onChange={(text: string) => setIsPhone(text)}
+                value={isPhone}
                 style={{ marginTop: 16 }}
                 title="Phone Number"
                 keyboardType="number-pad"
-                typePassword={false}
+                disableInput={false}
             />
-            <Input
-                style={{ marginTop: 16 }}
-                title="First Name"
-                keyboardType="default"
-                value={isFirstName}
-                onChange={(text: string) => setIsFirstName(text)}
-                typePassword={false}
-            />
-            <Input
-                style={{ marginTop: 16 }}
-                title="Last Name"
-                keyboardType="default"
-                value={isLastName}
-                onChange={(text: string) => setIsLastName(text)}
-                typePassword={false}
 
+            <Input
+                style={{ marginTop: 16 }}
+                title="Full Name"
+                keyboardType="default"
+                value={isFullName}
+                onChange={(text: string) => setIsFullName(text)}
+                secureText={false}
             />
+
             <Input
                 style={{ marginTop: 16 }}
                 title="Password"
                 keyboardType="default"
-                typePassword={true}
+                secureText={true}
                 value={isPassword}
                 onChange={(text: string) => setIsPassword(text)}
             />
@@ -103,6 +134,8 @@ const CreateAccount: React.FC<SignUpScreenProps> = ({ navigation }) => {
             </View>
 
             <Button
+                styleText={{}}
+                disable={false}
                 title="Register"
                 onPress={() => Register()}
                 style={{ marginTop: 16 }}
