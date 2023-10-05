@@ -1,15 +1,20 @@
-import Realm from "realm";
+// import Realm from 'realm';
+import { createRealmContext, Realm } from '@realm/react';
+
 
 class Message extends Realm.Object {
-    static schema: { name: string; properties: { message_text: string; from_user_id: string; sent_time: string; }; };
+    static schema: Realm.ObjectSchema = {
+        name: 'Message',
+        primaryKey: 'ref',
+        properties: {
+            ref: 'string',
+            from: 'string',
+            message: 'string',
+            sent_time: 'date',
+            type: 'string',
+        },
+    };
+    static isLive = true;
 }
-Message.schema = {
-    name: "Message",
-    properties: {
-        message_text: 'string',
-        from_user_id: 'string',
-        sent_time: 'string'
-    },
-};
 
 export default Message;

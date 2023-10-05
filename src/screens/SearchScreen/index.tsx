@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import mainTheme from "../../assets/colors";
+import { apikey } from "../LoginScreen";
 
 export default function SearchScreen() {
     const navigation = useNavigation();
@@ -14,18 +15,15 @@ export default function SearchScreen() {
 
     const FetchSearch = async () => {
         try {
-            // AsyncStorage.getItem('@apikey', async (error: any, data: any) => {
-                return await axios.post('http://127.0.0.1:5003/api/user/search', { keyword: value }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + data,
-                    },
-                    timeout: 20000
-                }).then((resposne: any) => {
-                    setData(resposne.data.data)
-                })
-            // })
-
+            return await axios.post('http://127.0.0.1:5003/api/user/search', { keyword: value }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + apikey,
+                },
+                timeout: 20000
+            }).then((resposne: any) => {
+                setData(resposne.data.data)
+            })
         } catch (error) {
             console.log(error);
         }
@@ -33,10 +31,10 @@ export default function SearchScreen() {
 
 
     useEffect(() => {
-        FetchSearch()        
+        FetchSearch()
     }, [value])
 
-    const renderItem = ({ item }: { item: any }) => {        
+    const renderItem = ({ item }: { item: any }) => {
         return (
             <View style={styles.borderFind}>
                 <View style={styles.topItem}>
@@ -49,7 +47,7 @@ export default function SearchScreen() {
                     <Text style={styles.mobile}>{item?.mobile}</Text>
                 </View>
                 <View style={styles.endItem}>
-                    <TouchableOpacity style={[styles.btnstatusfriend , {backgroundColor : item?.isFriend === false ? mainTheme.logo : '#e3e3e3'}]}>
+                    <TouchableOpacity style={[styles.btnstatusfriend, { backgroundColor: item?.isFriend === false ? mainTheme.logo : '#e3e3e3' }]}>
                         <Text>{item?.isFriend === false ? 'Kết bạn' : 'Đã kết bạn'}</Text>
                     </TouchableOpacity>
                 </View>

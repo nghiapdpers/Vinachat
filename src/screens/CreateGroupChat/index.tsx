@@ -7,6 +7,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header3 from "../../components/Header3";
 import data from "./data";
+import { apikey } from "../LoginScreen";
 
 export default function CreateGroupChat() {
     const navigation = useNavigation();
@@ -40,7 +41,6 @@ export default function CreateGroupChat() {
 
     const FetchCreateGroup = async () => {
         try {
-            // AsyncStorage.getItem('@apikey', async (error: any, apikey: any) => {
                 return await axios.post('http://127.0.0.1:5003/api/group/create', { refs: JSON.stringify(["deweiZVGonsVhpZxWghW", "P80NIrixjTpCzUTWu7Ko"]), name: groupname }, {
                     headers: {
                         'Content-Type': 'application/json',
@@ -49,7 +49,6 @@ export default function CreateGroupChat() {
                 }).then(async (resposne: any) => {
                     console.log(resposne.data);
                 })
-            // })
         } catch (error) {
             console.log(error);
         }

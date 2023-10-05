@@ -1,4 +1,4 @@
-import React, { useEffect, useState , useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
     SafeAreaView,
     Text,
@@ -15,10 +15,9 @@ import styles from "./styles";
 import Header from "../../components/Header";
 import { component, screen } from "../../assets/images";
 import mainTheme from "../../assets/colors";
-import GroupChat from "../../realm/GroupChat"
+import GroupChat from '../../realm/GroupChat'
+import { useRealm } from "@realm/react";
 import Message from "../../realm/Message";
-import User from "../../realm/User";
-import Realm from "realm";
 
 
 export default function MessageScreen({ route }: { route: any }) {
@@ -27,13 +26,13 @@ export default function MessageScreen({ route }: { route: any }) {
     const [data, setData] = useState([]);
     const ref = route?.params?.ref;
     const yourRef = useRef(null);
-    
+    const realm = useRealm()
+
+
     const FetchDataRealm = async () => {
         try {
-            const realm = await Realm.open({ schema: [GroupChat, User, Message] })
             const specificGroup = realm.objects('GroupChat').filtered(`ref = '${ref}'`)[0];
             console.log(specificGroup);
-            
             if (specificGroup) {
                 const messages = specificGroup.message;
                 setData(messages)
@@ -47,25 +46,31 @@ export default function MessageScreen({ route }: { route: any }) {
 
     const HandleSendMessage = async () => {
         try {
-            const realm = await Realm.open({ schema: [GroupChat, User, Message] });
-
             realm.write(() => {
-                let groupChat = realm.objects<GroupChat>('GroupChat').filtered(`ref = '${ref}'`)[0];
+                let groupChat: GroupChat = realm.objects<GroupChat>('GroupChat').filtered(`ref = '${ref}'`)[0];
                 if (!groupChat) {
                     groupChat = realm.create<GroupChat>('GroupChat', {
                         ref: ref,
+                        name: '',
+                        total_member: 0,
+                        adminRef: '',
+                        latest_message_from: '',
+                        latest_message_from_name: '',
+                        latest_message_text: '',
+                        latest_message_type: '',
+                        latest_message_sent_time: new Date(Date.parse(new Date().toISOString())),
                         member: [],
-                        message: [],
+                        messages: [],
                     });
                 }
-
                 const newMessage = {
-                    message_text: value,
-                    from_user_id: testfromid,
+                    ref: '2',
+                    from: testfromid,
+                    message: value,
                     sent_time: new Date().toISOString(),
+                    type: 'text',
                 };
-
-                groupChat.message.push(newMessage);
+                groupChat.messages.push(newMessage);
             });
 
             console.log('Message sent successfully');
@@ -75,6 +80,8 @@ export default function MessageScreen({ route }: { route: any }) {
             console.error('Error sending message:', error);
         }
     };
+
+
 
 
     useEffect(() => {

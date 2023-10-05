@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     FlatList,
     SafeAreaView,
@@ -11,8 +11,10 @@ import Header from '../../components/Header';
 import CardRequest from '../../components/CardRequest';
 import CardFriends from '../../components/CardFriends';
 import firestore from '@react-native-firebase/firestore'
+import axios from 'axios';
+import { apikey } from '../LoginScreen';
 
-firestore().useEmulator('localhost',8080)
+firestore().useEmulator('localhost', 8080)
 
 const dataFriends = [
     {
@@ -61,7 +63,29 @@ const dataRequest = [
 ]
 
 const Friends = () => {
-    firestore().collection('users').get().then((response : any) => console.log(response.docs))
+    firestore().collection('users').get().then((response: any) => console.log(response.docs))
+
+
+    const FetchGetFriendList = async () => {
+        try {
+            return await axios.post('http://127.0.0.1:5003/api/user/getFriendList', {}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + apikey
+                },
+                timeout: 20000
+            }).then((resposne: any) => {
+                console.log(resposne.data);
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        FetchGetFriendList()
+    }, [])
+
     return (
         <SafeAreaView style={styles.container}>
 
