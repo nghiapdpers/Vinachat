@@ -19,34 +19,40 @@ import EmojiKeyboard from '../../components/EmojiKeyboard';
 import styles from './styles';
 import {component, screen} from '../../assets/images';
 import mainTheme from '../../assets/colors';
+import {useDispatch, useSelector} from 'react-redux';
+import {listChatActions} from '../../redux/actions/listChatActions';
+
+// Màn hình chat:
+/**
+ * Sử dụng redux lưu trữ 20 tin nhắn mới nhất, đồng thời sử dụng Realm để lưu
+ * trữ toàn bộ thông tin đoạn chat. Sau khi người dùng két đến hết 20 tin nhắn mới nhất.
+ * Thì sử dụng dữ liệu từ Realm để thực hiện loadmore. Nếu dữ liệu của Realm hết thì sẽ gọi  * api để load tiếp dữ liệu từ nơi bị đứt đoạn.
+ *
+ * Chức năng chat nay được viết trực tiếp bằng firestore đảm bảo sự nhanh chóng (k phải thông qua api như cũ.). Điều này yêu cầu một số cài đặt ở server về phần login và cài đặt ở client.
+ *
+ * Mục tiêu của app: Nhanh, nhẹ. Các hoạt động realtime sẽ phải nhanh nhất có thê, vì thế hầu hết các chức năng không cần đến realtime hoặc tiêu tốn nhiều thời gian xử lý (filter hàng ngàn user để lọc ra bạn bè...) sẽ được server xử lý và trả về thông tin thông qua API. Đồng thời đảm bảo các logic đăng nhập, đăng ký... và cấu trúc dữ liệu được an toàn.
+ */
 
 const database = firestore();
 
-const api =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWYiOiJqRHVBUVlwcHJ1YUtZcElleGZCUiIsInV1aWQiOiIzMzk5N2QwYy0wZTkzLTUzMzctYTFjMy0wOWFlMGE2OWJkMTEiLCJpYXQiOjE2OTY0NzczOTAsImV4cCI6MTY5NjQ4MDk5MH0.OD-NpBqMBB5PFxrhmP625Ww7XA7TGeWpBKLAkLKwn2Q';
-const groupRef = 'VZsIsq9hUZw5plgW2ZUC';
-const ref = 'jDuAQYppruaKYpIexfBR';
+const groupRef = 'c1NgNes6PTy0lPqDUPCX';
 
 export default function MessageScreen({route}: {route: any}) {
+  const dispatch = useDispatch();
+
+  const ref = useSelector((s: any) => s.user.data.ref);
+
+  const listChatData = useSelector((s: any) => s.listChat.data);
+
   const [emoPicker, setEmoPicker] = useState(false);
   const [value, setValue] = useState('');
-  const [data, setData] = useState<any[]>([]);
   const [keyboard, setKeyboard] = useState(false);
   const listRef = useRef<any | FlatList>(null);
-
-  // fetch api to get message list
-  const fetchdata = async () => {
-    const result = await fetchMessageList(api, groupRef, 1);
-
-    if (result.message == 'success') {
-      setData(result.data.chats);
-    }
-  };
 
   // side effect: subcribe to listen chat
   useEffect(() => {
     // ignore initial listen
-    let initial = false;
+    let notFirstRender = false;
 
     const listenMessage = database
       .collection('groups')
@@ -56,20 +62,32 @@ export default function MessageScreen({route}: {route: any}) {
       .limit(20)
       .onSnapshot(
         snapshot => {
-          if (initial) {
+          if (notFirstRender) {
             snapshot.docChanges().forEach(item => {
               if (item.type === 'added') {
-                setData(a => [{...item.doc.data(), ref: item.doc.id}, ...a]);
+                dispatch(
+                  listChatActions.add({
+                    ref: item.doc.id,
+                    status: 'sended',
+                    from: item.doc.data().from,
+                    message: item.doc.data().message,
+                    sent_time: item.doc.data().sent_time,
+                    type: item.doc.data().type,
+                  }),
+                );
               }
             });
           } else {
-            setData(
-              snapshot.docs.map(item => ({
-                ...item.data(),
-                ref: item.id,
-              })),
+            dispatch(
+              listChatActions.merge(
+                snapshot.docs.map(item => ({
+                  ...item.data(),
+                  ref: item.id,
+                  status: 'sended',
+                })),
+              ),
             );
-            initial = true;
+            notFirstRender = true;
           }
         },
         err => {
@@ -83,7 +101,7 @@ export default function MessageScreen({route}: {route: any}) {
     };
   }, []);
 
-  const renderItem = ({item}: {item: any}) => {
+  const renderItem = ({item, index}: any) => {
     const messageFromMe = item.from === ref;
 
     return (
@@ -103,6 +121,11 @@ export default function MessageScreen({route}: {route: any}) {
           ]}>
           {item.message}
         </Text>
+        {messageFromMe && index == 0 && (
+          <Text style={styles.messageStatus}>
+            {item.status == 'sending' ? 'Đang gửi' : 'Đã gửi'}
+          </Text>
+        )}
       </View>
     );
   };
@@ -129,9 +152,47 @@ export default function MessageScreen({route}: {route: any}) {
 
   // event handler: send message
   const handleSendMessage = async () => {
-    sendMessage(api, groupRef, value);
-    setValue('');
-    listRef.current.scrollToOffset({animated: true, offset: 0});
+    try {
+      // create message ref
+      const messageRef = firestore()
+        .collection('groups')
+        .doc(groupRef)
+        .collection('messages')
+        .doc().id;
+
+      // timestamp
+      const now = firestore.Timestamp.now();
+
+      // save to redux
+      dispatch(
+        listChatActions.add({
+          ref: messageRef,
+          from: ref,
+          message: value,
+          sent_time: now,
+          status: 'sending',
+          type: 'text',
+        }),
+      );
+
+      setValue('');
+      listRef.current.scrollToOffset({animated: true, offset: 0});
+
+      // write to firestore
+      await firestore()
+        .collection('groups')
+        .doc(groupRef)
+        .collection('messages')
+        .doc(messageRef)
+        .set({
+          from: ref,
+          message: value,
+          sent_time: now,
+          type: 'text',
+        });
+    } catch (error) {
+      console.warn('SEND MESSAGE ERROR >> ', error);
+    }
   };
 
   return (
@@ -155,7 +216,7 @@ export default function MessageScreen({route}: {route: any}) {
         <View style={styles.bodyMessage}>
           <View style={styles.MessageView}>
             <FlatList
-              data={data}
+              data={listChatData}
               renderItem={renderItem}
               keyExtractor={item => item.ref}
               showsVerticalScrollIndicator={false}
@@ -205,141 +266,4 @@ export default function MessageScreen({route}: {route: any}) {
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
-}
-
-async function fetchMessageList(
-  api: string,
-  groupRef: string,
-  page: number,
-  last_chat_id?: string,
-) {
-  try {
-    const result = await fetch(
-      'http://10.0.2.2:5000/api/group/getListMessage',
-      {
-        headers: {
-          ['Authorization']: 'Bearer ' + api,
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          group_ref: groupRef,
-          page: page,
-          last_chat_id: last_chat_id ? last_chat_id : '',
-        }),
-      },
-    );
-
-    return result.json();
-  } catch (error) {
-    console.log(' FETCH MESSAGE LIST ERROR >> ', error);
-  }
-}
-
-async function sendMessage(api: string, groupRef: string, message: string) {
-  try {
-    const result = await fetch('http://10.0.2.2:5000/api/group/sendMessage', {
-      headers: {
-        ['Authorization']: 'Bearer ' + api,
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        to_group_ref: groupRef,
-        message: message,
-      }),
-    });
-
-    return result.json();
-  } catch (error) {
-    console.log(' SEND MESSAGE ERROR >> ', error);
-  }
-}
-
-// const FetchDataRealm = async () => {
-//   try {
-//     const realm = await Realm.open({schema: [GroupChat, User, Message]});
-//     const specificGroup = realm
-//       .objects('GroupChat')
-//       .filtered(`ref = '${ref}'`)[0];
-//     console.log(specificGroup);
-
-//     if (specificGroup) {
-//       const messages = specificGroup.message;
-//       setData(messages);
-//     } else {
-//       console.log('Không tìm thấy nhóm với ref cụ thể:');
-//     }
-//   } catch (error) {
-//     console.log('LOIIIII', error);
-//   }
-// };
-
-// const HandleSendMessage = async () => {
-//   handleCloseEmoji();
-//   try {
-//     const realm = await Realm.open({schema: [GroupChat, User, Message]});
-
-//     realm.write(() => {
-//       let groupChat: any = realm
-//         .objects<GroupChat>('GroupChat')
-//         .filtered(`ref = '${ref}'`)[0];
-//       if (!groupChat) {
-//         groupChat = realm.create<GroupChat>('GroupChat', {
-//           ref: ref,
-//           member: [],
-//           message: [],
-//         });
-//       }
-
-//       const newMessage = {
-//         message_text: value,
-//         from_user_id: testfromid,
-//         sent_time: new Date().toISOString(),
-//       };
-
-//       groupChat.message.push(newMessage);
-//     });
-
-//     console.log('Message sent successfully');
-//     FetchDataRealm();
-//     setValue('');
-//   } catch (error) {
-//     console.error('Error sending message:', error);
-//   }
-// };
-{
-  /* <View
-          style={{
-            height: 60,
-            backgroundColor: 'white',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginHorizontal: 40,
-          }}>
-          <TouchableOpacity
-            style={{
-              flex: 1,
-              backgroundColor: 'red',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            onPress={() => {
-              setTestFromId('1');
-            }}>
-            <Text>Tui</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              flex: 1,
-              backgroundColor: 'blue',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            onPress={() => {
-              setTestFromId('2');
-            }}>
-            <Text>Ban</Text>
-          </TouchableOpacity>
-        </View> */
 }

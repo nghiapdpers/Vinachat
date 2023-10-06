@@ -125,6 +125,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'black',
   },
+
+  buttonLogout: {
+    backgroundColor: mainTheme.lowerFillLogo,
+    borderRadius: 10,
+    padding: 10,
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+
+  textLogout: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: mainTheme.text,
+  },
 });
 
 export default styles;

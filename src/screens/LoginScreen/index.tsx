@@ -180,6 +180,8 @@ export default function LoginScreen() {
         },
       ]);
     }
+
+    console.log('login screen >> ', message);
   }, [message]);
 
   useEffect(() => {

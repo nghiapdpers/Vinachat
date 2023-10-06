@@ -77,6 +77,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'black',
   },
+  messageStatus: {
+    alignSelf: 'flex-end',
+    marginRight: 5,
+    color: 'grey',
+  },
 });
 
 export default styles;

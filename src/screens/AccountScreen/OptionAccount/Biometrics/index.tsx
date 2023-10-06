@@ -19,9 +19,9 @@ import {useNavigation} from '@react-navigation/native';
 import mainTheme from '../../../../assets/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
-import ReactNativeBiometrics from 'react-native-biometrics'
-import LottieView from "lottie-react-native";
-import { useSelector } from "react-redux";
+import ReactNativeBiometrics from 'react-native-biometrics';
+import LottieView from 'lottie-react-native';
+import {useSelector} from 'react-redux';
 
 export default function Biometrics() {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -32,10 +32,14 @@ export default function Biometrics() {
   const [confirmpassword, setconfirmpassword] = useState('');
   const [animation, setanimation] = useState(false);
 
-    const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true })
-    const user = useSelector((state: any) => state?.user);
-    const userExternal = useSelector((state: any) => state?.userExternal);
-    const mobile = user?.data?.mobile ? user?.data?.mobile : userExternal?.data?.mobile;
+  const rnBiometrics = new ReactNativeBiometrics({
+    allowDeviceCredentials: true,
+  });
+  const user = useSelector((state: any) => state?.user);
+  const userExternal = useSelector((state: any) => state?.userExternal);
+  const mobile = user?.data?.mobile
+    ? user?.data?.mobile
+    : userExternal?.data?.mobile;
 
   const onChangeSecureText = () => {
     setIsShown(!isShown);
@@ -66,6 +70,13 @@ export default function Biometrics() {
       }
     });
   };
+
+  const getUsernameAndPassword = async () => {
+    const username = await AsyncStorage.getItem('@UserRegisted_Biometrics');
+    console.log(username);
+  };
+
+  getUsernameAndPassword();
 
   const handleBiometric = () => {
     rnBiometrics
@@ -98,51 +109,24 @@ export default function Biometrics() {
       });
   };
 
-
-    const HandleConfirmPass = async () => {
-        await AsyncStorage.getItem('@PasswordUser', (error: any, password: any) => {
-            if (confirmpassword === password) {
-                handleBiometric()
-            } else {
-                setModalVisible(true);
-            }
-        })
-    };
-
-
-    const getUsernameAndPassword = async () => {
-        const username = await AsyncStorage.getItem('@UserRegisted_Biometrics');
-        console.log(username);
-
-    }
-
-    getUsernameAndPassword()
-
-    const handleBiometric = () => {
-        rnBiometrics.simplePrompt({ promptMessage: 'Confirm biometrics' })
-            .then(async (resultObject: any) => {
-                const { success } = resultObject
-                if (success) {
-                    await Keychain.setGenericPassword(mobile, password, {
-                        service: `myKeychainService_${mobile}`,
-                        accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
-                    });
-                    await AsyncStorage.setItem(`@isEnabled_${mobile}`, JSON.stringify(true));
-                    await AsyncStorage.setItem(`@UserRegisted_Biometrics`, mobile);
-                    setanimation(true)
-                    setTimeout(() => {
-                        setanimation(false)
-                        setModalVisible(false);
-                        setIsEnabled(true);
-                        setModalVisible(false);
-                    }, 5500);
-                } else {
-                    console.log('user cancelled biometric prompt')
-                }
-            })
-            .catch(() => {
-                console.log('biometrics failed')
-            })
+  const loadIsBiometricsEnabled = async () => {
+    try {
+      const storedMobile: any = await AsyncStorage.getItem(
+        '@UserRegisted_Biometrics',
+      );
+      if (storedMobile && storedMobile !== mobile) {
+        setIsEnabled(false);
+        await deleteBiometrics();
+      } else {
+        const isEnabledString = await AsyncStorage.getItem(
+          `@isEnabled_${mobile}`,
+        );
+        if (isEnabledString !== null) {
+          setIsEnabled(JSON.parse(isEnabledString));
+        }
+      }
+    } catch (error) {
+      console.log('Error loading isTouchIDEnabled from AsyncStorage:', error);
     }
   };
 

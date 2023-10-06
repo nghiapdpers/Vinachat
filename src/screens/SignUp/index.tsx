@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   Text,
-  StatusBar,
   Modal,
   View,
   Alert,
@@ -198,7 +197,6 @@ const SignUp = () => {
         </View>
       </Modal>
 
-      <StatusBar animated={true} backgroundColor={mainTheme.background} />
       <Text style={styles.title}>Create Account</Text>
 
       <Input

@@ -1,5 +1,11 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {FlatList, SafeAreaView, View, Text} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import {
+  FlatList,
+  SafeAreaView,
+  View,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 import styles from './styes';
@@ -7,6 +13,9 @@ import mainTheme from '../../assets/colors';
 import Header from '../../components/Header2';
 import CardRequest from '../../components/CardRequest';
 import CardFriends from '../../components/CardFriends';
+import {useDispatch, useSelector} from 'react-redux';
+import {RequestListActions} from '../../redux/actions/requestListAction';
+import apiReplyRequest from '../../apis/apiReplyRequest';
 
 const dataFriends = [
   {
@@ -46,51 +55,19 @@ const dataFriends = [
   },
 ];
 
-const dataRequest = [
-  {
-    id: 1,
-    name: 'Nghia Pham',
-    image:
-      'https://assets.dryicons.com/uploads/icon/preview/7805/icon_grid_1x_39f0ea11-1cfa-4903-8c39-221b37318018.png',
-  },
-  {
-    id: 2,
-    name: 'Nghia Pham',
-    image:
-      'https://assets.dryicons.com/uploads/icon/preview/7805/icon_grid_1x_39f0ea11-1cfa-4903-8c39-221b37318018.png',
-  },
-  {
-    id: 3,
-    name: 'Nghia Pham',
-    image:
-      'https://assets.dryicons.com/uploads/icon/preview/7805/icon_grid_1x_39f0ea11-1cfa-4903-8c39-221b37318018.png',
-  },
-];
-
 const database = firestore();
-const api =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWYiOiIxVkxhVldrRENUR0h5M1VKUFh4ayIsImlhdCI6MTY5NjQwOTI0MywiZXhwIjoxNjk2NDEyODQzfQ.-opg6WUqymSwWcsoTEsxkUrP0Wm6x0Tqu4XjsF4Coqk';
-const ref = '1VLaVWkDCTGHy3UJPXxk';
 
 const Friends = () => {
-  const [requestList, setRequestList] = useState<any[]>([]);
+  const dispatch = useDispatch();
 
-  const fetchRef = useRef<any>(null);
+  // get ref from user redux
+  const ref = useSelector((s: any) => s.user.data.ref);
 
-  // fetch data example
-  const fetchdata = () => {
-    clearTimeout(fetchRef.current);
+  const requestList = useSelector((s: any) => s.requestList.data);
+  const requestListLoading = useSelector((s: any) => s.requestList.loading);
+  const requestListMessage = useSelector((s: any) => s.requestList.message);
 
-    fetchRef.current = setTimeout(async () => {
-      const data = await fetchRequest(api);
-
-      if (data.message === 'success') {
-        setRequestList(data.data);
-      } else {
-        console.warn(data.message);
-      }
-    }, 100);
-  };
+  const requestDebounceRef = useRef<any | number>(null);
 
   // side effect: subcribe to listen realtime change from firestore
   useEffect(() => {
@@ -102,7 +79,11 @@ const Friends = () => {
       .where('status', '==', 'RC')
       .onSnapshot(
         snapshot => {
-          fetchdata();
+          clearTimeout(requestDebounceRef.current);
+
+          requestDebounceRef.current = setTimeout(() => {
+            dispatch(RequestListActions.start());
+          }, 100);
         },
         error => {
           console.warn('SUBCRIBE REQUEST LIST ERROR >> ', error);
@@ -117,12 +98,18 @@ const Friends = () => {
 
   // event handler: accept request
   const onAcceptRequest = (ref: string) => {
-    replyRequest(api, 'accept', ref);
+    apiReplyRequest({
+      ref: ref,
+      reply: 'accept',
+    });
   };
 
   // event handler: deny request
   const onDenyRequest = (ref: string) => {
-    replyRequest(api, 'deny', ref);
+    apiReplyRequest({
+      ref: ref,
+      reply: 'deny',
+    });
   };
 
   return (
@@ -154,9 +141,15 @@ const Friends = () => {
           );
         }}
         ListEmptyComponent={
-          <Text style={styles.requestListEmpty}>
-            Không có yêu cầu kết bạn mới
-          </Text>
+          requestListLoading ? (
+            <ActivityIndicator color={mainTheme.logo} />
+          ) : (
+            <Text style={styles.requestListEmpty}>
+              {!requestListMessage
+                ? 'Không có yêu cầu kết bạn mới'
+                : requestListMessage}
+            </Text>
+          )
         }
         keyExtractor={item => item.ref}
       />
@@ -184,60 +177,3 @@ const Friends = () => {
 };
 
 export default React.memo(Friends);
-
-const fetchRequest = async (api: string) => {
-  try {
-    const result = await fetch('http://10.0.2.2:5000/api/user/getRequestList', {
-      headers: {
-        ['Authorization']: 'Bearer ' + api,
-      },
-      method: 'POST',
-    });
-
-    return result.json();
-  } catch (error) {
-    console.log('FETCH REQUEST ERROR >> ', error);
-  }
-};
-
-const replyRequest = async (
-  api: string,
-  reply: 'accept' | 'deny',
-  ref: string,
-) => {
-  try {
-    const result = await fetch('http://10.0.2.2:5000/api/user/replyRequest', {
-      headers: {
-        ['Authorization']: 'Bearer ' + api,
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        ref: ref,
-        reply: reply,
-      }),
-    });
-
-    return result.json();
-  } catch (error) {
-    console.log('REPLY ERROR >> ', error);
-  }
-};
-
-{
-  /* <Text style={styles.title}>Request</Text>
-
-      {requestList?.map((item: any) => {
-        return (
-          <CardRequest
-            key={item?.ref}
-            name={item?.fullname}
-            image={
-              item?.avatar
-                ? item.avatar
-                : 'https://assets.dryicons.com/uploads/icon/preview/7805/icon_grid_1x_39f0ea11-1cfa-4903-8c39-221b37318018.png'
-            }
-          />
-        );
-      })} */
-}
