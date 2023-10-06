@@ -13,6 +13,11 @@ const styles = StyleSheet.create({
         color: mainTheme.text,
         textDecorationLine: 'underline',
         fontStyle: 'italic'
+    },
+    textEmpty: {
+        fontSize: 30,
+        color :"#818181",
+        opacity : 0.6
     }
 })
 

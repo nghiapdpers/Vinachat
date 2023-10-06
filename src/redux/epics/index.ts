@@ -4,13 +4,15 @@ import loginEpic from './loginEpic';
 import registerEpic from './registerEpic';
 import logoutEpic from './logoutEpics';
 import loginWithExternalEpic from './loginWithExternalEpic';
+import friendlistEpic from './friendlistEpic';
 
 const rootEpic = combineEpics(
     initialEpic,
     loginEpic,
     registerEpic,
     logoutEpic,
-    loginWithExternalEpic
+    loginWithExternalEpic,
+    friendlistEpic
 );
 
 export default rootEpic;

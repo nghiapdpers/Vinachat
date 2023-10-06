@@ -41,3 +41,8 @@ export enum CLEAR {
     MESSAGE = "CLEAR_MESSAGE"
 }
 
+export enum FRIENDLIST {
+    START = 'FRIENDLIST_START',
+    END = 'FRIENDLIST_END',
+    FAIL = 'FRIENDLIST_FAIL'
+}

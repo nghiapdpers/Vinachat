@@ -92,6 +92,8 @@ export default function App() {
           <Stack.Screen name="QrCode" component={QrCode} />
           <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
           <Stack.Screen name="Biometrics" component={Biometrics} />
+          <Stack.Screen name="CreateGroupChat" component={CreateGroupChat} />
+
         </Stack.Navigator>
       </NavigationContainer>
     </RealmProvider>

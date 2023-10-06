@@ -3,11 +3,9 @@ import styles from "./styles";
 import { Image, SafeAreaView, Text, View, TouchableOpacity, FlatList, TextInput } from "react-native";
 import { screen, component } from "../../assets/images";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header3 from "../../components/Header3";
 import data from "./data";
-import { apikey } from "../LoginScreen";
+import apiCreateGroup from "../../apis/apiCreateGroup";
 
 export default function CreateGroupChat() {
     const navigation = useNavigation();
@@ -41,25 +39,21 @@ export default function CreateGroupChat() {
 
     const FetchCreateGroup = async () => {
         try {
-                return await axios.post('http://127.0.0.1:5003/api/group/create', { refs: JSON.stringify(["deweiZVGonsVhpZxWghW", "P80NIrixjTpCzUTWu7Ko"]), name: groupname }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + apikey,
-                    },
-                }).then(async (resposne: any) => {
-                    console.log(resposne.data);
-                })
+            return await apiCreateGroup({ refs: JSON.stringify(["7Qj1dr5KxVXQDTKJQJYs", "9wA6C0CrzFcZiPhCoJAc"]), name: groupname })
+            .then(async (resposne: any) => {
+                console.log(resposne);
+            })
         } catch (error) {
             console.log(error);
         }
     }
 
-    const handleCreateGroupChat = async() => {
-        if(memberSelected.length >= 2 ){
+    const handleCreateGroupChat = async () => {
+        if (memberSelected.length >= 2) {
             FetchCreateGroup()
-        }else {
+        } else {
             console.log('ai cho tao');
-            
+
         }
     }
 

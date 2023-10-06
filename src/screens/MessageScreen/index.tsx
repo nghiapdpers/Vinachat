@@ -34,7 +34,7 @@ export default function MessageScreen({ route }: { route: any }) {
             const specificGroup = realm.objects('GroupChat').filtered(`ref = '${ref}'`)[0];
             console.log(specificGroup);
             if (specificGroup) {
-                const messages = specificGroup.message;
+                const messages = specificGroup.messages;
                 setData(messages)
             } else {
                 console.log('Không tìm thấy nhóm với ref cụ thể:');
@@ -64,7 +64,7 @@ export default function MessageScreen({ route }: { route: any }) {
                     });
                 }
                 const newMessage = {
-                    ref: '2',
+                    ref: '5',
                     from: testfromid,
                     message: value,
                     sent_time: new Date().toISOString(),
@@ -94,14 +94,14 @@ export default function MessageScreen({ route }: { route: any }) {
     }, [testfromid, data]);
 
     const renderItem = ({ item }: { item: any }) => {
-        const MessageFrom = item.from_user_id === testfromid;
+        const MessageFrom = item.from === testfromid;
 
         return (
             <View style={[styles.messageContainer, { alignItems: MessageFrom ? "flex-end" : "flex-start" }]}>
-                <View style={[styles.borderMessage, { backgroundColor: MessageFrom ? mainTheme.lowerFillLogo : mainTheme.white }]}>
-                    <Text>{item.message_text}</Text>
+                <View style={[styles.borderMessage, { backgroundColor: MessageFrom ? mainTheme.lowerFillLogo : mainTheme.white, maxWidth: '70%' }]}>
+                    <Text style={styles.textMessage}>{item.message}</Text>
                 </View>
-            </View>
+            </View >
         );
     };
 

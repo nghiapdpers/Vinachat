@@ -64,12 +64,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     messageContainer: {
-        flex : 1,
+        flex: 1,
     },
     borderMessage: {
-        margin :10,
-        padding : 10,
-        borderRadius : 40
+        margin: 10,
+        padding: 10,
+        borderRadius: 40
+    },
+    textMessage: {
+        margin : 0,
     }
 })
 

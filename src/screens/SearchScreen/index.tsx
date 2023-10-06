@@ -3,35 +3,31 @@ import styles from "./styles";
 import { Image, SafeAreaView, Text, View, TouchableOpacity, FlatList, TextInput } from "react-native";
 import { screen, component } from "../../assets/images";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import mainTheme from "../../assets/colors";
-import { apikey } from "../LoginScreen";
+import apiSearch from "../../apis/apiSearch";
 
 export default function SearchScreen() {
     const navigation = useNavigation();
     const [value, setvalue] = useState('');
-    const [data, setData] = useState([]);
+    const [data, setData] = useState(null);
 
     const FetchSearch = async () => {
         try {
-            return await axios.post('http://127.0.0.1:5003/api/user/search', { keyword: value }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + apikey,
-                },
-                timeout: 20000
-            }).then((resposne: any) => {
-                setData(resposne.data.data)
-            })
+            return await apiSearch({ keyword: value })
+                .then((resposne: any) => {
+                    setData(resposne.data)
+                })
         } catch (error) {
             console.log(error);
         }
     }
 
-
     useEffect(() => {
-        FetchSearch()
+        if (value.length == 10) {
+            FetchSearch()
+        } else {
+            setData(null);
+        }
     }, [value])
 
     const renderItem = ({ item }: { item: any }) => {
@@ -81,7 +77,7 @@ export default function SearchScreen() {
             <View style={styles.ViewFind}>
                 <FlatList
                     data={[data]}
-                    renderItem={data !== undefined ? renderItem : null}
+                    renderItem={data !== null ? renderItem : null}
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>
