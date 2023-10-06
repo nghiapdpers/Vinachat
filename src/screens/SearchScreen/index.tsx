@@ -6,7 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 import mainTheme from "../../assets/colors";
 import apiSearch from "../../apis/apiSearch";
 
-export default function SearchScreen() {
+export default function SearchScreen({ route }: { route: any }) {
+    const scanvalue = route?.params?.value;
     const navigation = useNavigation();
     const [value, setvalue] = useState('');
     const [data, setData] = useState(null);
@@ -23,12 +24,15 @@ export default function SearchScreen() {
     }
 
     useEffect(() => {
-        if (value.length == 10) {
-            FetchSearch()
+        if (scanvalue !== undefined) {
+            setvalue(scanvalue);
+            FetchSearch();
+        } else if (value.length === 10) {
+            FetchSearch();
         } else {
             setData(null);
         }
-    }, [value])
+    }, [value, scanvalue])
 
     const renderItem = ({ item }: { item: any }) => {
         return (

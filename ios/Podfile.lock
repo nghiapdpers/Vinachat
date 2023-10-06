@@ -1256,6 +1256,10 @@ PODS:
   - RNVectorIcons (10.0.0):
     - React-Core
   - SocketRocket (0.6.1)
+  - VisionCamera (3.3.0):
+    - React
+    - React-callinvoker
+    - React-Core
   - Yoga (1.14.0)
   - ZXingObjC (3.6.5):
     - ZXingObjC/All (= 3.6.5)
@@ -1321,6 +1325,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1463,6 +1468,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  VisionCamera:
+    :path: "../node_modules/react-native-vision-camera"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1544,6 +1551,7 @@ SPEC CHECKSUMS:
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
   RNVectorIcons: 8b5bb0fa61d54cd2020af4f24a51841ce365c7e9
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  VisionCamera: abdb4db40dc363b19e28428f656b882eec45d9fa
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 

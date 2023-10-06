@@ -26,7 +26,7 @@ const dataOptinoInfo = [
 export default function QrCode({ route }: { route: any }) {
     // const itemroute = route?.params?.item;
     const [QrCode, setQrCode] = useState<{ imageUri: string }>({ imageUri: '' });
-    const mobile = '0902770941';
+    const mobile = '0123456789';
 
 
     useEffect(() => {
