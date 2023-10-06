@@ -52,8 +52,6 @@ export default function HomeScreen() {
     };
 
     const renderFriendMessage = ({item}: {item: any}) => {
-      console.log(item);
-
       return (
         <TouchableOpacity
           style={styles.BorderMessage}
@@ -84,7 +82,10 @@ export default function HomeScreen() {
         />
         <View style={styles.createGroup}>
           <Text style={styles.texttitleMessage}>Message</Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('CreateGroupChat');
+            }}>
             <Image
               style={styles.createGroupIcon}
               source={screen.home.creategroup}
@@ -98,6 +99,54 @@ export default function HomeScreen() {
         />
       </View>
     );
+
+    // const renderFriendMessage = ({item}: {item: any}) => {
+    //   console.log(item);
+
+    //   return (
+    //     <TouchableOpacity
+    //       style={styles.BorderMessage}
+    //       onPress={() => {
+    //         navigation.navigate('MessageScreen', {ref: String(item.id)});
+    //       }}>
+    //       <View style={styles.MessageAvatar}>
+    //         <View style={styles.borderfriendActive}>
+    //           <Text>{getFirstLetters(item.name)}</Text>
+    //         </View>
+    //       </View>
+    //       <View style={styles.Message}>
+    //         <Text style={styles.textnameMessage}>{item.name}</Text>
+    //         <Text>{`You:${item.message}`}</Text>
+    //       </View>
+    //     </TouchableOpacity>
+    //   );
+    // };
+
+    // return (
+    //   <View style={styles.flatlistView}>
+    //     <FlatList
+    //       data={item.active}
+    //       renderItem={renderFriendActive}
+    //       keyExtractor={(item, index) => index.toString()}
+    //       horizontal={true}
+    //       showsHorizontalScrollIndicator={false}
+    //     />
+    //     <View style={styles.createGroup}>
+    //       <Text style={styles.texttitleMessage}>Message</Text>
+    //       <TouchableOpacity>
+    //         <Image
+    //           style={styles.createGroupIcon}
+    //           source={screen.home.creategroup}
+    //         />
+    //       </TouchableOpacity>
+    //     </View>
+    //     <FlatList
+    //       data={item.message}
+    //       renderItem={renderFriendMessage}
+    //       keyExtractor={(item, index) => index.toString()}
+    //     />
+    //   </View>
+    // );
   };
 
   return (

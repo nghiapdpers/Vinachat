@@ -5,6 +5,7 @@ import UserReducer from './userReducer';
 import UserExternalReducer from './userExternalReducer';
 import RequestListReducer from './requestListReducer';
 import ListChatReducer from './listChatReducer';
+import FriendListReducer from './friendReducer';
 
 const rootReducer = combineReducers({
   app: AppReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   userExternal: UserExternalReducer,
   requestList: RequestListReducer,
   listChat: ListChatReducer,
+  friendlist: FriendListReducer,
 });
 
 export default rootReducer;

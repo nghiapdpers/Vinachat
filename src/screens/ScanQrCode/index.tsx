@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, SafeAreaView, StyleSheet, Linking } from "react-native";
-// import { Camera, useCameraDevices } from "react-native-vision-camera";
+import { View, Text, SafeAreaView, StyleSheet } from "react-native";
+import { Camera, useCameraDevice, useCodeScanner } from "react-native-vision-camera";
 import { Svg, Defs, Mask, Rect } from "react-native-svg";
 import mainTheme from "../../assets/colors";
 import { useNavigation } from "@react-navigation/native";
@@ -10,33 +10,31 @@ import { component } from "../../assets/images";
 
 export default function ScanQrCode() {
     const [hasPermission, setHasPermission] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [data, setData] = useState([]);
     const navigation = useNavigation();
-    // const devices = useCameraDevices('wide-angle-camera');
-    // const device = devices.back;
+    const device = useCameraDevice('back', {
+        physicalDevices: ['wide-angle-camera']
+    });
 
-    // const [frameProcessor, barcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
-    //     checkInverted: true,
-    // });
-
-    // useEffect(() => {
-    //     requestCameraPermission();
-    // }, []);
+    useEffect(() => {
+        requestCameraPermission();
+    }, []);
 
 
+    const requestCameraPermission = async () => {
+        const cameraPermission = await Camera.requestCameraPermission();
+        setHasPermission(cameraPermission === 'denied');
+    };
 
-    // const requestCameraPermission = async () => {
-    //     const cameraPermission = await Camera.requestCameraPermission();
-    //     setHasPermission(cameraPermission === 'authorized');
-    // };
-
-    // useEffect(() => {
-    //     if (barcodes.length > 0) {
-    //         setData(barcodes[0].displayValue);
-    //     }    
-    // }, [barcodes, data]);
-
+    const codeScanner = useCodeScanner({
+        codeTypes: ['qr', 'ean-13'],
+        onCodeScanned: (codes) => {
+            if (codes) {
+                codes.map((item: any) => {
+                    navigation.navigate('SearchScreen', { value: item.value })
+                })
+            }
+        }
+    })
 
 
     return (
@@ -53,7 +51,7 @@ export default function ScanQrCode() {
                 />
             </View>
             <View style={styles.ViewCamera}>
-                {/* {device == undefined ? (
+                {device == undefined ? (
                     <View style={{ flex: 1 }}></View>
                 ) : (
                     <Camera
@@ -61,10 +59,9 @@ export default function ScanQrCode() {
                         device={device}
                         enableZoomGesture
                         isActive={true}
-                        // frameProcessor={frameProcessor}
-                        // frameProcessorFps={5}
+                        codeScanner={codeScanner}
                     />
-                )} */}
+                )}
                 <View style={styles.ScanQRView}>
                     <Svg width={'100%'} height={'100%'}>
                         <Defs>

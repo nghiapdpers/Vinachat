@@ -3,40 +3,38 @@ import styles from "./styles";
 import { Image, SafeAreaView, Text, View, TouchableOpacity, FlatList, TextInput } from "react-native";
 import { screen, component } from "../../assets/images";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import mainTheme from "../../assets/colors";
+import apiSearch from "../../apis/apiSearch";
 
-export default function SearchScreen() {
+export default function SearchScreen({ route }: { route: any }) {
+    const scanvalue = route?.params?.value;
     const navigation = useNavigation();
     const [value, setvalue] = useState('');
-    const [data, setData] = useState([]);
+    const [data, setData] = useState(null);
 
     const FetchSearch = async () => {
         try {
-            AsyncStorage.getItem('@apikey', async (error: any, data: any) => {
-                return await axios.post('http://127.0.0.1:5003/api/user/search', { keyword: value }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + data,
-                    },
-                    timeout: 20000
-                }).then((resposne: any) => {
-                    setData(resposne.data.data)
+            return await apiSearch({ keyword: value })
+                .then((resposne: any) => {
+                    setData(resposne.data)
                 })
-            })
-
         } catch (error) {
             console.log(error);
         }
     }
 
-
     useEffect(() => {
-        FetchSearch()        
-    }, [value])
+        if (scanvalue !== undefined) {
+            setvalue(scanvalue);
+            FetchSearch();
+        } else if (value.length === 10) {
+            FetchSearch();
+        } else {
+            setData(null);
+        }
+    }, [value, scanvalue])
 
-    const renderItem = ({ item }: { item: any }) => {        
+    const renderItem = ({ item }: { item: any }) => {
         return (
             <View style={styles.borderFind}>
                 <View style={styles.topItem}>
@@ -49,7 +47,7 @@ export default function SearchScreen() {
                     <Text style={styles.mobile}>{item?.mobile}</Text>
                 </View>
                 <View style={styles.endItem}>
-                    <TouchableOpacity style={[styles.btnstatusfriend , {backgroundColor : item?.isFriend === false ? mainTheme.logo : '#e3e3e3'}]}>
+                    <TouchableOpacity style={[styles.btnstatusfriend, { backgroundColor: item?.isFriend === false ? mainTheme.logo : '#e3e3e3' }]}>
                         <Text>{item?.isFriend === false ? 'Kết bạn' : 'Đã kết bạn'}</Text>
                     </TouchableOpacity>
                 </View>
@@ -83,7 +81,7 @@ export default function SearchScreen() {
             <View style={styles.ViewFind}>
                 <FlatList
                     data={[data]}
-                    renderItem={data !== undefined ? renderItem : null}
+                    renderItem={data !== null ? renderItem : null}
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>

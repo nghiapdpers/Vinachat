@@ -6,59 +6,45 @@ import {
   Text,
   ActivityIndicator,
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
-
 import styles from './styes';
 import mainTheme from '../../assets/colors';
 import Header from '../../components/Header2';
 import CardRequest from '../../components/CardRequest';
 import CardFriends from '../../components/CardFriends';
-import {useDispatch, useSelector} from 'react-redux';
-import {RequestListActions} from '../../redux/actions/requestListAction';
 import apiReplyRequest from '../../apis/apiReplyRequest';
-
-const dataFriends = [
-  {
-    id: 1,
-    name: 'Thanh Thuan',
-    image:
-      'https://m.media-amazon.com/images/S/pv-target-images/ae4816cade1a5b7f29787d0b89610132c72c7747041481c6619b9cc3302c0101.jpg',
-    status: true,
-  },
-  {
-    id: 2,
-    name: 'Thanh Thuan',
-    image:
-      'https://m.media-amazon.com/images/S/pv-target-images/ae4816cade1a5b7f29787d0b89610132c72c7747041481c6619b9cc3302c0101.jpg',
-    status: true,
-  },
-  {
-    id: 3,
-    name: 'Thanh Thuan',
-    image:
-      'https://m.media-amazon.com/images/S/pv-target-images/ae4816cade1a5b7f29787d0b89610132c72c7747041481c6619b9cc3302c0101.jpg',
-    status: false,
-  },
-  {
-    id: 4,
-    name: 'Thanh Thuan',
-    image:
-      'https://m.media-amazon.com/images/S/pv-target-images/ae4816cade1a5b7f29787d0b89610132c72c7747041481c6619b9cc3302c0101.jpg',
-    status: true,
-  },
-  {
-    id: 5,
-    name: 'Thanh Thuan',
-    image:
-      'https://m.media-amazon.com/images/S/pv-target-images/ae4816cade1a5b7f29787d0b89610132c72c7747041481c6619b9cc3302c0101.jpg',
-    status: false,
-  },
-];
+import firestore from '@react-native-firebase/firestore';
+import {useDispatch, useSelector} from 'react-redux';
+import {actionFriendListStart} from '../../redux/actions/friendAction';
+import {RequestListActions} from '../../redux/actions/requestListAction';
 
 const database = firestore();
 
 const Friends = () => {
   const dispatch = useDispatch();
+  // firestore().collection('users').get().then((response: any) => console.log(response.docs))
+  const data = useSelector(
+    (state: any) => state?.friendlist?.friendlist?.data?.data,
+  );
+
+  const FetchGetFriendList = async () => {
+    try {
+      dispatch(actionFriendListStart);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    FetchGetFriendList();
+  }, []);
+
+  const ListEmptyComponent = () => {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={styles.textEmpty}>Chưa có bạn bè</Text>
+      </View>
+    );
+  };
 
   // get ref from user redux
   const ref = useSelector((s: any) => s.user.data.ref);
@@ -158,10 +144,13 @@ const Friends = () => {
 
       <Text style={styles.title}>Friends</Text>
 
+      <Text style={styles.title}>Friends</Text>
+
       <FlatList
-        data={dataFriends}
-        style={{marginTop: 16, flex: 1}}
-        renderItem={({item}) => {
+        data={data}
+        style={{marginTop: 10}}
+        ListEmptyComponent={ListEmptyComponent}
+        renderItem={({item}: {item: any}) => {
           return (
             <CardFriends
               key={item?.id}

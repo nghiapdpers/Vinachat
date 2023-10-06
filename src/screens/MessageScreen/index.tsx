@@ -1,3 +1,4 @@
+import firestore from '@react-native-firebase/firestore';
 import {
   SafeAreaView,
   Text,
@@ -5,19 +6,19 @@ import {
   View,
   FlatList,
   KeyboardAvoidingView,
-  Pressable,
-  Keyboard,
-  TextInput,
   Platform,
   Image,
+  TextInput,
+  Keyboard,
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
-
+import {component, screen} from '../../assets/images';
+import GroupChat from '../../realm/GroupChat';
+import {useRealm} from '@realm/react';
+import Message from '../../realm/Message';
 import React, {useCallback, useEffect, useState, useRef} from 'react';
 import Header from '../../components/Header';
 import EmojiKeyboard from '../../components/EmojiKeyboard';
 import styles from './styles';
-import {component, screen} from '../../assets/images';
 import mainTheme from '../../assets/colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {listChatActions} from '../../redux/actions/listChatActions';
@@ -101,6 +102,56 @@ export default function MessageScreen({route}: {route: any}) {
     };
   }, []);
 
+  // const [value, setValue] = useState("");
+  //   const [testfromid, setTestFromId] = useState("1");
+  //   const [data, setData] = useState([]);
+  //   const ref = route?.params?.ref;
+  //   const yourRef = useRef(null);
+  //   const realm = useRealm()
+
+  //   const FetchDataRealm = async () => {
+  //       try {
+  //           const specificGroup = realm.objects('GroupChat').filtered(`ref = '${ref}'`)[0];
+  //           console.log(specificGroup);
+  //           if (specificGroup) {
+  //               const messages = specificGroup.messages;
+  //               setData(messages)
+  //           } else {
+  //               console.log('Không tìm thấy nhóm với ref cụ thể:');
+  //           }
+  //       } catch (error) {
+  //           console.log("LOIIIII", error);
+  //       }
+  //   }
+
+  //   const HandleSendMessage = async () => {
+  //       try {
+  //           realm.write(() => {
+  //               let groupChat: GroupChat = realm.objects<GroupChat>('GroupChat').filtered(`ref = '${ref}'`)[0];
+  //               if (!groupChat) {
+  //                   groupChat = realm.create<GroupChat>('GroupChat', {
+  //                       ref: ref,
+  //                       name: '',
+  //                       total_member: 0,
+  //                       adminRef: '',
+  //                       latest_message_from: '',
+  //                       latest_message_from_name: '',
+  //                       latest_message_text: '',
+  //                       latest_message_type: '',
+  //                       latest_message_sent_time: new Date(Date.parse(new Date().toISOString())),
+  //                       member: [],
+  //                       messages: [],
+  //                   });
+  //               }
+  //               const newMessage = {
+  //                   ref: '5',
+  //                   from: testfromid,
+  //                   message: value,
+  //                   sent_time: new Date().toISOString(),
+  //                   type: 'text',
+  //               };
+  //               groupChat.messages.push(newMessage);
+
   const renderItem = ({item, index}: any) => {
     const messageFromMe = item.from === ref;
 
@@ -129,6 +180,25 @@ export default function MessageScreen({route}: {route: any}) {
       </View>
     );
   };
+
+  //   useEffect(() => {
+  //     FetchDataRealm()
+  // }, []);
+
+  // useEffect(() => {
+  // }, [testfromid, data]);
+
+  // const renderItem = ({ item }: { item: any }) => {
+  //     const MessageFrom = item.from === testfromid;
+
+  //     return (
+  //         <View style={[styles.messageContainer, { alignItems: MessageFrom ? "flex-end" : "flex-start" }]}>
+  //             <View style={[styles.borderMessage, { backgroundColor: MessageFrom ? mainTheme.lowerFillLogo : mainTheme.white, maxWidth: '70%' }]}>
+  //                 <Text style={styles.textMessage}>{item.message}</Text>
+  //             </View>
+  //         </View >
+  //     );
+  // };
 
   // event handler: open emoji picker
   const handleOpenEmoji = useCallback(() => {

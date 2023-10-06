@@ -14,6 +14,23 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     paddingLeft: 10,
   },
+  // container: {
+  //   flex: 1,
+  //   backgroundColor: mainTheme.background,
+  //   paddingHorizontal: 16,
+  // },
+  // title: {
+  //   marginTop: 16,
+  //   fontSize: 18,
+  //   color: mainTheme.text,
+  //   textDecorationLine: 'underline',
+  //   fontStyle: 'italic',
+  // },
+  textEmpty: {
+    fontSize: 30,
+    color: '#818181',
+    opacity: 0.6,
+  },
 
   requestListEmpty: {
     fontSize: 16,

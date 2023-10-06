@@ -5,6 +5,7 @@ import registerEpic from './registerEpic';
 import logoutEpic from './logoutEpics';
 import loginWithExternalEpic from './loginWithExternalEpic';
 import requestListEpic from './requestListEpic';
+import friendlistEpic from './friendlistEpic';
 
 const rootEpic = combineEpics(
   initialEpic,
@@ -13,6 +14,7 @@ const rootEpic = combineEpics(
   logoutEpic,
   loginWithExternalEpic,
   requestListEpic,
+  friendlistEpic,
 );
 
 export default rootEpic;

@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyCXGeHUNUW3szDTjbFeqLAlLlCuzcP39HU</string>
+	<string>AIzaSyCGE3NooDCa5LVbvrU6ttjJHCNLeU9jiJ0</string>
 	<key>GCM_SENDER_ID</key>
-	<string>768134085782</string>
+	<string>149243845056</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>org.reactjs.native.example.Vinachat</string>
 	<key>PROJECT_ID</key>
-	<string>mobile-app-chat-1fc28</string>
+	<string>itestcloudfunction</string>
 	<key>STORAGE_BUCKET</key>
-	<string>mobile-app-chat-1fc28.appspot.com</string>
+	<string>itestcloudfunction.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:768134085782:ios:afaa840d97cdbcc604d6b7</string>
+	<string>1:149243845056:ios:5261d0e58176b5cc991025</string>
+	<key>DATABASE_URL</key>
+	<string>https://itestcloudfunction-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 </dict>
 </plist>
