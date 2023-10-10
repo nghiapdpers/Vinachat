@@ -1,5 +1,5 @@
 // import Realm from 'realm';
-import {createRealmContext, Realm} from '@realm/react';
+import { createRealmContext, Realm } from '@realm/react';
 
 class Message extends Realm.Object {
   static schema: Realm.ObjectSchema = {
@@ -9,7 +9,8 @@ class Message extends Realm.Object {
       ref: 'string',
       from: 'string',
       message: 'string',
-      sent_time: 'date',
+      sent_time: 'int',
+      status: 'string',
       type: 'string',
     },
   };

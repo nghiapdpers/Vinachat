@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, SafeAreaView, Image, Dimensions, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, SafeAreaView, Image, TouchableOpacity, Platform } from "react-native";
 import styles from "./styles";
 import RNQRGenerator from "rn-qr-generator";
-import { screen,component } from "../../../../assets/images";
+import { screen, component } from "../../../../assets/images";
 import Header from "../../../../components/Header";
+import ViewShot from "react-native-view-shot";
+import { Dirs, FileSystem } from 'react-native-file-access';
+
 
 const dataOptinoInfo = [
     {
@@ -27,7 +30,7 @@ export default function QrCode({ route }: { route: any }) {
     // const itemroute = route?.params?.item;
     const [QrCode, setQrCode] = useState<{ imageUri: string }>({ imageUri: '' });
     const mobile = '0123456789';
-
+    const screenshotRef = useRef<ViewShot>();
 
     useEffect(() => {
         RNQRGenerator.generate({
@@ -37,13 +40,29 @@ export default function QrCode({ route }: { route: any }) {
             correctionLevel: "L"
         })
             .then((response: any) => {
-                console.log(response);
+                // console.log(response);
                 const { uri } = response;
                 setQrCode({ imageUri: uri });
             })
             .catch((error: any) => console.log('Cannot create QR code', error));
 
     }, []);
+
+
+    // const saveImageToDevice = async (imageUri: string) => {
+    //     const filePath = `file://${Dirs.DocumentDir}/image.png`;
+
+    //     FileSystem.cpExternal(imageUri, filePath, 'images').then((res) => console.log(res))
+
+    // };
+
+    const handleScreenshot = async () => {
+        const screenshotUri = await screenshotRef.current?.capture();
+        console.log(screenshotUri);
+        
+        // await saveImageToDevice(screenshotUri)
+    };
+
 
 
 
@@ -62,11 +81,13 @@ export default function QrCode({ route }: { route: any }) {
             </View>
             <View style={styles.ViewQrCode}>
                 <View style={styles.BorderQR}>
-                    <View style={styles.FlexboxQR}>
+                    <ViewShot ref={screenshotRef} style={styles.FlexboxQR}>
+                        {/* <View style={styles.FlexboxQR}> */}
                         <View style={styles.BorderQRCode}>
                             {QrCode.imageUri && <Image resizeMode="stretch" source={{ uri: QrCode.imageUri }} style={styles.QR} />}
                         </View>
-                    </View>
+                        {/* </View> */}
+                    </ViewShot>
                     <View style={styles.FlexboxInfo}>
                         <View style={styles.flexInfo}>
                             <View style={styles.flexboxtext}>
@@ -87,7 +108,12 @@ export default function QrCode({ route }: { route: any }) {
                         <View style={styles.flexOptionInfo}>
                             {dataOptinoInfo.map((item: any) => {
                                 return (
-                                    <TouchableOpacity style={styles.ViewItem} key={item.id}>
+                                    <TouchableOpacity style={styles.ViewItem} key={item.id}
+                                        onPress={() => {
+                                            if (item.id === 2) {
+                                                handleScreenshot()
+                                            }
+                                        }}>
                                         <View style={styles.borderItemOption}>
                                             <Image style={styles.imgInfoOption} source={item.image} />
                                         </View>

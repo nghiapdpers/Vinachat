@@ -1,6 +1,6 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import mainTheme from '../../assets/colors';
-const {height: HeightScreen, width: WidthScreen} = Dimensions.get('window');
+const { height: HeightScreen, width: WidthScreen } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -68,14 +68,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   messageContainer: {
-    maxWidth: '80%',
+    flex: 1
   },
   borderMessage: {
     margin: 5,
     padding: 10,
-    borderRadius: 20,
-    fontSize: 14,
-    color: 'black',
+    borderRadius: 15,
+    maxWidth: '70%',
   },
   messageStatus: {
     alignSelf: 'flex-end',
@@ -151,7 +150,8 @@ const styles = StyleSheet.create({
   //   borderRadius: 40,
   // },
   textMessage: {
-    margin: 0,
+    fontSize: 15,
+    color: 'black',
   },
 });
 
