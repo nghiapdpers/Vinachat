@@ -10,7 +10,7 @@ export default async function apiListGroupChat(data: any) {
 
         const res = await apiHelper(url, data, apiKey);
 
-        // console.log('resListGroupChat:>>', res);
+        console.log('resListGroupChat:>>', res);
 
         switch (res?.code) {
             case NETWORK.SUCCESS:

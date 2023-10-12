@@ -22,6 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
+import { actionClearGroupChat } from '../../redux/actions/listGroupChat';
 
 const datauser = [
   {
@@ -96,12 +97,13 @@ export default function AccountScreen() {
     // Gọi action Logout
     dispatch(actionLogoutStart);
     // Xóa dữ liệu Redux
-    // dispatch(actionClearUser)
+    dispatch(actionClearGroupChat)
     dispatch(actionClearMessage);
     // Xóa dữ liệu trong Local
     await removeData(LOCALSTORAGE.user);
     await removeData(LOCALSTORAGE.userExternal);
     await removeData(LOCALSTORAGE.apikey);
+    await removeData(LOCALSTORAGE.groupChat);
     navigation.navigate('LoginScreen');
 
     // sign out firebase auth.

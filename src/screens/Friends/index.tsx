@@ -47,7 +47,7 @@ const Friends = () => {
   };
 
   // get ref from user redux
-  const ref = useSelector((s: any) => s.user.data.ref);
+  const ref = useSelector((s: any) => s.user.data?.ref);
 
   const requestList = useSelector((s: any) => s.requestList.data);
   const requestListLoading = useSelector((s: any) => s.requestList.loading);

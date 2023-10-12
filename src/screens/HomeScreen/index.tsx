@@ -37,7 +37,7 @@ export default function HomeScreen() {
     const list = useSelector((state: any) => state.groupChat?.data);
 
     useEffect(() => {
-        // console.log("list:>>", list);
+        console.log("list:>>", list);
     }, [list])
 
     // Khi thành công
