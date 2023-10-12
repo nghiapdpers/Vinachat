@@ -1,23 +1,36 @@
-import React, { useEffect, useState } from "react";
-import styles from "./styles";
-import { Image, SafeAreaView, Text, View, TouchableOpacity, FlatList } from "react-native";
-import { screen } from "../../assets/images";
+import React, { useEffect, useState } from 'react';
 import datafriend from "./data";
-import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
 import { actionListGroupChatStart, actionUpdateLatestMessage } from "../../redux/actions/listGroupChat";
 import firestore from "@react-native-firebase/firestore";
 import { getData } from "../../storage";
 import { LOCALSTORAGE } from "../../storage/direct";
+import styles from './styles';
+import {
+    Image,
+    SafeAreaView,
+    Text,
+    View,
+    TouchableOpacity,
+    FlatList,
+} from 'react-native';
+import { screen } from '../../assets/images';
+import datamessage from './data';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionFriendListStart } from '../../redux/actions/friendAction';
 
 firestore().useEmulator('10.0.2.2', 8080)
 const database = firestore();
 
-export default function HomeScreen() {
 
+export default function HomeScreen() {
     const [data, setData] = useState([]);
+    const [friendActive, setfriendActive] = useState([]);
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const datafriend = useSelector(
+        (state: any) => state?.friendlist?.friendlist?.data?.data,
+    );
 
     const user = useSelector((state: any) => state.user);
     const userExternal = useSelector((state: any) => state?.userExternal);
@@ -80,8 +93,9 @@ export default function HomeScreen() {
     }, []);
 
     useEffect(() => {
-        setData([datafriend]);
-    }, [])
+        dispatch(actionFriendListStart);
+        setData(datamessage);
+    }, []);
 
     // Gọi api Group Chat
     useEffect(() => {
@@ -156,13 +170,56 @@ export default function HomeScreen() {
         )
     }
 
+
+    const renderFriendActive = ({ item }: { item: any }) => {
+        return (
+            <TouchableOpacity
+                style={styles.viewfriendActive}
+                onPress={() => {
+                    navigation.navigate('MessageScreen', { ref: String(item.ref) });
+                }}>
+                <View style={styles.borderfriendActive}>
+                    <Text>{getFirstLetters(item.fullname)}</Text>
+                </View>
+                <Text numberOfLines={1} style={styles.textnameActive}>{item.fullname}</Text>
+            </TouchableOpacity>
+        );
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.logoText}>Vinachat</Text>
-                <TouchableOpacity style={styles.searchBorder} onPress={() => { navigation.navigate('SearchScreen') }}>
+                <TouchableOpacity
+                    style={styles.searchBorder}
+                    onPress={() => {
+                        navigation.navigate('SearchScreen');
+                    }}>
                     <Image style={styles.searchIcon} source={screen.home.search} />
                 </TouchableOpacity>
+            </View>
+            <View style={styles.FriendActive}>
+                <FlatList
+                    data={datafriend}
+                    renderItem={renderFriendActive}
+                    keyExtractor={(item, index) => index.toString()}
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                />
+            </View>
+            <View style={styles.optionView}>
+                <View style={styles.createGroup}>
+                    <Text style={styles.texttitleMessage}>Message</Text>
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('CreateGroupChat');
+                        }}>
+                        <Image
+                            style={styles.createGroupIcon}
+                            source={screen.home.creategroup}
+                        />
+                    </TouchableOpacity>
+                </View>
             </View>
             <View style={styles.listMessage}>
                 <FlatList
@@ -173,5 +230,5 @@ export default function HomeScreen() {
                 />
             </View>
         </SafeAreaView>
-    )
+    );
 }

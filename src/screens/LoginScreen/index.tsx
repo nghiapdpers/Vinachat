@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -9,30 +9,37 @@ import {
   Keyboard,
   Alert,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 import styles from './styles';
 import Input from '../../components/Input';
 import TextButton from '../../components/TextButton';
 import Button from '../../components/Button';
-import { screen } from '../../assets/images';
-import { actionClearMessage, actionLoginExternalStart, actionLoginStart } from '../../redux/actions/userActions';
+import {screen} from '../../assets/images';
+import {
+  actionClearMessage,
+  actionLoginExternalStart,
+  actionLoginStart,
+} from '../../redux/actions/userActions';
 import LoadingOverlay from '../../components/LoadingOverlay';
-import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics'
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
 
 export default function LoginScreen() {
-
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const user = useSelector((state: any) => state?.user);
   const userExternal = useSelector((state: any) => state?.userExternal);
   const message = useSelector((state: any) => state?.user?.login?.message);
-  const messageExternal = useSelector((state: any) => state?.userExternal?.login?.message);
+  const messageExternal = useSelector(
+    (state: any) => state?.userExternal?.login?.message,
+  );
   const loading = useSelector((state: any) => state.user?.loading);
-  const loadingExternal = useSelector((state: any) => state.userExternal?.loading);
+  const loadingExternal = useSelector(
+    (state: any) => state.userExternal?.loading,
+  );
 
   const [isPhone, setIsPhone] = useState('');
   const [isPassword, setIsPassword] = useState('');
@@ -42,40 +49,47 @@ export default function LoginScreen() {
   // console.log('message:>>', message);
   // console.log('messageExternal:>>', messageExternal);
 
-  const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true })
+  const rnBiometrics = new ReactNativeBiometrics({
+    allowDeviceCredentials: true,
+  });
   const [checkBiometrics, setcheckBiometrics] = useState('');
 
   useEffect(() => {
-    CheckSupported()
-    SaveSupported(checkBiometrics)
-  }, [checkBiometrics])
+    CheckSupported();
+    SaveSupported(checkBiometrics);
+  }, [checkBiometrics]);
 
   const handleLoginBiometrics = async () => {
     try {
-      rnBiometrics.simplePrompt({ promptMessage: 'Confirm biometrics' })
+      rnBiometrics
+        .simplePrompt({promptMessage: 'Confirm biometrics'})
         .then(async (resultObject: any) => {
-          const storedMobile: any = await AsyncStorage.getItem('@UserRegisted_Biometrics');
+          const storedMobile: any = await AsyncStorage.getItem(
+            '@UserRegisted_Biometrics',
+          );
+
+          console.log(resultObject);
           if (storedMobile) {
             const mobile = storedMobile;
+            console.log(mobile);
             const credentials = await Keychain.getGenericPassword({
               service: `myKeychainService_${mobile}`,
             });
             if (credentials) {
-              const { password } = credentials;
+              const {password} = credentials;
               // Gọi action đang nhập
-              CheckPasswordIfNotExists(password)
+              CheckPasswordIfNotExists(password);
               dispatch(actionLoginStart(mobile, password));
             } else {
               console.log('No item found in Keychain with Touch ID.');
             }
           }
         })
-        .catch(() => {
-          console.log('biometrics failed')
-        })
+        .catch(err => {
+          console.log('biometrics failed', err);
+        });
     } catch (error) {
       console.log(error);
-
     }
   };
 
@@ -86,28 +100,29 @@ export default function LoginScreen() {
         await AsyncStorage.setItem('@PasswordUser', newPassword);
         console.log('Password set successfully:', newPassword);
       } else {
-        console.log('Password is the same as existing password:', existingPassword);
+        console.log(
+          'Password is the same as existing password:',
+          existingPassword,
+        );
       }
     } catch (error) {
       console.error('Error setting password:', error);
     }
   };
 
-
   const CheckSupported = async () => {
-    rnBiometrics.isSensorAvailable()
-      .then((resultObject: any) => {
-        const { available, biometryType } = resultObject
-        if (available && biometryType === BiometryTypes.TouchID) {
-          setcheckBiometrics('TouchID is supported')
-        } else if (available && biometryType === BiometryTypes.FaceID) {
-          setcheckBiometrics('FaceID is supported')
-        } else if (available && biometryType === BiometryTypes.Biometrics) {
-          console.log('Biometrics is supported')
-        } else {
-          console.log('Biometrics not supported')
-        }
-      })
+    rnBiometrics.isSensorAvailable().then((resultObject: any) => {
+      const {available, biometryType} = resultObject;
+      if (available && biometryType === BiometryTypes.TouchID) {
+        setcheckBiometrics('TouchID is supported');
+      } else if (available && biometryType === BiometryTypes.FaceID) {
+        setcheckBiometrics('FaceID is supported');
+      } else if (available && biometryType === BiometryTypes.Biometrics) {
+        console.log('Biometrics is supported');
+      } else {
+        console.log('Biometrics not supported');
+      }
+    });
   };
 
   const SaveSupported = async (newisSupported: any) => {
@@ -117,13 +132,15 @@ export default function LoginScreen() {
         await AsyncStorage.setItem('@isSupported', newisSupported);
         console.log('Biometrics set successfully:', newisSupported);
       } else {
-        console.log('Biometrics  is the same as existing password:', existingSupported);
+        console.log(
+          'Biometrics  is the same as existing password:',
+          existingSupported,
+        );
       }
     } catch (error) {
       console.error('Error setting Biometrics :', error);
     }
-  }
-
+  };
 
   // Đăng nhập Default
   const handleLogin = () => {
@@ -133,7 +150,7 @@ export default function LoginScreen() {
     }
     // Gọi action đang nhập
     dispatch(actionLoginStart(isPhone, isPassword));
-    CheckPasswordIfNotExists(isPassword)
+    CheckPasswordIfNotExists(isPassword);
   };
 
   // Đăng nhập với tài khoản Vinateks
@@ -143,13 +160,13 @@ export default function LoginScreen() {
       return;
     }
     // Gọi action đang nhập
-    CheckPasswordIfNotExists(isPassword)
+    CheckPasswordIfNotExists(isPassword);
     dispatch(actionLoginExternalStart(isPhone, isPassword));
-  }
+  };
 
   useEffect(() => {
     if (message == 'success') {
-      navigation.navigate('BottomScreen')
+      navigation.navigate('BottomScreen');
       return;
     }
 
@@ -163,19 +180,20 @@ export default function LoginScreen() {
         },
       ]);
     }
+
+    console.log('login screen >> ', message);
   }, [message]);
 
   useEffect(() => {
     if (messageExternal && messageExternal == 'success') {
-      navigation.navigate('BottomScreen')
+      navigation.navigate('BottomScreen');
       return;
     }
 
     if (messageExternal && messageExternal == 'unlinked account') {
-      navigation.navigate('CreateAccount')
+      navigation.navigate('CreateAccount');
       dispatch(actionClearMessage);
-    }
-    else if (messageExternal && messageExternal != 'unlinked account') {
+    } else if (messageExternal && messageExternal != 'unlinked account') {
       Alert.alert('Thông báo', messageExternal, [
         {
           text: 'OK',
@@ -185,11 +203,10 @@ export default function LoginScreen() {
         },
       ]);
     }
-
-  }, [messageExternal])
+  }, [messageExternal]);
 
   return (
-    <Pressable onPress={() => Keyboard.dismiss()} style={{ flex: 1 }}>
+    <Pressable onPress={() => Keyboard.dismiss()} style={{flex: 1}}>
       <SafeAreaView style={styles.container}>
         <LoadingOverlay visible={loading || loadingExternal} />
         <Text style={styles.title}>login</Text>
@@ -208,7 +225,10 @@ export default function LoginScreen() {
             secureText={true}
           />
 
-          <TextButton text={'Forget password!'} style={styles.forgetPassButton} />
+          <TextButton
+            text={'Forget password!'}
+            style={styles.forgetPassButton}
+          />
 
           <View style={styles.signInView}>
             <Button
@@ -217,9 +237,14 @@ export default function LoginScreen() {
               onPress={() => handleLogin()}
             />
 
-            <TouchableOpacity onPress={() => handleLoginBiometrics()}>
+            <TouchableOpacity onPress={handleLoginBiometrics}>
               <Image
-                source={checkBiometrics === 'TouchID is supported' ? screen.login.fingerprint : screen.login.faceid}
+                source={
+                  checkBiometrics === 'TouchID is supported' ||
+                  checkBiometrics === 'Biometrics is supported'
+                    ? screen.login.fingerprint
+                    : screen.login.faceid
+                }
                 style={styles.fingerprintImage}
               />
             </TouchableOpacity>
@@ -227,7 +252,8 @@ export default function LoginScreen() {
 
           <TextButton
             onPress={() => handleLoginWithExternal()}
-            text={'Sign in with Vinateks Account!'} />
+            text={'Sign in with Vinateks Account!'}
+          />
 
           <View style={styles.registerView}>
             <Text style={styles.registerText}>Don't have an account?</Text>
@@ -241,5 +267,4 @@ export default function LoginScreen() {
       </SafeAreaView>
     </Pressable>
   );
-
 }

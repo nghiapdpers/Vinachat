@@ -1,15 +1,19 @@
-import Realm from "realm";
+// import Realm from "realm";
+import { createRealmContext, Realm } from '@realm/react';
+
 
 class User extends Realm.Object {
-    static schema: { name: string; properties: { user_id: string; join_time: string; left_time: string; }; };
+    static schema: Realm.ObjectSchema = {
+        name: 'User',
+        primaryKey: 'user_id',
+        properties: {
+            user_id: 'string',
+            join_time: 'date',
+            left_time: 'date',
+            role: 'string',
+        },
+    };
+    static isLive = true;
 }
-User.schema = {
-    name: "User",
-    properties: {
-        user_id: 'string',
-        join_time: 'string',
-        left_time: 'string'
-    },
-};
 
 export default User;
