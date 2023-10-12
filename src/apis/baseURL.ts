@@ -4,10 +4,12 @@ export const LOGIN_URL = `${DOMAIN}/api/user/login`;
 export const LOGIN_EXTERNAL_URL = `${DOMAIN}/api/user/loginWithExternal`;
 export const REGISTER_URL = `${DOMAIN}/api/user/register`;
 export const LOGOUT_URL = `${DOMAIN}/api/user/logout`;
+export const LIST_GROUP_CHAT = `${DOMAIN}/api/user/getGroupChat`;
 
 export default {
   LOGIN_URL,
   REGISTER_URL,
   LOGOUT_URL,
-  LOGIN_EXTERNAL_URL
+  LOGIN_EXTERNAL_URL,
+  LIST_GROUP_CHAT
 };

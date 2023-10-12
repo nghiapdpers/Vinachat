@@ -4,7 +4,7 @@ const datafriend = {
             id: 1,
             name: 'Anh A',
             avatar: '',
-            status : 'online'
+            status: 'online'
         },
         {
             id: 2,
@@ -16,49 +16,49 @@ const datafriend = {
             id: 3,
             name: 'Anh C',
             avatar: '',
-            status :  'online'
+            status: 'online'
         },
         {
             id: 4,
             name: 'Anh D',
             avatar: '',
-            status :  'online'
+            status: 'online'
         },
         {
             id: 5,
             name: 'Chi A',
             avatar: '',
-            status :  'online'
+            status: 'online'
         },
         {
             id: 6,
             name: 'Anh E',
             avatar: '',
-            status :  'online'
+            status: 'online'
         },
         {
             id: 7,
             name: 'Anh P',
             avatar: '',
-            status :  'online'
+            status: 'online'
         },
         {
             id: 8,
             name: 'Anh F',
             avatar: '',
-            status :  'online'
+            status: 'online'
         },
         {
             id: 9,
             name: 'Anh 10',
             avatar: '',
-            status :  'online'
+            status: 'online'
         },
         {
             id: 10,
             name: 'Cau 3',
             avatar: '',
-            status :  'offline'
+            status: 'offline'
         }
     ],
     message:

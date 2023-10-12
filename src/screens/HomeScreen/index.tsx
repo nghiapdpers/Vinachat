@@ -5,15 +5,89 @@ import { screen } from "../../assets/images";
 import datafriend from "./data";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
+import { actionListGroupChatStart, actionUpdateLatestMessage } from "../../redux/actions/listGroupChat";
+import firestore from "@react-native-firebase/firestore";
+import { getData } from "../../storage";
+import { LOCALSTORAGE } from "../../storage/direct";
+
+firestore().useEmulator('10.0.2.2', 8080)
+const database = firestore();
 
 export default function HomeScreen() {
 
     const [data, setData] = useState([]);
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+
+    const user = useSelector((state: any) => state.user);
+    const userExternal = useSelector((state: any) => state?.userExternal);
+    const list = useSelector((state: any) => state.groupChat?.data);
+
+    useEffect(() => {
+        console.log("list:>>", list);
+    }, [list])
+
+    // Khi thành công
+    function onResultGroups(QuerySnapshot: any) {
+        const groupDataArray: any[] = [];
+
+        QuerySnapshot.forEach((e: any) => {
+            const id = e.id; // lấy ra id của document
+            const data = e.data();
+            data.ref = id; // Thêm thuộc tính id vào data
+            groupDataArray.push(data);
+
+        });
+
+        console.log('groupDataArray:>>', groupDataArray);
+        // Nạp dữ liệu lên redux
+        dispatch(actionUpdateLatestMessage(groupDataArray))
+
+    }
+
+    // Khi lỗi
+    function onErrorGroups(error: any) {
+        console.log('Error get realtime:>>', error);
+    }
+
+    useEffect(() => {
+        const listRef: any[] = [];
+        const getListRef = async () => {
+            // Lấy ra GROUP_CHAT trong Local.
+            const res = await getData(LOCALSTORAGE.groupChat);
+
+            // Lấy ra mảng ref trong group chat để check điều kiện khi lắng nghe collection "groups"
+            if (res && res.data) {
+                res.data.forEach((e: any) => {
+                    listRef.push(e.ref);
+                });
+            }
+
+            console.log(listRef);
+
+            if (listRef.length > 0) {
+                // Bắt đầu lắng nghe dữ liệu từ collection "groups"
+                database.collection('groups')
+                    .where(firestore.FieldPath.documentId(), 'in', listRef)
+                    .onSnapshot(onResultGroups, onErrorGroups);
+            } else {
+                console.log("Listef Is Empty");
+            }
+        };
+
+        // call method
+        getListRef();
+    }, []);
 
     useEffect(() => {
         setData([datafriend]);
     }, [])
+
+    // Gọi api Group Chat
+    useEffect(() => {
+        dispatch(actionListGroupChatStart())
+    }, [])
+
 
     const getFirstLetters = (inputString: any) => {
         const words = inputString.trim().split(' ');
@@ -52,7 +126,7 @@ export default function HomeScreen() {
                     </View>
                     <View style={styles.Message}>
                         <Text style={styles.textnameMessage}>{item.name}</Text>
-                        <Text>{`You:${item.message}`}</Text>
+                        <Text >{(user?.data?.fullname || userExternal?.data?.fullname) == item?.latest_message_from_name ? `You: ${item?.latest_message_text}` : `${item?.latest_message_from_name}: ${item?.latest_message_text}`}</Text>
                     </View>
                 </TouchableOpacity>
             )
@@ -74,7 +148,7 @@ export default function HomeScreen() {
                     </TouchableOpacity>
                 </View>
                 <FlatList
-                    data={item.message}
+                    data={list}
                     renderItem={renderFriendMessage}
                     keyExtractor={(item, index) => index.toString()}
                 />
