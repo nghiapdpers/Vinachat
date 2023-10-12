@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
 
 import SignUp from './src/screens/SignUp';
 import {NavigationContainer} from '@react-navigation/native';
@@ -30,10 +31,10 @@ import ScanQrCode from './src/screens/ScanQrCode';
 import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
 import CreateGroupChat from './src/screens/CreateGroupChat';
 import 'react-native-reanimated';
-import { RealmProvider } from "@realm/react";
-import GroupChat from "./src/realm/GroupChat";
-import Message from "./src/realm/Message";
-import User from "./src/realm/User";
+import {RealmProvider} from '@realm/react';
+import GroupChat from './src/realm/GroupChat';
+import Message from './src/realm/Message';
+import User from './src/realm/User';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -43,6 +44,7 @@ const HOST = 'localhost';
 // use fierstore emulator
 firestore().useEmulator(HOST, 8080);
 auth().useEmulator(`http://${HOST}:9099`);
+storage().useEmulator(HOST, 9199);
 
 export default function App() {
   const dispatch = useDispatch();
@@ -86,11 +88,14 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
-            gestureEnabled: true,
-            gestureDirection: 'horizontal',
+            // gestureEnabled: true,
+            // gestureDirection: 'horizontal',
             headerShown: false,
           }}>
-          <Stack.Screen name="Home" component={isC ? BottomScreen : LoginScreen} />
+          <Stack.Screen
+            name="Home"
+            component={isC ? BottomScreen : LoginScreen}
+          />
           <Stack.Screen name="BottomScreen" component={BottomScreen} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignUp} />
@@ -102,7 +107,6 @@ export default function App() {
           <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
           <Stack.Screen name="Biometrics" component={Biometrics} />
           <Stack.Screen name="CreateGroupChat" component={CreateGroupChat} />
-
         </Stack.Navigator>
       </NavigationContainer>
     </RealmProvider>

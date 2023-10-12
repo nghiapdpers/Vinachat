@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import {
   SafeAreaView,
   Text,
@@ -10,8 +11,9 @@ import {
   Image,
   TextInput,
   Keyboard,
+  Pressable,
 } from 'react-native';
-import {component, screen} from '../../assets/images';
+import images, {component, screen} from '../../assets/images';
 import GroupChat from '../../realm/GroupChat';
 import {useRealm} from '@realm/react';
 import Message from '../../realm/Message';
@@ -22,11 +24,14 @@ import styles from './styles';
 import mainTheme from '../../assets/colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {listChatActions} from '../../redux/actions/listChatActions';
+import MoreMessageOptions from '../../components/MoreMessageOptions';
+import {Asset} from 'react-native-image-picker';
+import {useCameraPermission} from 'react-native-vision-camera';
 
 // Màn hình chat:
 /**
  * Sử dụng redux lưu trữ 20 tin nhắn mới nhất, đồng thời sử dụng Realm để lưu
- * trữ toàn bộ thông tin đoạn chat. Sau khi người dùng két đến hết 20 tin nhắn mới nhất.
+ * trữ toàn bộ thông tin đoạn chat. Sau khi người dùng kéo đến hết 20 tin nhắn mới nhất.
  * Thì sử dụng dữ liệu từ Realm để thực hiện loadmore. Nếu dữ liệu của Realm hết thì sẽ gọi  * api để load tiếp dữ liệu từ nơi bị đứt đoạn.
  *
  * Chức năng chat nay được viết trực tiếp bằng firestore đảm bảo sự nhanh chóng (k phải thông qua api như cũ.). Điều này yêu cầu một số cài đặt ở server về phần login và cài đặt ở client.
@@ -36,15 +41,22 @@ import {listChatActions} from '../../redux/actions/listChatActions';
 
 const database = firestore();
 
-const groupRef = 'c1NgNes6PTy0lPqDUPCX';
+const groupRef = 'bRI3rRaWSpmgx5c81W0v';
+const total_member = 2;
 
 export default function MessageScreen({route}: {route: any}) {
+  const {hasPermission, requestPermission} = useCameraPermission();
+
   const dispatch = useDispatch();
 
   const ref = useSelector((s: any) => s.user.data.ref);
+  const myName = useSelector((s: any) => s.user.data.fullname);
 
   const listChatData = useSelector((s: any) => s.listChat.data);
 
+  const [isSend, setIsSend] = useState(false);
+  const [imagesData, setImagesData] = useState<Asset[]>([]);
+  const [moreOptVisible, setMoreOptVisible] = useState(false);
   const [emoPicker, setEmoPicker] = useState(false);
   const [value, setValue] = useState('');
   const [keyboard, setKeyboard] = useState(false);
@@ -68,12 +80,10 @@ export default function MessageScreen({route}: {route: any}) {
               if (item.type === 'added') {
                 dispatch(
                   listChatActions.add({
+                    ...item.doc.data(),
                     ref: item.doc.id,
                     status: 'sended',
-                    from: item.doc.data().from,
-                    message: item.doc.data().message,
-                    sent_time: item.doc.data().sent_time,
-                    type: item.doc.data().type,
+                    from_name: item.doc.data().from_name,
                   }),
                 );
               }
@@ -85,6 +95,7 @@ export default function MessageScreen({route}: {route: any}) {
                   ...item.data(),
                   ref: item.id,
                   status: 'sended',
+                  from_name: item.data().from_name,
                 })),
               ),
             );
@@ -154,24 +165,63 @@ export default function MessageScreen({route}: {route: any}) {
 
   const renderItem = ({item, index}: any) => {
     const messageFromMe = item.from === ref;
+    const messageType = item.type;
+
+    const lastMessageSameFrom = listChatData[index + 1]?.from === item.from;
 
     return (
       <View
         style={[
           styles.messageContainer,
           {alignSelf: messageFromMe ? 'flex-end' : 'flex-start'},
+          {marginTop: lastMessageSameFrom ? 0 : 18},
         ]}>
-        <Text
-          style={[
-            styles.borderMessage,
-            {
-              backgroundColor: messageFromMe
-                ? mainTheme.lowerFillLogo
-                : mainTheme.white,
-            },
-          ]}>
-          {item.message}
-        </Text>
+        {!messageFromMe && total_member > 2 && !lastMessageSameFrom && (
+          <Text style={[styles.messageFromName]}>{item.from_name}</Text>
+        )}
+
+        {item.message.length > 0 && (
+          <Text
+            style={[
+              styles.borderMessage,
+              {
+                backgroundColor: messageFromMe
+                  ? mainTheme.lowerFillLogo
+                  : mainTheme.white,
+              },
+            ]}>
+            {item.message}
+          </Text>
+        )}
+
+        {item.images && item.images.length > 0 && (
+          <>
+            {item.images.map((image: any, index: number) => (
+              <View
+                key={image + index}
+                style={[
+                  styles.imageMessage,
+                  messageFromMe
+                    ? {alignSelf: 'flex-end', marginRight: 10}
+                    : {alignSelf: 'flex-start', marginLeft: 10},
+                ]}>
+                <Image
+                  source={
+                    image == 'dang-tai-anh-len-server'
+                      ? images.screen.message.loading
+                      : {uri: image}
+                  }
+                  style={
+                    image == 'dang-tai-anh-len-server'
+                      ? {width: 64, height: 64, alignSelf: 'center'}
+                      : {width: '100%', height: '100%', borderRadius: 10}
+                  }
+                />
+              </View>
+            ))}
+          </>
+        )}
+
         {messageFromMe && index == 0 && (
           <Text style={styles.messageStatus}>
             {item.status == 'sending' ? 'Đang gửi' : 'Đã gửi'}
@@ -203,6 +253,7 @@ export default function MessageScreen({route}: {route: any}) {
   // event handler: open emoji picker
   const handleOpenEmoji = useCallback(() => {
     setEmoPicker(true);
+    setMoreOptVisible(false);
     Keyboard.dismiss();
   }, []);
 
@@ -211,8 +262,25 @@ export default function MessageScreen({route}: {route: any}) {
     setEmoPicker(false);
   }, []);
 
+  // event handler: open more options
+  const handleOpenMoreOpt = useCallback(async () => {
+    if (!hasPermission) {
+      await requestPermission();
+    }
+
+    setMoreOptVisible(true);
+    setEmoPicker(false);
+    Keyboard.dismiss();
+  }, []);
+
+  // event handler: close more options
+  const handleCloseMoreOpt = useCallback(() => {
+    setMoreOptVisible(false);
+  }, []);
+
   Keyboard.addListener('keyboardDidShow', () => {
     handleCloseEmoji();
+    handleCloseMoreOpt();
     setKeyboard(true);
   });
 
@@ -233,33 +301,80 @@ export default function MessageScreen({route}: {route: any}) {
       // timestamp
       const now = firestore.Timestamp.now();
 
-      // save to redux
-      dispatch(
-        listChatActions.add({
-          ref: messageRef,
-          from: ref,
-          message: value,
-          sent_time: now,
-          status: 'sending',
-          type: 'text',
-        }),
-      );
+      if (imagesData.length == 0) {
+        // save to redux
+        dispatch(
+          listChatActions.add({
+            ref: messageRef,
+            from: ref,
+            message: value,
+            sent_time: now,
+            status: 'sending',
+            type: 'text',
+            from_name: myName,
+          }),
+        );
+      } else {
+        // save to redux
+        dispatch(
+          listChatActions.add({
+            ref: messageRef,
+            from: ref,
+            message: value,
+            sent_time: now,
+            status: 'sending',
+            type: 'image',
+            from_name: myName,
+            images: new Array(imagesData.length).fill(
+              'dang-tai-anh-len-server',
+            ),
+          }),
+        );
+      }
 
       setValue('');
       listRef.current.scrollToOffset({animated: true, offset: 0});
 
-      // write to firestore
-      await firestore()
-        .collection('groups')
-        .doc(groupRef)
-        .collection('messages')
-        .doc(messageRef)
-        .set({
-          from: ref,
-          message: value,
-          sent_time: now,
-          type: 'text',
+      if (imagesData.length == 0) {
+        // write to firestore
+        await firestore()
+          .collection('groups')
+          .doc(groupRef)
+          .collection('messages')
+          .doc(messageRef)
+          .set({
+            from: ref,
+            message: value,
+            sent_time: now,
+            type: 'text',
+            from_name: myName,
+          });
+      } else {
+        const imagesPromise = imagesData.map(async (item: Asset) => {
+          const ref = storage().ref(`/groups/${groupRef}/${item.fileName}`);
+          await ref.putFile(item.uri!);
+          return ref.getDownloadURL();
         });
+
+        const images = await Promise.all(imagesPromise);
+
+        // write to firestore
+        await firestore()
+          .collection('groups')
+          .doc(groupRef)
+          .collection('messages')
+          .doc(messageRef)
+          .set({
+            from: ref,
+            message: value,
+            sent_time: now,
+            type: 'image',
+            from_name: myName,
+            images,
+          });
+      }
+
+      setIsSend(!isSend);
     } catch (error) {
       console.warn('SEND MESSAGE ERROR >> ', error);
     }
@@ -284,7 +399,13 @@ export default function MessageScreen({route}: {route: any}) {
         </View>
 
         <View style={styles.bodyMessage}>
-          <View style={styles.MessageView}>
+          <Pressable
+            style={styles.MessageView}
+            onPress={() => {
+              handleCloseEmoji();
+              handleCloseMoreOpt();
+              Keyboard.dismiss();
+            }}>
             <FlatList
               data={listChatData}
               renderItem={renderItem}
@@ -293,10 +414,12 @@ export default function MessageScreen({route}: {route: any}) {
               inverted
               ref={listRef}
             />
-          </View>
+          </Pressable>
 
           <View style={styles.MessageInput}>
-            <TouchableOpacity style={styles.moreInput}>
+            <TouchableOpacity
+              style={styles.moreInput}
+              onPress={handleOpenMoreOpt}>
               <Image style={styles.iconmore} source={screen.message.more} />
             </TouchableOpacity>
             <View style={styles.borderViewInput}>
@@ -306,6 +429,8 @@ export default function MessageScreen({route}: {route: any}) {
                   placeholder="Message..."
                   value={value}
                   onChangeText={text => setValue(text)}
+                  onSubmitEditing={handleSendMessage}
+                  enterKeyHint="send"
                 />
                 <TouchableOpacity
                   style={styles.emoji}
@@ -332,6 +457,11 @@ export default function MessageScreen({route}: {route: any}) {
             setValue(v => (v += e));
           }}
           visible={emoPicker}
+        />
+        <MoreMessageOptions
+          visible={moreOptVisible}
+          onImagesUpdate={setImagesData}
+          extraClearImages={isSend}
         />
       </SafeAreaView>
     </KeyboardAvoidingView>

@@ -1,5 +1,6 @@
 import {StyleSheet, Dimensions} from 'react-native';
 import mainTheme from '../../assets/colors';
+import {SCREEN} from '../../global';
 const {height: HeightScreen, width: WidthScreen} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -76,6 +77,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     fontSize: 14,
     color: 'black',
+    textAlign: 'center',
   },
   messageStatus: {
     alignSelf: 'flex-end',
@@ -152,6 +154,20 @@ const styles = StyleSheet.create({
   // },
   textMessage: {
     margin: 0,
+  },
+
+  imageMessage: {
+    width: SCREEN.width * 0.6,
+    height: SCREEN.width * 0.8,
+    marginVertical: 5,
+    justifyContent: 'center',
+  },
+
+  messageFromName: {
+    fontWeight: '500',
+    color: mainTheme.logo,
+    marginLeft: 15,
+    fontSize: 16,
   },
 });
 
