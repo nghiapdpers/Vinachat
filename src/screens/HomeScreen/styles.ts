@@ -31,15 +31,17 @@ const styles = StyleSheet.create({
     searchIcon: {
         width: 30,
         height: 30,
-        margin :20
+        margin: 20
     },
     listMessage: {
         flex: 1,
-    },
-    flatlistView: {
-        flex: 1,
-        width: WidthScreen,
         alignItems: 'center'
+    },
+    optionView: {
+        height: HeightScreen * 0.06,
+        width: WidthScreen,
+        alignItems: 'center',
+        justifyContent :'center',
     },
     listfriendActive: {
         flex: 1,
@@ -51,10 +53,11 @@ const styles = StyleSheet.create({
     viewfriendActive: {
         margin: 5,
         alignItems: 'center',
+        width: 100,
     },
     borderfriendActive: {
-        width: 70,
-        height: 70,
+        width: 65,
+        height: 65,
         borderRadius: 40,
         backgroundColor: mainTheme.lowerFillLogo,
         justifyContent: 'center',
@@ -62,7 +65,7 @@ const styles = StyleSheet.create({
     },
     textnameActive: {
         color: 'black',
-        fontSize: 16
+        fontSize: 16,
     },
     BorderMessage: {
         backgroundColor: mainTheme.white,
@@ -87,7 +90,7 @@ const styles = StyleSheet.create({
         color: 'black'
     },
     createGroup: {
-        width :WidthScreen*0.9,
+        width: WidthScreen * 0.9,
         height: 60,
         flexDirection: 'row',
         alignItems: 'center',
@@ -97,10 +100,15 @@ const styles = StyleSheet.create({
         width: 35,
         height: 35
     },
-    texttitleMessage : {
-        fontFamily :'lobster',
-        fontSize : 24,
-        opacity : 0.2
+    texttitleMessage: {
+        fontFamily: 'lobster',
+        fontSize: 24,
+        opacity: 0.2
+    },
+    FriendActive: {
+        width: WidthScreen,
+        height: HeightScreen * 0.11,
+        justifyContent :"center",
     }
 
 })

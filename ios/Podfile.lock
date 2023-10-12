@@ -1087,6 +1087,8 @@ PODS:
     - glog
   - react-native-biometrics (3.0.1):
     - React-Core
+  - react-native-cameraroll (5.10.0):
+    - React-Core
   - react-native-netinfo (9.4.1):
     - React-Core
   - react-native-safe-area-context (4.7.2):
@@ -1205,9 +1207,6 @@ PODS:
     - React-jsi (= 0.72.4)
     - React-logger (= 0.72.4)
     - React-perflogger (= 0.72.4)
-  - ReactNativeFileAccess (3.0.4):
-    - React-Core
-    - ZIPFoundation (= 0.9.11)
   - RealmJS (12.2.0):
     - React
   - RecaptchaInterop (100.0.0)
@@ -1282,7 +1281,6 @@ PODS:
     - React-callinvoker
     - React-Core
   - Yoga (1.14.0)
-  - ZIPFoundation (0.9.11)
   - ZXingObjC (3.6.5):
     - ZXingObjC/All (= 3.6.5)
   - ZXingObjC/All (3.6.5)
@@ -1313,6 +1311,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-biometrics (from `../node_modules/react-native-biometrics`)
+  - "react-native-cameraroll (from `../node_modules/@react-native-camera-roll/camera-roll`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
@@ -1334,7 +1333,6 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - ReactNativeFileAccess (from `../node_modules/react-native-file-access`)
   - RealmJS (from `../node_modules/realm`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
@@ -1378,7 +1376,6 @@ SPEC REPOS:
     - PromisesObjC
     - RecaptchaInterop
     - SocketRocket
-    - ZIPFoundation
     - ZXingObjC
 
 EXTERNAL SOURCES:
@@ -1429,6 +1426,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-biometrics:
     :path: "../node_modules/react-native-biometrics"
+  react-native-cameraroll:
+    :path: "../node_modules/@react-native-camera-roll/camera-roll"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-safe-area-context:
@@ -1471,8 +1470,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  ReactNativeFileAccess:
-    :path: "../node_modules/react-native-file-access"
   RealmJS:
     :path: "../node_modules/realm"
   RNCAsyncStorage:
@@ -1553,6 +1550,7 @@ SPEC CHECKSUMS:
   React-jsinspector: aaed4cf551c4a1c98092436518c2d267b13a673f
   React-logger: da1ebe05ae06eb6db4b162202faeafac4b435e77
   react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
+  react-native-cameraroll: 4701ae7c3dbcd3f5e9e150ca17f250a276154b35
   react-native-netinfo: fefd4e98d75cbdd6e85fc530f7111a8afdf2b0c5
   react-native-safe-area-context: 7aa8e6d9d0f3100a820efb1a98af68aa747f9284
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
@@ -1574,7 +1572,6 @@ SPEC CHECKSUMS:
   React-runtimescheduler: fe76d9246193a4545af98d4ef37d1aae1f72e3dc
   React-utils: 550fae00bb20830df2a33d8a06847362c4c76f0f
   ReactCommon: 78e46b7af6e98db9c2aad390d8294db33a88d791
-  ReactNativeFileAccess: 4530e3be4d5069454c6c6389096d8cb78c897f2c
   RealmJS: a480cb21d4b0ba82c843c77c3a211770411eec75
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RNCAsyncStorage: c913ede1fa163a71cea118ed4670bbaaa4b511bb
@@ -1594,7 +1591,6 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   VisionCamera: abdb4db40dc363b19e28428f656b882eec45d9fa
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
-  ZIPFoundation: b1f0de4eed33e74a676f76e12559ab6b75990197
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
 PODFILE CHECKSUM: fd1ef223249ca314aa3bc6a7c7374151ac762b20

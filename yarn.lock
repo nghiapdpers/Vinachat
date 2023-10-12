@@ -1540,6 +1540,11 @@
   dependencies:
     merge-options "^3.0.4"
 
+"@react-native-camera-roll/camera-roll@^5.10.0":
+  version "5.10.0"
+  resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-5.10.0.tgz#98cf5489be6805ac926b1c4d29ac956cf4df45dc"
+  integrity sha512-NZb/zU4S+k1Hx2Y3BdNufrfn8whNsiRjHNxeiGMak8OwDDJikqP5Ej7HXFv8sJSfTGfi1ddH0wdd541MHV/Nbw==
+
 "@react-native-clipboard/clipboard@^1.11.2":
   version "1.12.1"
   resolved "https://registry.yarnpkg.com/@react-native-clipboard/clipboard/-/clipboard-1.12.1.tgz#a23f9defb732077afa860d0598baa95f5ee9f54b"
@@ -6525,11 +6530,6 @@ react-native-emoji-modal@^0.2.4:
     react ">=17.0.0"
     react-native ">=0.64.0"
     react-native-vector-icons "^9.0.0"
-
-react-native-file-access@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/react-native-file-access/-/react-native-file-access-3.0.4.tgz#cc760232d6a153db152497f6a073c71c4cb911b0"
-  integrity sha512-sDmGeIIiSlLSrdtvEtADQ1uMoF+Zoegvu/Wr0z0Ej9lU8tHX0C1q+fJnCEBJSUjQ31rSzlabjWgQDKbpOEBdWg==
 
 react-native-gesture-handler@^2.13.0:
   version "2.13.1"

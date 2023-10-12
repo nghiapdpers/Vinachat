@@ -87,34 +87,69 @@ const styles = StyleSheet.create({
     },
     flexboxtext: {
         flex: 3,
-        width : '100%',
-        alignItems :'center',
-        top : 20
+        width: '100%',
+        alignItems: 'center',
+        top: 20
     },
     flexbox: {
         flex: 7,
-        flexDirection :"row"
+        flexDirection: "row"
     },
-    ImageInfo : {
-        flex : 3,
-        alignItems :'center',
-        justifyContent :'center'
+    ImageInfo: {
+        flex: 3,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
-    TextInfo : {
-        flex :7,
-        justifyContent :'center'
+    TextInfo: {
+        flex: 7,
+        justifyContent: 'center'
     },
-    borderImage : {
-        width : 100,
-        height : 100,
-        borderRadius : 50,
-        backgroundColor :mainTheme.background
+    borderImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: mainTheme.background
     },
-    textusername : {
-        fontSize : 22
+    textusername: {
+        fontSize: 22
     },
-    textfullname : {
-        fontSize : 16
+    textfullname: {
+        fontSize: 16
+    },
+    Screenshotborder: {
+        backgroundColor: mainTheme.logo,
+        width: WidthScreen,
+        height: HeightScreen * 0.5,
+        position: 'absolute',
+        top: -9999,
+        left: -9999
+    },
+    flexscreenshotqr: {
+        flex: 7,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    flexscreenshotinfo: {
+        flex: 3,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        marginHorizontal: 45
+    },
+    BorderQRCodeScreenshot: {
+        width: '75%',
+        height: '90%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    StylesAlert: {
+        position: "absolute",
+        backgroundColor: '#333333',
+    },
+    textAlert: {
+        fontSize: 15,
+        color : "white",
+        padding : 5
     }
 })
 

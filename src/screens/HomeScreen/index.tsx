@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles';
 import {
   Image,
@@ -8,17 +8,26 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import {screen} from '../../assets/images';
-import datafriend from './data';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import { screen } from '../../assets/images';
+import datamessage from './data';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionFriendListStart } from '../../redux/actions/friendAction';
+
 
 export default function HomeScreen() {
   const [data, setData] = useState([]);
+  const [friendActive, setfriendActive] = useState([]);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const datafriend = useSelector(
+    (state: any) => state?.friendlist?.friendlist?.data?.data,
+  );
+
 
   useEffect(() => {
-    setData([datafriend]);
+    dispatch(actionFriendListStart);
+    setData(datamessage);
   }, []);
 
   const getFirstLetters = (inputString: any) => {
@@ -35,118 +44,40 @@ export default function HomeScreen() {
     }
   };
 
-  const Flatlistrender = ({item}: {item: any}) => {
-    const renderFriendActive = ({item}: {item: any}) => {
-      return (
-        <TouchableOpacity
-          style={styles.viewfriendActive}
-          onPress={() => {
-            navigation.navigate('MessageScreen', {ref: String(item.id)});
-          }}>
+  const renderFriendActive = ({ item }: { item: any }) => {
+    return (
+      <TouchableOpacity
+        style={styles.viewfriendActive}
+        onPress={() => {
+          navigation.navigate('MessageScreen', { ref: String(item.ref) });
+        }}>
+        <View style={styles.borderfriendActive}>
+          <Text>{getFirstLetters(item.fullname)}</Text>
+        </View>
+        <Text numberOfLines={1} style={styles.textnameActive}>{item.fullname}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const Flatlistrender = ({ item }: { item: any }) => {
+    return (
+      <TouchableOpacity
+        style={styles.BorderMessage}
+        onPress={() => {
+          navigation.navigate('MessageScreen', { ref: String(item.id) });
+        }}>
+        <View style={styles.MessageAvatar}>
           <View style={styles.borderfriendActive}>
             <Text>{getFirstLetters(item.name)}</Text>
           </View>
-          <Text style={styles.textnameActive}>{item.name}</Text>
-        </TouchableOpacity>
-      );
-    };
-
-    const renderFriendMessage = ({item}: {item: any}) => {
-      return (
-        <TouchableOpacity
-          style={styles.BorderMessage}
-          onPress={() => {
-            navigation.navigate('MessageScreen', {ref: String(item.id)});
-          }}>
-          <View style={styles.MessageAvatar}>
-            <View style={styles.borderfriendActive}>
-              <Text>{getFirstLetters(item.name)}</Text>
-            </View>
-          </View>
-          <View style={styles.Message}>
-            <Text style={styles.textnameMessage}>{item.name}</Text>
-            <Text>{`You:${item.message}`}</Text>
-          </View>
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View style={styles.flatlistView}>
-        <FlatList
-          data={item.active}
-          renderItem={renderFriendActive}
-          keyExtractor={(item, index) => index.toString()}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-        />
-        <View style={styles.createGroup}>
-          <Text style={styles.texttitleMessage}>Message</Text>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('CreateGroupChat');
-            }}>
-            <Image
-              style={styles.createGroupIcon}
-              source={screen.home.creategroup}
-            />
-          </TouchableOpacity>
         </View>
-        <FlatList
-          data={item.message}
-          renderItem={renderFriendMessage}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
+        <View style={styles.Message}>
+          <Text style={styles.textnameMessage}>{item.name}</Text>
+          <Text>{`You:${item.message}`}</Text>
+        </View>
+      </TouchableOpacity>
     );
 
-    // const renderFriendMessage = ({item}: {item: any}) => {
-    //   console.log(item);
-
-    //   return (
-    //     <TouchableOpacity
-    //       style={styles.BorderMessage}
-    //       onPress={() => {
-    //         navigation.navigate('MessageScreen', {ref: String(item.id)});
-    //       }}>
-    //       <View style={styles.MessageAvatar}>
-    //         <View style={styles.borderfriendActive}>
-    //           <Text>{getFirstLetters(item.name)}</Text>
-    //         </View>
-    //       </View>
-    //       <View style={styles.Message}>
-    //         <Text style={styles.textnameMessage}>{item.name}</Text>
-    //         <Text>{`You:${item.message}`}</Text>
-    //       </View>
-    //     </TouchableOpacity>
-    //   );
-    // };
-
-    // return (
-    //   <View style={styles.flatlistView}>
-    //     <FlatList
-    //       data={item.active}
-    //       renderItem={renderFriendActive}
-    //       keyExtractor={(item, index) => index.toString()}
-    //       horizontal={true}
-    //       showsHorizontalScrollIndicator={false}
-    //     />
-    //     <View style={styles.createGroup}>
-    //       <Text style={styles.texttitleMessage}>Message</Text>
-    //       <TouchableOpacity>
-    //         <Image
-    //           style={styles.createGroupIcon}
-    //           source={screen.home.creategroup}
-    //         />
-    //       </TouchableOpacity>
-    //     </View>
-    //     <FlatList
-    //       data={item.message}
-    //       renderItem={renderFriendMessage}
-    //       keyExtractor={(item, index) => index.toString()}
-    //     />
-    //   </View>
-    // );
   };
 
   return (
@@ -160,6 +91,29 @@ export default function HomeScreen() {
           }}>
           <Image style={styles.searchIcon} source={screen.home.search} />
         </TouchableOpacity>
+      </View>
+      <View style={styles.FriendActive}>
+        <FlatList
+          data={datafriend}
+          renderItem={renderFriendActive}
+          keyExtractor={(item, index) => index.toString()}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+      <View style={styles.optionView}>
+        <View style={styles.createGroup}>
+          <Text style={styles.texttitleMessage}>Message</Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('CreateGroupChat');
+            }}>
+            <Image
+              style={styles.createGroupIcon}
+              source={screen.home.creategroup}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.listMessage}>
         <FlatList

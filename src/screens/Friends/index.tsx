@@ -151,7 +151,7 @@ const Friends = () => {
           return (
             <CardFriends
               key={item?.id}
-              name={item?.name}
+              name={item?.fullname}
               image={item?.image}
               status={item?.status}
             />
