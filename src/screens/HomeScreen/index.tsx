@@ -37,7 +37,7 @@ export default function HomeScreen() {
     const list = useSelector((state: any) => state.groupChat?.data);
 
     useEffect(() => {
-        console.log("list:>>", list);
+        // console.log("list:>>", list);
     }, [list])
 
     // Khi thành công
@@ -84,7 +84,7 @@ export default function HomeScreen() {
                     .where(firestore.FieldPath.documentId(), 'in', listRef)
                     .onSnapshot(onResultGroups, onErrorGroups);
             } else {
-                console.log("Listef Is Empty");
+                console.log("ListRef Is Empty");
             }
         };
 
@@ -102,7 +102,6 @@ export default function HomeScreen() {
         dispatch(actionListGroupChatStart())
     }, [])
 
-
     const getFirstLetters = (inputString: any) => {
         const words = inputString.trim().split(' ');
         if (words.length === 0) {
@@ -115,61 +114,7 @@ export default function HomeScreen() {
             const lastLetter = words[words.length - 1].charAt(0).toUpperCase(); // Lấy chữ cái đầu tiên của từ cuối cùng và chuyển thành chữ hoa
             return firstLetter + lastLetter; // Kết hợp chữ cái đầu tiên của từ đầu tiên và từ cuối cùng
         }
-    }
-
-    const Flatlistrender = ({ item }: { item: any }) => {
-
-        const renderFriendActive = ({ item }: { item: any }) => {
-            return (
-                <TouchableOpacity style={styles.viewfriendActive} onPress={() => { navigation.navigate('MessageScreen', { ref: String(item.id) }) }}>
-                    <View style={styles.borderfriendActive}>
-                        <Text>{getFirstLetters(item.name)}</Text>
-                    </View>
-                    <Text style={styles.textnameActive}>{item.name}</Text>
-                </TouchableOpacity>
-            )
-        }
-
-        const renderFriendMessage = ({ item }: { item: any }) => {
-            return (
-                <TouchableOpacity style={styles.BorderMessage} onPress={() => { navigation.navigate('MessageScreen', { ref: String(item.id) }) }}>
-                    <View style={styles.MessageAvatar}>
-                        <View style={styles.borderfriendActive}>
-                            <Text>{getFirstLetters(item.name)}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.Message}>
-                        <Text style={styles.textnameMessage}>{item.name}</Text>
-                        <Text >{(user?.data?.fullname || userExternal?.data?.fullname) == item?.latest_message_from_name ? `You: ${item?.latest_message_text}` : `${item?.latest_message_from_name}: ${item?.latest_message_text}`}</Text>
-                    </View>
-                </TouchableOpacity>
-            )
-        }
-
-        return (
-            <View style={styles.flatlistView}>
-                <FlatList
-                    data={item.active}
-                    renderItem={renderFriendActive}
-                    keyExtractor={(item, index) => index.toString()}
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                />
-                <View style={styles.createGroup}>
-                    <Text style={styles.texttitleMessage}>Message</Text>
-                    <TouchableOpacity>
-                        <Image style={styles.createGroupIcon} source={screen.home.creategroup} />
-                    </TouchableOpacity>
-                </View>
-                <FlatList
-                    data={list}
-                    renderItem={renderFriendMessage}
-                    keyExtractor={(item, index) => index.toString()}
-                />
-            </View>
-        )
-    }
-
+    };
 
     const renderFriendActive = ({ item }: { item: any }) => {
         return (
@@ -184,6 +129,27 @@ export default function HomeScreen() {
                 <Text numberOfLines={1} style={styles.textnameActive}>{item.fullname}</Text>
             </TouchableOpacity>
         );
+    };
+
+    const Flatlistrender = ({ item }: { item: any }) => {
+        return (
+            <TouchableOpacity
+                style={styles.BorderMessage}
+                onPress={() => {
+                    navigation.navigate('MessageScreen', { ref: String(item.id) });
+                }}>
+                <View style={styles.MessageAvatar}>
+                    <View style={styles.borderfriendActive}>
+                        <Text>{getFirstLetters(item.name)}</Text>
+                    </View>
+                </View>
+                <View style={styles.Message}>
+                    <Text style={styles.textnameMessage}>{item.name}</Text>
+                    <Text>{(user?.data?.fullname || userExternal?.data?.fullname) === item?.latest_message_from_name ? `You: ${item.latest_message_text}` : `${item.latest_message_from_name}: ${item.latest_message_text}`}</Text>
+                </View>
+            </TouchableOpacity>
+        );
+
     };
 
     return (
@@ -223,7 +189,7 @@ export default function HomeScreen() {
             </View>
             <View style={styles.listMessage}>
                 <FlatList
-                    data={data}
+                    data={list}
                     renderItem={Flatlistrender}
                     keyExtractor={(item, index) => index.toString()}
                     showsVerticalScrollIndicator={false}

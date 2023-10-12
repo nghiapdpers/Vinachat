@@ -248,6 +248,7 @@ export type RootStackParamList = {
   CreateAccount: any;
   Friends: any;
   LoginScreen: any;
+  CreateGroupChat: any;
 };
 
 declare global {

@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
         height: HeightScreen * 0.06,
         width: WidthScreen,
         alignItems: 'center',
-        justifyContent :'center',
+        justifyContent: 'center',
     },
     listfriendActive: {
         flex: 1,
@@ -89,6 +89,11 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: 'black'
     },
+    flatlistView: {
+        flex: 1,
+        width: WidthScreen,
+        alignItems: 'center'
+    },
     createGroup: {
         width: WidthScreen * 0.9,
         height: 60,
@@ -108,7 +113,7 @@ const styles = StyleSheet.create({
     FriendActive: {
         width: WidthScreen,
         height: HeightScreen * 0.11,
-        justifyContent :"center",
+        justifyContent: "center",
     }
 
 })
