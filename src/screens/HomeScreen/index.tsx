@@ -1,11 +1,8 @@
-import React, {useEffect} from 'react';
-import {
-  actionListGroupChatStart,
-  actionUpdateLatestMessage,
-} from '../../redux/actions/listGroupChat';
-import firestore from '@react-native-firebase/firestore';
-import {getData} from '../../storage';
-import {LOCALSTORAGE} from '../../storage/direct';
+import React, { useEffect, useState } from 'react';
+import { actionListGroupChatStart, actionUpdateLatestMessage } from "../../redux/actions/listGroupChat";
+import firestore from "@react-native-firebase/firestore";
+import { getData } from "../../storage";
+import { LOCALSTORAGE } from "../../storage/direct";
 import styles from './styles';
 import {
   Image,
@@ -15,20 +12,21 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import {screen} from '../../assets/images';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {actionFriendListStart} from '../../redux/actions/friendAction';
+import { screen } from '../../assets/images';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionFriendListStart } from '../../redux/actions/friendAction';
 
+firestore().useEmulator('127.0.0.1', 8080)
 const database = firestore();
 
 export default function HomeScreen() {
-  const navigation = useNavigation();
-  const dispatch = useDispatch();
+    const navigation = useNavigation();
+    const dispatch = useDispatch();
+    const datafriend = useSelector(
+        (state: any) => state?.friendlist?.friendlist?.data?.data,
+    );
 
-  const datafriend = useSelector(
-    (state: any) => state?.friendlist?.friendlist?.data?.data,
-  );
   const user = useSelector((state: any) => state.user);
   const userExternal = useSelector((state: any) => state?.userExternal);
   const list = useSelector((state: any) => state.groupChat?.data);
