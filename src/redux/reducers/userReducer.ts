@@ -39,7 +39,7 @@ export default function UserReducer(state = initialState, action: AnyAction) {
                 loading: false,
                 login: {
                     status: false,
-                    message: action.payload.message,
+                    message: action.payload?.message,
                 },
             };
         case REGISTER.END:

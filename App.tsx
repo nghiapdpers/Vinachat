@@ -34,15 +34,17 @@ import { RealmProvider } from "@realm/react";
 import GroupChat from "./src/realm/GroupChat";
 import Message from "./src/realm/Message";
 import User from "./src/realm/User";
+import storage from '@react-native-firebase/storage'
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const HOST = 'localhost';
+const HOST = '192.168.0.131';
 
 // use fierstore emulator
 firestore().useEmulator(HOST, 8080);
 auth().useEmulator(`http://${HOST}:9099`);
+storage().useEmulator(HOST, 9199);
 
 export default function App() {
   const dispatch = useDispatch();

@@ -35,7 +35,7 @@ import { listChatActions } from '../../redux/actions/listChatActions';
  */
 
 const database = firestore();
-const groupRef = '7KH3Ay7UenvVWJlmMezl';
+const groupRef = '8pYpDESqxHhpY8erUyQj';
 
 export default function MessageScreen({ route }: { route: any }) {
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ export default function MessageScreen({ route }: { route: any }) {
   const [keyboard, setKeyboard] = useState(false);
   const listRef = useRef<any | FlatList>(null);
   const realm = useRealm()
-  console.log(ref);
+  // console.log(ref);
 
 
   // side effect: subcribe to listen chat

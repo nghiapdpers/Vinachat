@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { actionListGroupChatStart, actionUpdateLatestMessage } from "../../redux/actions/listGroupChat";
 import firestore from "@react-native-firebase/firestore";
-import { getData } from "../../storage";
-import { LOCALSTORAGE } from "../../storage/direct";
 import styles from './styles';
 import {
     Image,
@@ -16,10 +14,9 @@ import { screen } from '../../assets/images';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionFriendListStart } from '../../redux/actions/friendAction';
+import loginEpic from '../../redux/epics/loginEpic';
 
-firestore().useEmulator('10.0.2.2', 8080)
 const database = firestore();
-
 
 export default function HomeScreen() {
 
@@ -32,10 +29,7 @@ export default function HomeScreen() {
     const user = useSelector((state: any) => state.user);
     const userExternal = useSelector((state: any) => state?.userExternal);
     const list = useSelector((state: any) => state.groupChat?.data);
-
-    useEffect(() => {
-        console.log("list:>>", list);
-    }, [list])
+    const status = useSelector((state: any) => state.groupChat?.status);
 
     // Khi thành công
     function onResultGroups(QuerySnapshot: any) {
@@ -61,19 +55,12 @@ export default function HomeScreen() {
     }
 
     useEffect(() => {
-        const listRef: any[] = [];
-        const getListRef = async () => {
-            // Lấy ra GROUP_CHAT trong Local.
-            const res = await getData(LOCALSTORAGE.groupChat);
 
-            // Lấy ra mảng ref trong group chat để check điều kiện khi lắng nghe collection "groups"
-            if (res && res.data) {
-                res.data.forEach((e: any) => {
-                    listRef.push(e.ref);
-                });
-            }
+        if (status === 'done') {
 
-            console.log(listRef);
+            const listRef = list.map((e: any) => e.ref);
+
+            console.log('listRef:>>', listRef);
 
             if (listRef.length > 0) {
                 // Bắt đầu lắng nghe dữ liệu từ collection "groups"
@@ -83,11 +70,9 @@ export default function HomeScreen() {
             } else {
                 console.log("ListRef Is Empty");
             }
-        };
+        }
 
-        // call method
-        getListRef();
-    }, []);
+    }, [status]);
 
     useEffect(() => {
         dispatch(actionFriendListStart);

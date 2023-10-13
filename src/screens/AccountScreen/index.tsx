@@ -18,7 +18,7 @@ import {
   actionClearUser,
   actionLogoutStart,
 } from '../../redux/actions/userActions';
-import { useNavigation } from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
@@ -104,7 +104,7 @@ export default function AccountScreen() {
     await removeData(LOCALSTORAGE.userExternal);
     await removeData(LOCALSTORAGE.apikey);
     await removeData(LOCALSTORAGE.groupChat);
-    navigation.navigate('LoginScreen');
+    navigation.dispatch(StackActions.replace('LoginScreen'));
 
     // sign out firebase auth.
     auth().signOut();
