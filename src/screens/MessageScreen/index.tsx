@@ -40,7 +40,7 @@ import {listChatActions} from '../../redux/actions/listChatActions';
  */
 
 const database = firestore();
-const groupRef = '7KH3Ay7UenvVWJlmMezl';
+const groupRef = 'dAkcblIwZ36CS2WNDPu9';
 const total_member = 2;
 
 export default function MessageScreen({route}: {route: any}) {
@@ -59,7 +59,6 @@ export default function MessageScreen({route}: {route: any}) {
   const [keyboard, setKeyboard] = useState(false);
   const listRef = useRef<any | FlatList>(null);
   const realm = useRealm();
-  console.log(ref);
 
   // side effect: subcribe to listen chat
   useEffect(() => {
@@ -111,6 +110,9 @@ export default function MessageScreen({route}: {route: any}) {
                     message: item.doc.data().message,
                     sent_time: item.doc.data().sent_time.seconds,
                     type: item.doc.data().type,
+                    images: item.doc.data().images
+                      ? item.doc.data().images.map((url: any) => ({url: url}))
+                      : [],
                   };
                   groupChat.messages.push(newMessage);
                 });
@@ -141,72 +143,71 @@ export default function MessageScreen({route}: {route: any}) {
     };
   }, []);
 
-  useEffect(() => {
-    // ignore initial listen
-    let notFirstRender = false;
-    const listenMessagetoRealm = database
-      .collection('groups')
-      .doc(groupRef)
-      .collection('messages')
-      .orderBy('sent_time', 'desc')
-      .onSnapshot(
-        snapshot => {
-          if (notFirstRender) {
-            snapshot.docChanges().forEach(item => {
-              if (item.type === 'added') {
-                realm.write(() => {
-                  let groupChat: GroupChat = realm
-                    .objects<GroupChat>('GroupChat')
-                    .filtered(`ref = '${groupRef}'`)[0];
-                  if (!groupChat) {
-                    groupChat = realm.create<GroupChat>('GroupChat', {
-                      ref: groupRef,
-                      name: '',
-                      total_member: 0,
-                      adminRef: '',
-                      latest_message_from: '',
-                      latest_message_from_name: '',
-                      latest_message_text: '',
-                      latest_message_type: '',
-                      latest_message_sent_time: 0,
-                      member: [],
-                      messages: [],
-                    });
-                  }
-                  const newMessage = {
-                    ref: item.doc.id,
-                    status: 'sended',
-                    from: item.doc.data().from,
-                    message: item.doc.data().message,
-                    sent_time: item.doc.data().sent_time.seconds,
-                    type: item.doc.data().type,
-                  };
-                  groupChat.messages.push(newMessage);
-                });
-              }
-            });
-          }
-        },
-        err => {
-          console.warn(err);
-        },
-      );
+  // useEffect(() => {
+  //   // ignore initial listen
+  //   let notFirstRender = false;
+  //   const listenMessagetoRealm = database
+  //     .collection('groups')
+  //     .doc(groupRef)
+  //     .collection('messages')
+  //     .orderBy('sent_time', 'desc')
+  //     .onSnapshot(
+  //       snapshot => {
+  //         if (notFirstRender) {
+  //           snapshot.docChanges().forEach(item => {
+  //             if (item.type === 'added') {
+  //               realm.write(() => {
+  //                 let groupChat: GroupChat = realm
+  //                   .objects<GroupChat>('GroupChat')
+  //                   .filtered(`ref = '${groupRef}'`)[0];
+  //                 if (!groupChat) {
+  //                   groupChat = realm.create<GroupChat>('GroupChat', {
+  //                     ref: groupRef,
+  //                     name: '',
+  //                     total_member: 0,
+  //                     adminRef: '',
+  //                     latest_message_from: '',
+  //                     latest_message_from_name: '',
+  //                     latest_message_text: '',
+  //                     latest_message_type: '',
+  //                     latest_message_sent_time: 0,
+  //                     member: [],
+  //                     messages: [],
+  //                   });
+  //                 }
+  //                 const newMessage = {
+  //                   ref: item.doc.id,
+  //                   status: 'sended',
+  //                   from: item.doc.data().from,
+  //                   message: item.doc.data().message,
+  //                   sent_time: item.doc.data().sent_time.seconds,
+  //                   type: item.doc.data().type,
+  //                 };
+  //                 groupChat.messages.push(newMessage);
+  //               });
+  //             }
+  //           });
+  //         }
+  //       },
+  //       err => {
+  //         console.warn(err);
+  //       },
+  //     );
 
-    const specificGroup = realm
-      .objects('GroupChat')
-      .filtered(`ref = '${groupRef}'`)[0];
-    console.log(specificGroup);
-    // unsubcribe firestore chat group
-    return () => {
-      listenMessagetoRealm();
-    };
-  }, []);
+  //   const specificGroup = realm
+  //     .objects('GroupChat')
+  //     .filtered(`ref = '${groupRef}'`)[0];
+  //   console.log(specificGroup);
+  //   // unsubcribe firestore chat group
+  //   return () => {
+  //     listenMessagetoRealm();
+  //   };
+  // }, []);
 
   //   const yourRef = useRef(null);
 
   const renderItem = ({item, index}: any) => {
     const messageFromMe = item.from === ref;
-    const messageType = item.type;
 
     const lastMessageSameFrom = listChatData[index + 1]?.from === item.from;
 
@@ -222,7 +223,7 @@ export default function MessageScreen({route}: {route: any}) {
         )}
 
         {item.message.length > 0 && (
-          <Text
+          <View
             style={[
               styles.borderMessage,
               {
@@ -231,8 +232,8 @@ export default function MessageScreen({route}: {route: any}) {
                   : mainTheme.white,
               },
             ]}>
-            {item.message}
-          </Text>
+            <Text style={styles.textMessage}>{item.message}</Text>
+          </View>
         )}
 
         {item.images && item.images.length > 0 && (
@@ -262,17 +263,7 @@ export default function MessageScreen({route}: {route: any}) {
             ))}
           </>
         )}
-        <View
-          style={[
-            styles.borderMessage,
-            {
-              backgroundColor: messageFromMe
-                ? mainTheme.lowerFillLogo
-                : mainTheme.white,
-            },
-          ]}>
-          <Text style={styles.textMessage}>{item.message}</Text>
-        </View>
+
         {messageFromMe && index == 0 && (
           <Text style={styles.messageStatus}>
             {item.status == 'sending' ? 'Đang gửi' : 'Đã gửi'}
@@ -452,6 +443,9 @@ export default function MessageScreen({route}: {route: any}) {
               showsVerticalScrollIndicator={false}
               inverted
               ref={listRef}
+              onEndReached={() => {
+                console.log('load more o day');
+              }}
             />
           </Pressable>
 
