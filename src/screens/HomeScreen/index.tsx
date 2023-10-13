@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from 'react';
-import datafriend from './data';
+import React, {useEffect} from 'react';
 import {
   actionListGroupChatStart,
   actionUpdateLatestMessage,
@@ -17,23 +16,19 @@ import {
   FlatList,
 } from 'react-native';
 import {screen} from '../../assets/images';
-import datamessage from './data';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {actionFriendListStart} from '../../redux/actions/friendAction';
 
-firestore().useEmulator('10.0.2.2', 8080);
 const database = firestore();
 
 export default function HomeScreen() {
-  const [data, setData] = useState([]);
-  const [friendActive, setfriendActive] = useState([]);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
   const datafriend = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
   );
-
   const user = useSelector((state: any) => state.user);
   const userExternal = useSelector((state: any) => state?.userExternal);
   const list = useSelector((state: any) => state.groupChat?.data);
@@ -95,7 +90,6 @@ export default function HomeScreen() {
 
   useEffect(() => {
     dispatch(actionFriendListStart);
-    // setData(datamessage);
   }, []);
 
   // Gọi api Group Chat
