@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, SafeAreaView, Image, Dimensions, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, SafeAreaView, Image, TouchableOpacity, Platform, PermissionsAndroid } from "react-native";
 import styles from "./styles";
 import RNQRGenerator from "rn-qr-generator";
-import { screen,component } from "../../../../assets/images";
 import Header from "../../../../components/Header";
+import ViewShot from "react-native-view-shot";
+import { CameraRoll, iosRequestAddOnlyGalleryPermission } from "@react-native-camera-roll/camera-roll";
+import { screen, component } from "../../../../assets/images";
 
-const dataOptinoInfo = [
+const dataOptionInfo = [
     {
         id: 1,
         title: 'Chia sẻ',
@@ -21,31 +23,71 @@ const dataOptinoInfo = [
         title: 'Đổi mã',
         image: screen.qrcode.changeQR
     }
-]
+];
 
 export default function QrCode({ route }: { route: any }) {
-    // const itemroute = route?.params?.item;
-    const [QrCode, setQrCode] = useState<{ imageUri: string }>({ imageUri: '' });
+    const [QrCode, setQrCode] = useState({ imageUri: '' });
     const mobile = '0123456789';
-
+    const screenshotRef = useRef<ViewShot>(null);
+    const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
+    const [responseStatus, setresponseStatus] = useState('');
+    const [showArlert, setshowArlert] = useState(false);
 
     useEffect(() => {
+        const requestCameraRollPermission = async () => {
+            if (Platform.OS === 'ios') {
+                const hasPermission = await iosRequestAddOnlyGalleryPermission();
+                setHasCameraRollPermission(hasPermission);
+            } else {
+                const hasPermission = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+                if (!hasPermission) {
+                    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+                }
+                setHasCameraRollPermission(hasPermission);
+            }
+        };
+
+        requestCameraRollPermission();
         RNQRGenerator.generate({
             value: mobile,
             width: 250,
             height: 250,
             correctionLevel: "L"
         })
-            .then((response: any) => {
-                console.log(response);
+            .then((response) => {
                 const { uri } = response;
                 setQrCode({ imageUri: uri });
             })
-            .catch((error: any) => console.log('Cannot create QR code', error));
-
+            .catch((error) => console.log('Cannot create QR code', error));
     }, []);
 
+    const convertStatus = (status: any) => {
+        switch (status) {
+            case 'success':
+                return 'Mã QR Code của bạn đã được lưu thành công'
+            case 'failed':
+                return 'Mã QR Code của bạn lưu không thành công'
+        }
+    }
 
+
+    const handleScreenshot = async () => {
+        try {
+            const screenshotUri = await screenshotRef?.current?.capture();
+            const response = `file://${screenshotUri}`;
+            await CameraRoll.save(response, { type: 'photo' }).then((response: any) => {
+                setresponseStatus('success')
+            }).catch((error: any) => {
+                setresponseStatus('failed')
+            })
+            setshowArlert(true);
+            setTimeout(() => {
+                setshowArlert(false);
+            }, 3000);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -60,12 +102,29 @@ export default function QrCode({ route }: { route: any }) {
                     title={"Mã QR"}
                 />
             </View>
+            <ViewShot ref={screenshotRef} style={styles.Screenshotborder}>
+                <View style={styles.flexscreenshotqr}>
+                    <View style={styles.BorderQRCodeScreenshot}>
+                        {QrCode.imageUri && <Image resizeMode="stretch" source={{ uri: QrCode.imageUri }} style={styles.QR} />}
+                    </View>
+                </View>
+                <View style={styles.flexscreenshotinfo}>
+                    <View style={styles.borderImage}>
+                    </View>
+                    <Text style={styles.textusername}>Nguyễn Trung Thịnh</Text>
+                </View>
+            </ViewShot>
             <View style={styles.ViewQrCode}>
                 <View style={styles.BorderQR}>
                     <View style={styles.FlexboxQR}>
                         <View style={styles.BorderQRCode}>
                             {QrCode.imageUri && <Image resizeMode="stretch" source={{ uri: QrCode.imageUri }} style={styles.QR} />}
                         </View>
+                        {showArlert === true ? (
+                            <View style={styles.StylesAlert}>
+                                <Text style={styles.textAlert}>{convertStatus(responseStatus)}</Text>
+                            </View>
+                        ) : null}
                     </View>
                     <View style={styles.FlexboxInfo}>
                         <View style={styles.flexInfo}>
@@ -75,7 +134,7 @@ export default function QrCode({ route }: { route: any }) {
                             <View style={styles.flexbox}>
                                 <View style={styles.ImageInfo}>
                                     <View style={styles.borderImage}>
-
+                                        {/* Thêm nội dung hình ảnh tại đây */}
                                     </View>
                                 </View>
                                 <View style={styles.TextInfo}>
@@ -85,21 +144,24 @@ export default function QrCode({ route }: { route: any }) {
                             </View>
                         </View>
                         <View style={styles.flexOptionInfo}>
-                            {dataOptinoInfo.map((item: any) => {
-                                return (
-                                    <TouchableOpacity style={styles.ViewItem} key={item.id}>
-                                        <View style={styles.borderItemOption}>
-                                            <Image style={styles.imgInfoOption} source={item.image} />
-                                        </View>
-                                        <Text style={styles.texttitle}>{item.title}</Text>
+                            {dataOptionInfo.map((item) => (
+                                <View style={styles.ViewItem} key={item.id}>
+                                    <TouchableOpacity style={styles.borderItemOption}
+                                        onPress={() => {
+                                            if (item.id === 2) {
+                                                handleScreenshot();
+                                            }
+                                        }}
+                                    >
+                                        <Image style={styles.imgInfoOption} source={item.image} />
                                     </TouchableOpacity>
-                                )
-                            })}
+                                    <Text style={styles.texttitle}>{item.title}</Text>
+                                </View>
+                            ))}
                         </View>
                     </View>
                 </View>
             </View>
         </SafeAreaView>
-    )
+    );
 }
-

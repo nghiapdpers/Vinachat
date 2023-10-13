@@ -7,5 +7,7 @@ export enum LOCALSTORAGE {
 
     user = 'user',
 
-    userExternal = 'userExternal'
+    userExternal = 'userExternal',
+
+    groupChat = 'groupChat'
 }

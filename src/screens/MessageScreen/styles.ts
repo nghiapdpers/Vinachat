@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   messageContainer: {
-    maxWidth: '80%',
+    flex: 1,
   },
   borderMessage: {
     margin: 5,
@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'black',
     textAlign: 'center',
+    maxWidth: '70%',
   },
   messageStatus: {
     alignSelf: 'flex-end',
@@ -153,7 +154,8 @@ const styles = StyleSheet.create({
   //   borderRadius: 40,
   // },
   textMessage: {
-    margin: 0,
+    fontSize: 15,
+    color: 'black',
   },
 
   imageMessage: {

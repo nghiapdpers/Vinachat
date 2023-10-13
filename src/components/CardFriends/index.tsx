@@ -9,7 +9,9 @@ const CardFriends = ({ image, name, status }: { name: string, image: string, sta
         <View style={styles.container}>
             {image ? (
                 <Image style={styles.icon} source={{ uri: image }} />
-            ) : null}
+            ) : (<View style={styles.borderImage}>
+
+            </View>)}
             <View style={{ marginLeft: 8 }}>
                 <Text style={{ fontSize: 20, color: mainTheme.text }}>{name}</Text>
                 {status ? (

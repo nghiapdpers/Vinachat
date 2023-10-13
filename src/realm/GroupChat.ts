@@ -14,7 +14,7 @@ class GroupChat extends Realm.Object {
             latest_message_from_name: 'string',
             latest_message_text: 'string',
             latest_message_type: 'string',
-            latest_message_sent_time: 'date',
+            latest_message_sent_time: 'int',
             members: { type: 'list', objectType: 'User' },
             messages: { type: 'list', objectType: 'Message' },
         },
