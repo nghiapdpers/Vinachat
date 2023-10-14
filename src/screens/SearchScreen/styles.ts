@@ -70,11 +70,11 @@ const styles = StyleSheet.create({
         backgroundColor: mainTheme.logo
     },
     bodyItem: {
-        flex: 5.5,
+        flex: 5,
         justifyContent :'center'
     },
     endItem: {
-        flex: 2.5,
+        flex: 3,
         justifyContent :'center',
         alignItems :'center'
     },

@@ -6,27 +6,30 @@ import { useNavigation } from "@react-navigation/native";
 import Header3 from "../../components/Header3";
 import data from "./data";
 import apiCreateGroup from "../../apis/apiCreateGroup";
+import { useSelector } from "react-redux";
 
 export default function CreateGroupChat() {
     const navigation = useNavigation();
     const [memberSelected, setmemberSelected] = useState([]);
     const [groupname, setgroupname] = useState('');
     const yourRef = useRef(null);
+    const datafriend = useSelector(
+        (state: any) => state?.friendlist?.friendlist?.data?.data,
+    );
 
-    // const [refs, setrefs] = useState([]);
 
+    // Chọn bạn bè để tạo nhóm
     const handleMemberSelection = (member: any) => {
         const isSelected = memberSelected.some((selectedMember: any) => selectedMember.id === member.id);
         if (isSelected) {
             const updatedMembers = memberSelected.filter((selectedMember: any) => selectedMember.id !== member.id);
             setmemberSelected(updatedMembers);
-            // setrefs((prevRefs: any) => prevRefs.filter((ref: any) => ref !== member.id));
         } else {
             setmemberSelected([...memberSelected, member]);
-            // setrefs((prevRefs: any) => [...prevRefs, member.id]);
         }
     };
 
+    // Xoá bạn bè đã chọn
     const handleremovemember = (member: any) => {
         const updatedMembers = memberSelected.filter((selectedMember: any) => selectedMember.id !== member.id);
         setmemberSelected(updatedMembers);
@@ -37,12 +40,13 @@ export default function CreateGroupChat() {
     }, [memberSelected])
 
 
+    // Fetch API tạo nhóm 
     const FetchCreateGroup = async () => {
         try {
             return await apiCreateGroup({ refs: JSON.stringify(["7Qj1dr5KxVXQDTKJQJYs", "9wA6C0CrzFcZiPhCoJAc"]), name: groupname })
-            .then(async (resposne: any) => {
-                console.log(resposne);
-            })
+                .then(async (resposne: any) => {
+                    console.log(resposne);
+                })
         } catch (error) {
             console.log(error);
         }
@@ -73,8 +77,8 @@ export default function CreateGroupChat() {
                     </View>
                 </View>
                 <View style={styles.NameFlex}>
-                    <Text style={styles.textnameItem}>{item.name}</Text>
-                    <Text style={styles.textactive}>{item.status}</Text>
+                    <Text style={styles.textnameItem}>{item.fullname}</Text>
+                    <Text style={styles.textactive}>{item.mobile}</Text>
                 </View>
             </View>
         )
@@ -124,7 +128,7 @@ export default function CreateGroupChat() {
                 </View>
                 <View style={styles.friendbody}>
                     <FlatList
-                        data={data}
+                        data={datafriend}
                         renderItem={renderItem}
                         keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
