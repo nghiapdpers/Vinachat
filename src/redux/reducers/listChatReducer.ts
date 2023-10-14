@@ -3,6 +3,10 @@ import {AnyAction} from '@reduxjs/toolkit';
 
 const initialState = {
   data: [],
+  lmTotal: 1,
+  lmCurrent: 0,
+  lmLoading: false,
+  message: undefined,
 };
 
 export default function ListChatReducer(
@@ -43,6 +47,48 @@ export default function ListChatReducer(
       return {
         ...state,
         data: updatedData,
+        lmTotal: state.lmTotal + 1,
+      };
+    }
+
+    case LIST_CHAT.LOADMORE_START: {
+      return {
+        ...state,
+        message: undefined,
+        lmLoading: true,
+      };
+    }
+
+    case LIST_CHAT.LOADMORE_END: {
+      const updateData = [
+        ...state.data,
+        ...action.payload.data.chats.map((item: any) => ({
+          ...item,
+          status: 'sended',
+        })),
+      ];
+
+      return {
+        ...state,
+        message: undefined,
+        data: updateData,
+        lmTotal: action.payload.data.total_record,
+        lmCurrent: updateData.length,
+        lmLoading: false,
+      };
+    }
+
+    case LIST_CHAT.LOADMORE_FAIL: {
+      return {
+        ...state,
+        message: action.payload.message,
+        lmLoading: false,
+      };
+    }
+
+    case LIST_CHAT.LOADMORE_CLEAR: {
+      return {
+        ...initialState,
       };
     }
 

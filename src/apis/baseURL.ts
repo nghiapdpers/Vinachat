@@ -11,6 +11,7 @@ export const SEND_MESSAGE = `${DOMAIN}/api/group/sendMessage`;
 export const SEARCH_URL = `${DOMAIN}/api/user/search`;
 export const CREATE_GROUP_URL = `${DOMAIN}/api/group/create`;
 export const FRIENDS_LIST_URL = `${DOMAIN}/api/user/getFriendList`;
+export const LOADMORE_MESSAGE = `${DOMAIN}/api/group/getListMessage`;
 
 export default {
   LOGIN_URL,
@@ -24,4 +25,5 @@ export default {
   SEARCH_URL,
   CREATE_GROUP_URL,
   FRIENDS_LIST_URL,
+  LOADMORE_MESSAGE,
 };

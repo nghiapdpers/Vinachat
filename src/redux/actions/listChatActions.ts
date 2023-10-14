@@ -26,7 +26,42 @@ function addListChatData(data: chatProps) {
   };
 }
 
+function loadmoreListChatDataS(groupRef: string, last_chat_id: string) {
+  return {
+    type: LIST_CHAT.LOADMORE_START,
+    payload: {
+      group_ref: groupRef,
+      page: 2,
+      last_chat_id: last_chat_id,
+    },
+  };
+}
+
+function loadmoreListChatDataE(data: any) {
+  return {
+    type: LIST_CHAT.LOADMORE_END,
+    payload: data,
+  };
+}
+
+function loadmoreListChatDataF(data: any) {
+  return {
+    type: LIST_CHAT.LOADMORE_FAIL,
+    payload: data,
+  };
+}
+
+function listChatDataClear() {
+  return {
+    type: LIST_CHAT.LOADMORE_CLEAR,
+  };
+}
+
 export const listChatActions = {
   merge: mergeListChatData,
   add: addListChatData,
+  loadmore_start: loadmoreListChatDataS,
+  loadmore_end: loadmoreListChatDataE,
+  loadmore_fail: loadmoreListChatDataF,
+  clear: listChatDataClear,
 };

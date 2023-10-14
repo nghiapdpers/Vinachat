@@ -133,7 +133,10 @@ export default function HomeScreen() {
       <TouchableOpacity
         style={styles.BorderMessage}
         onPress={() => {
-          navigation.navigate('MessageScreen', {ref: String(item.id)});
+          navigation.navigate('MessageScreen', {
+            groupRef: item.ref,
+            total_member: item.total_member,
+          });
         }}>
         <View style={styles.MessageAvatar}>
           <View style={styles.borderfriendActive}>

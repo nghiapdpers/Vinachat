@@ -27,33 +27,43 @@ import {Asset} from 'react-native-image-picker';
 import {useCameraPermission} from 'react-native-vision-camera';
 import {useDispatch, useSelector} from 'react-redux';
 import {listChatActions} from '../../redux/actions/listChatActions';
+import {useRoute} from '@react-navigation/native';
 
 // Màn hình chat:
 /**
- * Sử dụng redux lưu trữ 20 tin nhắn mới nhất, đồng thời sử dụng Realm để lưu
- * trữ toàn bộ thông tin đoạn chat. Sau khi người dùng kéo đến hết 20 tin nhắn mới nhất.
- * Thì sử dụng dữ liệu từ Realm để thực hiện loadmore. Nếu dữ liệu của Realm hết thì sẽ gọi  * api để load tiếp dữ liệu từ nơi bị đứt đoạn.
- *
  * Chức năng chat nay được viết trực tiếp bằng firestore đảm bảo sự nhanh chóng (k phải thông qua api như cũ.). Điều này yêu cầu một số cài đặt ở server về phần login và cài đặt ở client.
  *
  * Mục tiêu của app: Nhanh, nhẹ. Các hoạt động realtime sẽ phải nhanh nhất có thê, vì thế hầu hết các chức năng không cần đến realtime hoặc tiêu tốn nhiều thời gian xử lý (filter hàng ngàn user để lọc ra bạn bè...) sẽ được server xử lý và trả về thông tin thông qua API. Đồng thời đảm bảo các logic đăng nhập, đăng ký... và cấu trúc dữ liệu được an toàn.
+ *
+ * Chức năng loadmore: mỗi khi kéo lên tới tận cùng tin nhắn mới nhất, gọi api để cập nhật thêm 20 các tin nhắn tiếp theo (không lưu vào realm - realm sẽ gọi api để đồng bộ tin nhắn mỗi khi vào màn hình screen, và real sẽ cập nhật khi có tin nhắn mới). Nếu mất mạng, sẽ sử dụng realm để hiển thị.
+ *
+ * Lần đầu vào màn hình Message: gọi api để đồng bộ tin nhắn từ firestore với realm. Nghĩa là sẽ lấy ref tin nhắn cuối cùng được lưu trong realm, sau đó gọi api để đồng bộ tin nhắn từ firestore và lưu vào realm. Chức năng hiển thị không thay đổi.
+ *
  */
 
 const database = firestore();
-const groupRef = 'dAkcblIwZ36CS2WNDPu9';
-const total_member = 2;
+// const groupRef = 'dAkcblIwZ36CS2WNDPu9';
+// const total_member = 2;
 
-export default function MessageScreen({route}: {route: any}) {
+export default function MessageScreen() {
   const {hasPermission, requestPermission} = useCameraPermission();
+
+  const route = useRoute();
+
+  const {groupRef, total_member}: any = route.params;
 
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
   const myName = useSelector((s: any) => s.user.data.fullname);
 
+  const listChatData = useSelector((s: any) => s.listChat.data);
+  const loadmore = useSelector((s: any) => s.listChat.lmLoading);
+  const totalMessage = useSelector((s: any) => s.listChat.lmTotal);
+  const currentMessage = useSelector((s: any) => s.listChat.lmCurrent);
+
   const [isSend, setIsSend] = useState(false);
   const [imagesData, setImagesData] = useState<Asset[]>([]);
   const [moreOptVisible, setMoreOptVisible] = useState(false);
-  const listChatData = useSelector((s: any) => s.listChat.data);
   const [emoPicker, setEmoPicker] = useState(false);
   const [value, setValue] = useState('');
   const [keyboard, setKeyboard] = useState(false);
@@ -84,6 +94,7 @@ export default function MessageScreen({route}: {route: any}) {
                     from_name: item.doc.data().from_name,
                   }),
                 );
+
                 realm.write(() => {
                   let groupChat: GroupChat = realm
                     .objects<GroupChat>('GroupChat')
@@ -103,6 +114,7 @@ export default function MessageScreen({route}: {route: any}) {
                       messages: [],
                     });
                   }
+
                   const newMessage = {
                     ref: item.doc.id,
                     status: 'sended',
@@ -119,16 +131,25 @@ export default function MessageScreen({route}: {route: any}) {
               }
             });
           } else {
-            dispatch(
-              listChatActions.merge(
-                snapshot.docs.map(item => ({
-                  ...item.data(),
-                  ref: item.id,
-                  status: 'sended',
-                  from_name: item.data().from_name,
-                })),
-              ),
-            );
+            if (
+              (listChatData.length > 0 &&
+                !snapshot.empty &&
+                listChatData[0].ref !== snapshot.docs[0].id) ||
+              listChatData.length == 0
+            ) {
+              dispatch(listChatActions.clear());
+
+              dispatch(
+                listChatActions.merge(
+                  snapshot.docs.map(item => ({
+                    ...item.data(),
+                    ref: item.id,
+                    status: 'sended',
+                    from_name: item.data().from_name,
+                  })),
+                ),
+              );
+            }
             notFirstRender = true;
           }
         },
@@ -410,6 +431,18 @@ export default function MessageScreen({route}: {route: any}) {
     }
   };
 
+  // event handler: loadmore
+  const handleLoadmore = () => {
+    if (currentMessage < totalMessage) {
+      dispatch(
+        listChatActions.loadmore_start(
+          groupRef,
+          listChatData[listChatData.length - 1].ref,
+        ),
+      );
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -436,6 +469,7 @@ export default function MessageScreen({route}: {route: any}) {
               handleCloseMoreOpt();
               Keyboard.dismiss();
             }}>
+            {loadmore && <Text>Tải thêm</Text>}
             <FlatList
               data={listChatData}
               renderItem={renderItem}
@@ -443,9 +477,8 @@ export default function MessageScreen({route}: {route: any}) {
               showsVerticalScrollIndicator={false}
               inverted
               ref={listRef}
-              onEndReached={() => {
-                console.log('load more o day');
-              }}
+              onEndReached={handleLoadmore}
+              windowSize={21}
             />
           </Pressable>
 
@@ -462,8 +495,9 @@ export default function MessageScreen({route}: {route: any}) {
                   placeholder="Message..."
                   value={value}
                   onChangeText={text => setValue(text)}
-                  onSubmitEditing={handleSendMessage}
                   enterKeyHint="send"
+                  onSubmitEditing={handleSendMessage}
+                  blurOnSubmit={false}
                 />
                 <TouchableOpacity
                   style={styles.emoji}
