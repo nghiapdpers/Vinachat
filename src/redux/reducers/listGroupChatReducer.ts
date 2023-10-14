@@ -48,10 +48,12 @@ export default function listGroupChatReducer(state = initialState, action: AnyAc
                 if (index !== -1 && updatedData[index].latest_message_text !== updatedItem.latest_message_text && updatedItem.latest_message_text) {
                     // Cập nhập nội dung tin nhắn
                     updatedData[index].latest_message_text = updatedItem.latest_message_text;
+                    updatedData[index].latest_message_type = updatedItem.latest_message_type;
                     // Cập nhập tên người gửi tin nhắn
                     updatedData[index].latest_message_from_name = updatedItem.latest_message_from_name;
                     updatedTextData.push(updatedData[index]); // Thêm mục này vào mảng đã thay đổi
-                } else if (index !== -1 && updatedData[index].latest_message_type !== updatedItem.latest_message_type) {
+                } else if (index !== -1 && updatedData[index].latest_message_type !== updatedItem.latest_message_type && updatedItem.latest_message_type) {
+                    updatedData[index].latest_message_text = updatedItem.latest_message_text;
                     // Cập nhật type message
                     updatedData[index].latest_message_type = updatedItem.latest_message_type;
                     // Cập nhập tên người gửi tin nhắn

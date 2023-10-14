@@ -14,9 +14,7 @@ import { screen } from '../../assets/images';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionFriendListStart } from '../../redux/actions/friendAction';
-import loginEpic from '../../redux/epics/loginEpic';
 
-firestore().useEmulator('127.0.0.1', 8080)
 const database = firestore();
 
 export default function HomeScreen() {
@@ -136,7 +134,11 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={styles.BorderMessage}
           onPress={() => {
-            navigation.navigate('MessageScreen', { ref: String(item.id) });
+            navigation.navigate('MessageScreen', {
+              groupRef: item.ref,
+              total_member: item.total_member,
+              groupName: item.name,
+            });
           }}>
           <View style={styles.MessageAvatar}>
             <View style={styles.borderfriendActive}>

@@ -1,5 +1,5 @@
-import {LIST_CHAT} from '../actions/types';
-import {AnyAction} from '@reduxjs/toolkit';
+import { LIST_CHAT } from '../actions/types';
+import { AnyAction } from '@reduxjs/toolkit';
 
 const initialState = {
   data: [],
