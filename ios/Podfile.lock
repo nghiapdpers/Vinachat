@@ -1234,6 +1234,15 @@ PODS:
     - RNFBApp
   - RNGestureHandler (2.13.1):
     - React-Core
+  - RNImageCropPicker (0.40.0):
+    - React-Core
+    - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.40.0)
+    - TOCropViewController
+  - RNImageCropPicker/QBImagePickerController (0.40.0):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController
   - RNKeychain (8.1.2):
     - React-Core
   - RNQrGenerator (1.3.1):
@@ -1276,7 +1285,8 @@ PODS:
   - RNVectorIcons (10.0.0):
     - React-Core
   - SocketRocket (0.6.1)
-  - VisionCamera (3.3.0):
+  - TOCropViewController (2.6.1)
+  - VisionCamera (3.3.1):
     - React
     - React-callinvoker
     - React-Core
@@ -1342,6 +1352,7 @@ DEPENDENCIES:
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNQrGenerator (from `../node_modules/rn-qr-generator`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -1376,6 +1387,7 @@ SPEC REPOS:
     - PromisesObjC
     - RecaptchaInterop
     - SocketRocket
+    - TOCropViewController
     - ZXingObjC
 
 EXTERNAL SOURCES:
@@ -1488,6 +1500,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
   RNQrGenerator:
@@ -1582,6 +1596,7 @@ SPEC CHECKSUMS:
   RNFBFirestore: efd8996a791bb9edbd0a3b3acfd80d7a60d9a1d9
   RNFBStorage: 8463ef384e28c9b1fc7ad2905b5137bac93871d6
   RNGestureHandler: 38aa38413896620338948fbb5c90579a7b1c3fde
+  RNImageCropPicker: 486e2f7e2b0461ce24321f751410dce1b3b49e6d
   RNKeychain: a65256b6ca6ba6976132cc4124b238a5b13b3d9c
   RNQrGenerator: 90461ba3ca88c1d38ef73da50fade35d9648215d
   RNReanimated: 99aa8c96151abbc2d7e737a56ec62aca709f0c92
@@ -1589,7 +1604,8 @@ SPEC CHECKSUMS:
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
   RNVectorIcons: 8b5bb0fa61d54cd2020af4f24a51841ce365c7e9
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  VisionCamera: abdb4db40dc363b19e28428f656b882eec45d9fa
+  TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
+  VisionCamera: ed0b360805f140c0108d9039fd8a58abbde2ff51
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 

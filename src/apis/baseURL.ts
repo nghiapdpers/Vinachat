@@ -1,4 +1,4 @@
-const DOMAIN = 'http://127.0.0.1:5003';
+const DOMAIN = 'http://192.168.0.122:5000';
 
 export const LOGIN_URL = `${DOMAIN}/api/user/login`;
 export const LOGIN_EXTERNAL_URL = `${DOMAIN}/api/user/loginWithExternal`;

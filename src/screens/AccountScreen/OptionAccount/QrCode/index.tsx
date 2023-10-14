@@ -6,6 +6,7 @@ import Header from "../../../../components/Header";
 import ViewShot from "react-native-view-shot";
 import { CameraRoll, iosRequestAddOnlyGalleryPermission } from "@react-native-camera-roll/camera-roll";
 import { screen, component } from "../../../../assets/images";
+import { useSelector } from "react-redux";
 
 const dataOptionInfo = [
     {
@@ -27,11 +28,13 @@ const dataOptionInfo = [
 
 export default function QrCode({ route }: { route: any }) {
     const [QrCode, setQrCode] = useState({ imageUri: '' });
-    const mobile = '0123456789';
     const screenshotRef = useRef<ViewShot>(null);
     const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
     const [responseStatus, setresponseStatus] = useState('');
     const [showArlert, setshowArlert] = useState(false);
+    const user = useSelector((state: any) => state?.user);
+    const userExternal = useSelector((state: any) => state?.userExternal);
+
 
     useEffect(() => {
         const requestCameraRollPermission = async () => {
@@ -49,7 +52,7 @@ export default function QrCode({ route }: { route: any }) {
 
         requestCameraRollPermission();
         RNQRGenerator.generate({
-            value: mobile,
+            value: userExternal?.data?.mobile || user?.data?.mobile,
             width: 250,
             height: 250,
             correctionLevel: "L"
@@ -139,7 +142,9 @@ export default function QrCode({ route }: { route: any }) {
                                 </View>
                                 <View style={styles.TextInfo}>
                                     <Text style={styles.textusername}>ngtrthinhh</Text>
-                                    <Text style={styles.textfullname}>Nguyễn Trung Thịnh</Text>
+                                    <Text style={styles.textfullname}>
+                                        {userExternal?.data?.fullname || user?.data?.fullname}
+                                    </Text>
                                 </View>
                             </View>
                         </View>
