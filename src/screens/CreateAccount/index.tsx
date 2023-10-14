@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, View, Alert} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, Text, View, Alert } from 'react-native';
 import styles from './styes';
 import mainTheme from '../../assets/colors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import CheckBox from '../../components/CheckBox';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   actionClearUser,
   actionRegisterStart,
@@ -16,7 +16,7 @@ const CreateAccount = () => {
   const dispatch = useDispatch();
   const route = useRoute();
   const navigation = useNavigation();
-  const {phone} = route?.params || {};
+  const { phone } = route?.params || {};
 
   const user = useSelector((state: any) => state?.user);
   const userExternal = useSelector((state: any) => state?.userExternal);
@@ -101,14 +101,14 @@ const CreateAccount = () => {
       <Input
         onChange={(text: string) => setIsPhone(text)}
         value={isPhone}
-        style={{marginTop: 16}}
+        style={{ marginTop: 16 }}
         title="Phone Number"
         keyboardType="number-pad"
         disableInput={false}
       />
 
       <Input
-        style={{marginTop: 16}}
+        style={{ marginTop: 16 }}
         title="Full Name"
         keyboardType="default"
         value={isFullName}
@@ -117,7 +117,7 @@ const CreateAccount = () => {
       />
 
       <Input
-        style={{marginTop: 16}}
+        style={{ marginTop: 16 }}
         title="Password"
         keyboardType="default"
         secureText={true}
@@ -133,7 +133,7 @@ const CreateAccount = () => {
           justifyContent: 'center',
         }}>
         <CheckBox status={isChecked} handleChecked={toggleCheckBox} />
-        <Text style={{fontSize: 16, color: mainTheme.text, marginLeft: 8}}>
+        <Text style={{ fontSize: 16, color: mainTheme.text, marginLeft: 8 }}>
           I agree with Terms and Conditions
         </Text>
       </View>
@@ -143,7 +143,7 @@ const CreateAccount = () => {
         disable={false}
         title="Register"
         onPress={() => Register()}
-        style={{marginTop: 16}}
+        style={{ marginTop: 16 }}
       />
     </SafeAreaView>
   );

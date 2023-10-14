@@ -4,6 +4,7 @@ import { GROUPCHAT } from '../actions/types';
 const initialState = {
     loading: false,
     data: [],
+    status: 'notLoading'
 };
 
 export default function listGroupChatReducer(state = initialState, action: AnyAction) {
@@ -11,18 +12,21 @@ export default function listGroupChatReducer(state = initialState, action: AnyAc
         case GROUPCHAT.START:
             return {
                 ...state,
-                loading: true
+                loading: true,
+                status: 'loading'
             }
         case GROUPCHAT.END:
             return {
                 ...state,
                 loading: false,
-                data: action.payload.data,
+                data: action.payload?.data,
+                status: 'done'
             };
         case GROUPCHAT.FAIL:
             return {
                 ...state,
-                loading: false
+                loading: false,
+                status: 'fail'
             }
         case GROUPCHAT.UPDATE_LATEST_MESSAGE:
             // Dữ liệu nhận
@@ -37,17 +41,26 @@ export default function listGroupChatReducer(state = initialState, action: AnyAc
             // Cập nhật trường "latest_message_text" cho từng mục trong mảng
             updatedDataArray?.forEach((updatedItem: any) => {
                 const index = updatedData.findIndex((item: any) => item?.ref === updatedItem.ref);
-                console.log('vị trí index:>>', index);
+                // console.log('vị trí index:>>', index);
 
 
                 // Nếu tìm thấy mục với cùng ref và khác latest_message_text thì cập nhật "latest_message_text"
-                if (index !== -1 && updatedData[index].latest_message_text !== updatedItem.latest_message_text) {
+                if (index !== -1 && updatedData[index].latest_message_text !== updatedItem.latest_message_text && updatedItem.latest_message_text) {
                     // Cập nhập nội dung tin nhắn
                     updatedData[index].latest_message_text = updatedItem.latest_message_text;
+                    updatedData[index].latest_message_type = updatedItem.latest_message_type;
+                    // Cập nhập tên người gửi tin nhắn
+                    updatedData[index].latest_message_from_name = updatedItem.latest_message_from_name;
+                    updatedTextData.push(updatedData[index]); // Thêm mục này vào mảng đã thay đổi
+                } else if (index !== -1 && updatedData[index].latest_message_type !== updatedItem.latest_message_type && updatedItem.latest_message_type) {
+                    updatedData[index].latest_message_text = updatedItem.latest_message_text;
+                    // Cập nhật type message
+                    updatedData[index].latest_message_type = updatedItem.latest_message_type;
                     // Cập nhập tên người gửi tin nhắn
                     updatedData[index].latest_message_from_name = updatedItem.latest_message_from_name;
                     updatedTextData.push(updatedData[index]); // Thêm mục này vào mảng đã thay đổi
                 }
+
             });
 
             // console.log('mục có latestMessage thay đổi:>>', updatedTextData);

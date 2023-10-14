@@ -4,8 +4,6 @@ import {
   actionUpdateLatestMessage,
 } from '../../redux/actions/listGroupChat';
 import firestore from '@react-native-firebase/firestore';
-import {getData} from '../../storage';
-import {LOCALSTORAGE} from '../../storage/direct';
 import styles from './styles';
 import {
   Image,
@@ -25,13 +23,16 @@ const database = firestore();
 export default function HomeScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
   const datafriend = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
   );
+
   const user = useSelector((state: any) => state.user);
   const userExternal = useSelector((state: any) => state?.userExternal);
   const list = useSelector((state: any) => state.groupChat?.data);
+  const status = useSelector((state: any) => state.groupChat?.status);
+
+  console.log('user:>>', user?.data?.fullname);
 
   useEffect(() => {
     console.log('list:>>', list);
@@ -53,25 +54,25 @@ export default function HomeScreen() {
     dispatch(actionUpdateLatestMessage(groupDataArray));
   }
 
+  useEffect(() => {
+    dispatch(actionFriendListStart);
+  }, []);
+
+  // Gọi api Group Chat
+  useEffect(() => {
+    dispatch(actionListGroupChatStart());
+  }, []);
+
   // Khi lỗi
   function onErrorGroups(error: any) {
     console.log('Error get realtime:>>', error);
   }
 
   useEffect(() => {
-    const listRef: any[] = [];
-    const getListRef = async () => {
-      // Lấy ra GROUP_CHAT trong Local.
-      const res = await getData(LOCALSTORAGE.groupChat);
+    if (status === 'done') {
+      const listRef = list.map((e: any) => e.ref);
 
-      // Lấy ra mảng ref trong group chat để check điều kiện khi lắng nghe collection "groups"
-      if (res && res.data) {
-        res.data.forEach((e: any) => {
-          listRef.push(e.ref);
-        });
-      }
-
-      console.log(listRef);
+      console.log('listRef:>>', listRef);
 
       if (listRef.length > 0) {
         // Bắt đầu lắng nghe dữ liệu từ collection "groups"
@@ -82,11 +83,8 @@ export default function HomeScreen() {
       } else {
         console.log('ListRef Is Empty');
       }
-    };
-
-    // call method
-    getListRef();
-  }, []);
+    }
+  }, [status]);
 
   useEffect(() => {
     dispatch(actionFriendListStart);
@@ -131,7 +129,12 @@ export default function HomeScreen() {
   };
 
   const Flatlistrender = ({item}: {item: any}) => {
-    return (
+    console.log(
+      (user?.data?.fullname || userExternal?.data?.fullname) ===
+        item?.latest_message_from_name && item?.latest_message_type === 'image',
+    );
+
+    return item?.latest_message_type ? (
       <TouchableOpacity
         style={styles.BorderMessage}
         onPress={() => {
@@ -151,12 +154,16 @@ export default function HomeScreen() {
           <Text>
             {(user?.data?.fullname || userExternal?.data?.fullname) ===
             item?.latest_message_from_name
-              ? `You: ${item.latest_message_text}`
+              ? item?.latest_message_type === 'image'
+                ? `You: Hình ảnh`
+                : `You: ${item.latest_message_text}`
+              : item?.latest_message_type === 'image'
+              ? `${item.latest_message_from_name}: Hình ảnh`
               : `${item.latest_message_from_name}: ${item.latest_message_text}`}
           </Text>
         </View>
       </TouchableOpacity>
-    );
+    ) : null;
   };
 
   return (
