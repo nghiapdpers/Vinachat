@@ -112,6 +112,8 @@ export default function HomeScreen() {
   };
 
   const renderFriendActive = ({item}: {item: any}) => {
+    console.log('friend active item', item);
+
     return (
       <TouchableOpacity
         style={styles.viewfriendActive}
@@ -136,6 +138,7 @@ export default function HomeScreen() {
           navigation.navigate('MessageScreen', {
             groupRef: item.ref,
             total_member: item.total_member,
+            groupName: item.name,
           });
         }}>
         <View style={styles.MessageAvatar}>

@@ -28,6 +28,7 @@ import {useCameraPermission} from 'react-native-vision-camera';
 import {useDispatch, useSelector} from 'react-redux';
 import {listChatActions} from '../../redux/actions/listChatActions';
 import {useRoute} from '@react-navigation/native';
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 // Màn hình chat:
 /**
@@ -50,7 +51,7 @@ export default function MessageScreen() {
 
   const route = useRoute();
 
-  const {groupRef, total_member}: any = route.params;
+  const {groupRef, total_member, groupName}: any = route.params;
 
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
@@ -69,6 +70,7 @@ export default function MessageScreen() {
   const [keyboard, setKeyboard] = useState(false);
   const listRef = useRef<any | FlatList>(null);
   const realm = useRealm();
+  const [isReady, setIsReady] = useState(false);
 
   // side effect: subcribe to listen chat
   useEffect(() => {
@@ -133,8 +135,7 @@ export default function MessageScreen() {
           } else {
             if (
               (listChatData.length > 0 &&
-                !snapshot.empty &&
-                listChatData[0].ref !== snapshot.docs[0].id) ||
+                listChatData[0]?.ref !== snapshot.docs[0]?.id) ||
               listChatData.length == 0
             ) {
               dispatch(listChatActions.clear());
@@ -151,6 +152,7 @@ export default function MessageScreen() {
               );
             }
             notFirstRender = true;
+            setIsReady(true);
           }
         },
         err => {
@@ -442,7 +444,7 @@ export default function MessageScreen() {
 
   // event handler: loadmore
   const handleLoadmore = () => {
-    if (currentMessage < totalMessage) {
+    if (currentMessage < totalMessage && listChatData.length >= 20) {
       dispatch(
         listChatActions.loadmore_start(
           groupRef,
@@ -458,11 +460,12 @@ export default function MessageScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : keyboard ? 25 : 0}>
       <SafeAreaView style={styles.container}>
+        {!isReady && <LoadingOverlay />}
         <View style={styles.header}>
           <Header
             Iconback={component.header.back}
-            text={'ngtrthinhh'}
-            status={'Active now'}
+            text={groupName}
+            status={undefined}
             IconOption1={screen.message.phonecall}
             IconOption2={screen.message.videocall}
             IconOption3={screen.message.list}
@@ -478,7 +481,7 @@ export default function MessageScreen() {
               handleCloseMoreOpt();
               Keyboard.dismiss();
             }}>
-            {loadmore && <Text>Tải thêm</Text>}
+            {loadmore && <Text style={styles.loadmoreText}>Tải thêm</Text>}
             <FlatList
               data={listChatData}
               renderItem={renderItem}

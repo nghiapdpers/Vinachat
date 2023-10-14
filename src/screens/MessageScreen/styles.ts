@@ -171,6 +171,14 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 16,
   },
+
+  loadmoreText: {
+    fontSize: 14,
+    fontWeight: '500',
+    backgroundColor: mainTheme.logo,
+    textAlign: 'center',
+    color: mainTheme.white,
+  },
 });
 
 export default styles;
