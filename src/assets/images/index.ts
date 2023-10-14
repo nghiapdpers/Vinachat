@@ -6,6 +6,13 @@ export const component = {
   header: {
     back: require('./Components/Header/back.png'),
   },
+  more_message_opt: {
+    image: require('./Components/MoreMessageOptions/image.png'),
+    photo: require('./Components/MoreMessageOptions/photo.png'),
+  },
+  list_image: {
+    close: require('./Components/ListImage/close.png'),
+  },
 };
 
 export const screen = {
@@ -44,6 +51,7 @@ export const screen = {
     voicechat: require('./Screen/MessageScreen/microphone.png'),
     picture: require('./Screen/MessageScreen/picture.png'),
     emoji: require('./Screen/MessageScreen/emoji.png'),
+    loading: require('./Screen/MessageScreen/loading.png'),
   },
   qrcode: {
     download: require('./Screen/QRCode/download.png'),
@@ -58,6 +66,7 @@ export const screen = {
 
 const images = {
   component,
+  screen,
 };
 
 export default images;

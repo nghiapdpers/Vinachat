@@ -8,6 +8,8 @@ type chatProps = {
   sent_time?: FirebaseFirestoreTypes.Timestamp;
   type?: 'text' | 'image';
   status: 'sending' | 'sended';
+  from_name: string;
+  images?: any[];
 };
 
 function mergeListChatData(data: chatProps[]) {
