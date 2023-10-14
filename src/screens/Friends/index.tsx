@@ -155,7 +155,7 @@ const Friends = () => {
       <Text style={styles.title}>Friends</Text>
       <FlatList
         data={data}
-        style={{marginTop: 10}}
+        style={{marginTop: 10, flex: 1}}
         ListEmptyComponent={ListEmptyComponent}
         renderItem={({item}: {item: any}) => {
           return (

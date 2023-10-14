@@ -13,21 +13,22 @@ import {
   Keyboard,
   Pressable,
 } from 'react-native';
-import images, { component, screen } from '../../assets/images';
+import images, {component, screen} from '../../assets/images';
 import GroupChat from '../../realm/GroupChat';
-import { useRealm } from '@realm/react';
+import {useRealm} from '@realm/react';
 import Message from '../../realm/Message';
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, {useCallback, useEffect, useState, useRef} from 'react';
 import Header from '../../components/Header';
 import EmojiKeyboard from '../../components/EmojiKeyboard';
 import styles from './styles';
 import mainTheme from '../../assets/colors';
 import MoreMessageOptions from '../../components/MoreMessageOptions';
-import { Image as ImageAsset } from 'react-native-image-crop-picker';
-import { useCameraPermission } from 'react-native-vision-camera';
-import { useDispatch, useSelector } from 'react-redux';
-import { listChatActions } from '../../redux/actions/listChatActions';
-import { useRoute } from '@react-navigation/native';
+import {Image as ImageAsset} from 'react-native-image-crop-picker';
+import {useCameraPermission} from 'react-native-vision-camera';
+import {useDispatch, useSelector} from 'react-redux';
+import {listChatActions} from '../../redux/actions/listChatActions';
+import {useRoute} from '@react-navigation/native';
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 // Màn hình chat:
 /**
@@ -46,11 +47,11 @@ const database = firestore();
 // const total_member = 2;
 
 export default function MessageScreen() {
-  const { hasPermission, requestPermission } = useCameraPermission();
+  const {hasPermission, requestPermission} = useCameraPermission();
 
   const route = useRoute();
 
-  const { groupRef, total_member }: any = route.params;
+  const {groupRef, total_member, groupName}: any = route.params;
 
 
   const dispatch = useDispatch();
@@ -71,6 +72,7 @@ export default function MessageScreen() {
   const [keyboard, setKeyboard] = useState(false);
   const listRef = useRef<any | FlatList>(null);
   const realm = useRealm();
+  const [isReady, setIsReady] = useState(false);
 
   // side effect: subcribe to listen chat
   useEffect(() => {
@@ -125,7 +127,7 @@ export default function MessageScreen() {
                     sent_time: item.doc.data().sent_time.seconds,
                     type: item.doc.data().type,
                     images: item.doc.data().images
-                      ? item.doc.data().images.map((url: any) => ({ url: url }))
+                      ? item.doc.data().images.map((url: any) => ({url: url}))
                       : [],
                   };
                   groupChat.messages.push(newMessage);
@@ -135,8 +137,7 @@ export default function MessageScreen() {
           } else {
             if (
               (listChatData.length > 0 &&
-                !snapshot.empty &&
-                listChatData[0].ref !== snapshot.docs[0].id) ||
+                listChatData[0]?.ref !== snapshot.docs[0]?.id) ||
               listChatData.length == 0
             ) {
               dispatch(listChatActions.clear());
@@ -153,6 +154,7 @@ export default function MessageScreen() {
               );
             }
             notFirstRender = true;
+            setIsReady(true);
           }
         },
         err => {
@@ -229,7 +231,7 @@ export default function MessageScreen() {
 
   //   const yourRef = useRef(null);
 
-  const renderItem = ({ item, index }: any) => {
+  const renderItem = ({item, index}: any) => {
     const messageFromMe = item.from === ref;
 
     const lastMessageSameFrom = listChatData[index + 1]?.from === item.from;
@@ -238,8 +240,8 @@ export default function MessageScreen() {
       <View
         style={[
           styles.messageContainer,
-          { alignSelf: messageFromMe ? 'flex-end' : 'flex-start' },
-          { marginTop: lastMessageSameFrom ? 0 : 18 },
+          {alignSelf: messageFromMe ? 'flex-end' : 'flex-start'},
+          {marginTop: lastMessageSameFrom ? 0 : 18},
         ]}>
         {!messageFromMe && total_member > 2 && !lastMessageSameFrom && (
           <Text style={[styles.messageFromName]}>{item.from_name}</Text>
@@ -267,19 +269,19 @@ export default function MessageScreen() {
                 style={[
                   styles.imageMessage,
                   messageFromMe
-                    ? { alignSelf: 'flex-end', marginRight: 10 }
-                    : { alignSelf: 'flex-start', marginLeft: 10 },
+                    ? {alignSelf: 'flex-end', marginRight: 10}
+                    : {alignSelf: 'flex-start', marginLeft: 10},
                 ]}>
                 <Image
                   source={
                     image == 'dang-tai-anh-len-server'
                       ? images.screen.message.loading
-                      : { uri: image }
+                      : {uri: image}
                   }
                   style={
                     image == 'dang-tai-anh-len-server'
-                      ? { width: 64, height: 64, alignSelf: 'center' }
-                      : { width: '100%', height: '100%', borderRadius: 10 }
+                      ? {width: 64, height: 64, alignSelf: 'center'}
+                      : {width: '100%', height: '100%', borderRadius: 10}
                   }
                 />
               </View>
@@ -386,7 +388,7 @@ export default function MessageScreen() {
       }
 
       setValue('');
-      listRef.current.scrollToOffset({ animated: true, offset: 0 });
+      listRef.current.scrollToOffset({animated: true, offset: 0});
 
       if (imagesData.length == 0) {
         // write to firestore
@@ -444,7 +446,7 @@ export default function MessageScreen() {
 
   // event handler: loadmore
   const handleLoadmore = () => {
-    if (currentMessage < totalMessage) {
+    if (currentMessage < totalMessage && listChatData.length >= 20) {
       dispatch(
         listChatActions.loadmore_start(
           groupRef,
@@ -460,11 +462,12 @@ export default function MessageScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : keyboard ? 25 : 0}>
       <SafeAreaView style={styles.container}>
+        {!isReady && <LoadingOverlay />}
         <View style={styles.header}>
           <Header
             Iconback={component.header.back}
-            text={'ngtrthinhh'}
-            status={'Active now'}
+            text={groupName}
+            status={undefined}
             IconOption1={screen.message.phonecall}
             IconOption2={screen.message.videocall}
             IconOption3={screen.message.list}
@@ -480,7 +483,7 @@ export default function MessageScreen() {
               handleCloseMoreOpt();
               Keyboard.dismiss();
             }}>
-            {loadmore && <Text>Tải thêm</Text>}
+            {loadmore && <Text style={styles.loadmoreText}>Tải thêm</Text>}
             <FlatList
               data={listChatData}
               renderItem={renderItem}
