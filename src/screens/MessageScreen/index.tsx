@@ -52,9 +52,11 @@ export default function MessageScreen() {
 
   const { groupRef, total_member }: any = route.params;
 
+
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
   const myName = useSelector((s: any) => s.user.data.fullname);
+
 
   const listChatData = useSelector((s: any) => s.listChat.data);
   const loadmore = useSelector((s: any) => s.listChat.lmLoading);

@@ -164,7 +164,30 @@ export default function HomeScreen() {
             </Text>
           </View>
         </TouchableOpacity>
-      ) : null
+      ) :
+        (
+          <TouchableOpacity
+            style={styles.BorderMessage}
+            onPress={() => {
+              navigation.navigate('MessageScreen', {
+                groupRef: item.ref,
+                total_member: item.total_member,
+                groupName: item.name,
+              });
+            }}>
+            <View style={styles.MessageAvatar}>
+              <View style={styles.borderfriendActive}>
+                <Text>{getFirstLetters(item.name)}</Text>
+              </View>
+            </View>
+            <View style={styles.Message}>
+              <Text style={styles.textnameMessage}>{item.name}</Text>
+              <Text>
+                Bạn vừa kết bạn với {item?.name}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )
     )
 
   };
