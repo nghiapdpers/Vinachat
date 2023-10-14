@@ -39,7 +39,7 @@ import storage from '@react-native-firebase/storage'
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const HOST = '192.168.0.131';
+const HOST = '192.168.0.122';
 
 // use fierstore emulator
 firestore().useEmulator(HOST, 8080);

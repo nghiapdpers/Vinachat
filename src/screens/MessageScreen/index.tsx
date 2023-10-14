@@ -35,7 +35,7 @@ import { listChatActions } from '../../redux/actions/listChatActions';
  */
 
 const database = firestore();
-const groupRef = '8pYpDESqxHhpY8erUyQj';
+const groupRef = 'UMOR8jfc38MNL7eBRcqO';
 
 export default function MessageScreen({ route }: { route: any }) {
   const dispatch = useDispatch();

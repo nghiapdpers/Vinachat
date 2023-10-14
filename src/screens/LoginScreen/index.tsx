@@ -30,8 +30,6 @@ export default function LoginScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const user = useSelector((state: any) => state?.user);
-  const userExternal = useSelector((state: any) => state?.userExternal);
   const message = useSelector((state: any) => state?.user?.login?.message);
   const messageExternal = useSelector((state: any) => state?.userExternal?.login?.message);
   const loading = useSelector((state: any) => state.user?.loading);
@@ -40,10 +38,6 @@ export default function LoginScreen() {
   const [isPhone, setIsPhone] = useState('');
   const [isPassword, setIsPassword] = useState('');
 
-  // console.log('userLogin:>>', user);
-  // console.log('userExternalLogin:>>', userExternal);
-  // console.log('message:>>', message);
-  // console.log('messageExternal:>>', messageExternal);
 
   const rnBiometrics = new ReactNativeBiometrics({
     allowDeviceCredentials: true,
