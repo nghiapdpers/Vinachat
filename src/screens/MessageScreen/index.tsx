@@ -23,7 +23,7 @@ import EmojiKeyboard from '../../components/EmojiKeyboard';
 import styles from './styles';
 import mainTheme from '../../assets/colors';
 import MoreMessageOptions from '../../components/MoreMessageOptions';
-import {Asset} from 'react-native-image-picker';
+import {Image as ImageAsset} from 'react-native-image-crop-picker';
 import {useCameraPermission} from 'react-native-vision-camera';
 import {useDispatch, useSelector} from 'react-redux';
 import {listChatActions} from '../../redux/actions/listChatActions';
@@ -62,7 +62,7 @@ export default function MessageScreen() {
   const currentMessage = useSelector((s: any) => s.listChat.lmCurrent);
 
   const [isSend, setIsSend] = useState(false);
-  const [imagesData, setImagesData] = useState<Asset[]>([]);
+  const [imagesData, setImagesData] = useState<ImageAsset[]>([]);
   const [moreOptVisible, setMoreOptVisible] = useState(false);
   const [emoPicker, setEmoPicker] = useState(false);
   const [value, setValue] = useState('');
@@ -401,9 +401,18 @@ export default function MessageScreen() {
             from_name: myName,
           });
       } else {
-        const imagesPromise = imagesData.map(async (item: Asset) => {
-          const ref = storage().ref(`/groups/${groupRef}/${item.fileName}`);
-          await ref.putFile(item.uri!);
+        const imagesPromise = imagesData.map(async (item: ImageAsset) => {
+          // cut filename from path (android)
+          let fileName;
+          if (Platform.OS === 'ios') {
+            fileName = item.filename;
+          } else {
+            const splitPath = item.path.split('/');
+            fileName = splitPath[splitPath.length - 1];
+          }
+
+          const ref = storage().ref(`/groups/${groupRef}/${fileName}`);
+          await ref.putFile(item.path);
           return ref.getDownloadURL();
         });
 

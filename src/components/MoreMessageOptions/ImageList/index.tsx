@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import styles from './styles';
 import {memo, useEffect, useState} from 'react';
-import {Asset} from 'react-native-image-picker';
 import images from '../../../assets/images';
 import {
   chosenImageActions,
@@ -39,7 +38,7 @@ function ImageList({visible, onClose}: Props) {
         contentContainerStyle={styles.listContent}
         renderItem={({item, index}) => (
           <View>
-            <Image source={{uri: item.uri}} style={styles.image} />
+            <Image source={{uri: item.path}} style={styles.image} />
             <TouchableOpacity
               style={styles.closeView}
               onPress={() => handleDeleteImage(index)}>
