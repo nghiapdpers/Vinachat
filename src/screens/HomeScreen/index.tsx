@@ -148,97 +148,91 @@ export default function HomeScreen() {
           <View style={styles.borderfriendActive}>
             <Text>{getFirstLetters(item.name)}</Text>
           </View>
-          <View style={styles.Message}>
-            <Text style={styles.textnameMessage}>{item.name}</Text>
-            <Text>
-              {
-                (user?.data?.fullname || userExternal?.data?.fullname) === item?.latest_message_from_name
-                  ? (
-                    item?.latest_message_type === 'image'
-                      ? `You: Hình ảnh`
-                      : `You: ${item.latest_message_text}`
-                  )
-                  : (
-                    item?.latest_message_type === 'image'
-                      ? `${item.latest_message_from_name}: Hình ảnh`
-                      : `${item.latest_message_from_name}: ${item.latest_message_text}`
-                  )
-              }
-            </Text>
-          </View>
+        </View>
+        <View style={styles.Message}>
+          <Text style={styles.textnameMessage}>{item.name}</Text>
+          <Text>
+            {(user?.data?.fullname || userExternal?.data?.fullname) ===
+              item?.latest_message_from_name
+              ? item?.latest_message_type === 'image'
+                ? `You: Hình ảnh`
+                : `You: ${item.latest_message_text}`
+              : item?.latest_message_type === 'image'
+                ? `${item.latest_message_from_name}: Hình ảnh`
+                : `${item.latest_message_from_name}: ${item.latest_message_text}`}
+          </Text>
         </View>
       </TouchableOpacity>
-    ) :
-      (
-        <TouchableOpacity
-          style={styles.BorderMessage}
-          onPress={() => {
-            navigation.navigate('MessageScreen', {
-              groupRef: item.ref,
-              total_member: item.total_member,
-              groupName: item.name,
-            });
-          }}>
-          <View style={styles.MessageAvatar}>
-            <View style={styles.borderfriendActive}>
-              <Text>{getFirstLetters(item.name)}</Text>
-            </View>
-          </View>
-          <View style={styles.Message}>
-            <Text style={styles.textnameMessage}>{item.name}</Text>
-            <Text>
-              Bạn vừa kết bạn với {item?.name}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      )
-    )
-
-};
-
-return (
-  <SafeAreaView style={styles.container}>
-    <View style={styles.header}>
-      <Text style={styles.logoText}>Vinachat</Text>
+    ) : (
       <TouchableOpacity
-        style={styles.searchBorder}
+        style={styles.BorderMessage}
         onPress={() => {
-          navigation.navigate('SearchScreen');
+          navigation.navigate('MessageScreen', {
+            groupRef: item.ref,
+            total_member: item.total_member,
+            groupName: item.name,
+          });
         }}>
-        <Image style={styles.searchIcon} source={screen.home.search} />
+        <View style={styles.MessageAvatar}>
+          <View style={styles.borderfriendActive}>
+            <Text>{getFirstLetters(item.name)}</Text>
+          </View>
+        </View>
+        <View style={styles.Message}>
+          <Text style={styles.textnameMessage}>{item.name}</Text>
+          <Text>
+            Bạn vừa kết bạn với {item?.name}
+          </Text>
+        </View>
       </TouchableOpacity>
-    </View>
-    <View style={styles.FriendActive}>
-      <FlatList
-        data={datafriend}
-        renderItem={renderFriendActive}
-        keyExtractor={(item, index) => index.toString()}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-      />
-    </View>
-    <View style={styles.optionView}>
-      <View style={styles.createGroup}>
-        <Text style={styles.texttitleMessage}>Message</Text>
+    );
+
+
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.logoText}>Vinachat</Text>
         <TouchableOpacity
+          style={styles.searchBorder}
           onPress={() => {
-            navigation.navigate('CreateGroupChat');
+            navigation.navigate('SearchScreen');
           }}>
-          <Image
-            style={styles.createGroupIcon}
-            source={screen.home.creategroup}
-          />
+          <Image style={styles.searchIcon} source={screen.home.search} />
         </TouchableOpacity>
       </View>
-    </View>
-    <View style={styles.listMessage}>
-      <FlatList
-        data={list}
-        renderItem={Flatlistrender}
-        keyExtractor={(item, index) => index.toString()}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
-  </SafeAreaView>
-);
+      <View style={styles.FriendActive}>
+        <FlatList
+          data={datafriend}
+          renderItem={renderFriendActive}
+          keyExtractor={(item, index) => index.toString()}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+      <View style={styles.optionView}>
+        <View style={styles.createGroup}>
+          <Text style={styles.texttitleMessage}>Message</Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('CreateGroupChat');
+            }}>
+            <Image
+              style={styles.createGroupIcon}
+              source={screen.home.creategroup}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.listMessage}>
+        <FlatList
+          data={list}
+          renderItem={Flatlistrender}
+          keyExtractor={(item, index) => index.toString()}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+    </SafeAreaView>
+  );
 }
