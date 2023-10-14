@@ -40,7 +40,7 @@ import { listChatActions } from '../../redux/actions/listChatActions';
  */
 
 const database = firestore();
-const groupRef = 'dAkcblIwZ36CS2WNDPu9';
+const groupRef = 'UMOR8jfc38MNL7eBRcqO';
 const total_member = 2;
 
 export default function MessageScreen({ route }: { route: any }) {

@@ -30,6 +30,10 @@ export default function HomeScreen() {
   const list = useSelector((state: any) => state.groupChat?.data);
   const status = useSelector((state: any) => state.groupChat?.status);
 
+
+  console.log('user:>>', user?.data?.fullname);
+
+
   useEffect(() => {
     console.log('list:>>', list);
   }, [list]);
@@ -124,23 +128,41 @@ export default function HomeScreen() {
   };
 
   const Flatlistrender = ({ item }: { item: any }) => {
+    console.log((user?.data?.fullname || userExternal?.data?.fullname) === item?.latest_message_from_name && item?.latest_message_type === 'image');
+
     return (
-      <TouchableOpacity
-        style={styles.BorderMessage}
-        onPress={() => {
-          navigation.navigate('MessageScreen', { ref: String(item.id) });
-        }}>
-        <View style={styles.MessageAvatar}>
-          <View style={styles.borderfriendActive}>
-            <Text>{getFirstLetters(item.name)}</Text>
+      item?.latest_message_type ? (
+        <TouchableOpacity
+          style={styles.BorderMessage}
+          onPress={() => {
+            navigation.navigate('MessageScreen', { ref: String(item.id) });
+          }}>
+          <View style={styles.MessageAvatar}>
+            <View style={styles.borderfriendActive}>
+              <Text>{getFirstLetters(item.name)}</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.Message}>
-          <Text style={styles.textnameMessage}>{item.name}</Text>
-          <Text>{(user?.data?.fullname || userExternal?.data?.fullname) === item?.latest_message_from_name ? `You: ${item.latest_message_text}` : `${item.latest_message_from_name}: ${item.latest_message_text}`}</Text>
-        </View>
-      </TouchableOpacity>
-    );
+          <View style={styles.Message}>
+            <Text style={styles.textnameMessage}>{item.name}</Text>
+            <Text>
+              {
+                (user?.data?.fullname || userExternal?.data?.fullname) === item?.latest_message_from_name
+                  ? (
+                    item?.latest_message_type === 'image'
+                      ? `You: Hình ảnh`
+                      : `You: ${item.latest_message_text}`
+                  )
+                  : (
+                    item?.latest_message_type === 'image'
+                      ? `${item.latest_message_from_name}: Hình ảnh`
+                      : `${item.latest_message_from_name}: ${item.latest_message_text}`
+                  )
+              }
+            </Text>
+          </View>
+        </TouchableOpacity>
+      ) : null
+    )
 
   };
 

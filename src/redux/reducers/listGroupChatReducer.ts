@@ -45,13 +45,20 @@ export default function listGroupChatReducer(state = initialState, action: AnyAc
 
 
                 // Nếu tìm thấy mục với cùng ref và khác latest_message_text thì cập nhật "latest_message_text"
-                if (index !== -1 && updatedData[index].latest_message_text !== updatedItem.latest_message_text) {
+                if (index !== -1 && updatedData[index].latest_message_text !== updatedItem.latest_message_text && updatedItem.latest_message_text) {
                     // Cập nhập nội dung tin nhắn
                     updatedData[index].latest_message_text = updatedItem.latest_message_text;
                     // Cập nhập tên người gửi tin nhắn
                     updatedData[index].latest_message_from_name = updatedItem.latest_message_from_name;
                     updatedTextData.push(updatedData[index]); // Thêm mục này vào mảng đã thay đổi
+                } else if (index !== -1 && updatedData[index].latest_message_type !== updatedItem.latest_message_type) {
+                    // Cập nhật type message
+                    updatedData[index].latest_message_type = updatedItem.latest_message_type;
+                    // Cập nhập tên người gửi tin nhắn
+                    updatedData[index].latest_message_from_name = updatedItem.latest_message_from_name;
+                    updatedTextData.push(updatedData[index]); // Thêm mục này vào mảng đã thay đổi
                 }
+
             });
 
             // console.log('mục có latestMessage thay đổi:>>', updatedTextData);
