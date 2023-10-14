@@ -1,20 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import styles from './styles';
-import {
-  Image,
-  SafeAreaView,
-  Text,
-  View,
-  TouchableOpacity,
-  FlatList,
-  TextInput,
-} from 'react-native';
-import {screen, component} from '../../assets/images';
-import {useNavigation} from '@react-navigation/native';
-import mainTheme from '../../assets/colors';
-import apiSearch from '../../apis/apiSearch';
+import React, { useEffect, useState } from "react";
+import styles from "./styles";
+import { Image, SafeAreaView, Text, View, TouchableOpacity, FlatList, TextInput } from "react-native";
+import { screen, component } from "../../assets/images";
+import { useNavigation } from "@react-navigation/native";
+import mainTheme from "../../assets/colors";
+import apiSearch from "../../apis/apiSearch";
+import apiFriendRequest from "../../apis/apiFriendRequest";
 
-export default function SearchScreen({route}: {route: any}) {
+export default function SearchScreen({ route }: { route: any }) {
   const scanvalue = route?.params?.value;
   const navigation = useNavigation();
   const [value, setvalue] = useState('');
@@ -22,8 +15,10 @@ export default function SearchScreen({route}: {route: any}) {
 
   const FetchSearch = async () => {
     try {
-      return await apiSearch({keyword: value}).then((resposne: any) => {
+      return await apiSearch({ keyword: value }).then((resposne: any) => {
         setData(resposne.data);
+        console.log(resposne.data);
+
       });
     } catch (error) {
       console.log(error);
@@ -39,33 +34,53 @@ export default function SearchScreen({route}: {route: any}) {
     } else {
       setData(null);
     }
-  }, [value, scanvalue]);
+  }, [value, scanvalue])
 
-  const renderItem = ({item}: {item: any}) => {
+  const handleFriendRequest = async (friendRef: any) => {
+    try {
+      return await apiFriendRequest({ ref: friendRef }).then((response: any) => {
+        console.log(response);
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const ConvertStatusFriend = (status: any) => {
+    switch (status) {
+      case 'N':
+        return 'Kết bạn'
+      case 'R':
+        return 'Đã gửi lời mời'
+      case 'F':
+        return 'Đã kết bạn'
+    }
+  }
+
+  const renderItem = ({ item }: { item: any }) => {
+
     return (
       <View style={styles.borderFind}>
         <View style={styles.topItem}>
-          <View style={styles.imageItem}></View>
+          <View style={styles.imageItem}>
+
+          </View>
         </View>
         <View style={styles.bodyItem}>
           <Text style={styles.textItemName}>{item?.fullname}</Text>
           <Text style={styles.mobile}>{item?.mobile}</Text>
         </View>
         <View style={styles.endItem}>
-          <TouchableOpacity
-            style={[
-              styles.btnstatusfriend,
-              {
-                backgroundColor:
-                  item?.isFriend === false ? mainTheme.logo : '#e3e3e3',
-              },
-            ]}>
-            <Text>{item?.isFriend === false ? 'Kết bạn' : 'Đã kết bạn'}</Text>
+          <TouchableOpacity style={[styles.btnstatusfriend, { backgroundColor: item?.status === 'N' || item?.status === 'R' ? mainTheme.logo : '#e3e3e3' }]}
+            onPress={() => { handleFriendRequest(item.ref) }}
+          >
+            <Text>{ConvertStatusFriend(item.status)}</Text>
           </TouchableOpacity>
         </View>
       </View>
-    );
-  };
+    )
+  }
+
 
   return (
     <SafeAreaView style={styles.container}>

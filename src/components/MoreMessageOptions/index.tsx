@@ -1,9 +1,10 @@
 import {View, TouchableOpacity, Image, Text, ScrollView} from 'react-native';
 import {
-  launchImageLibrary,
-  launchCamera,
-  Asset,
-} from 'react-native-image-picker';
+  openPicker,
+  openCamera,
+  Image as ImageAsset,
+  clean,
+} from 'react-native-image-crop-picker';
 import {memo, useEffect, useState} from 'react';
 
 import styles from './styles';
@@ -20,7 +21,7 @@ import {
 type Props = {
   visible: boolean;
   extraClearImages?: any;
-  onImagesUpdate: (data: Asset[]) => void;
+  onImagesUpdate: (data: ImageAsset[]) => void;
 };
 
 const MoreMessageOptions = memo(function ({
@@ -34,21 +35,15 @@ const MoreMessageOptions = memo(function ({
 
   // event handler: choose image from library
   const handleOnPickImage = async (action: 'new' | 'add') => {
-    const image = await launchImageLibrary({
-      mediaType: 'mixed',
-      presentationStyle: 'fullScreen',
-      videoQuality: 'medium',
-      quality: 0.5,
-      selectionLimit: 0,
+    const image = await openPicker({
+      multiple: true,
+      maxFiles: 10,
+      minFiles: 0,
+      mediaType: 'photo',
     });
 
-    if (
-      !image.errorCode &&
-      !image.errorMessage &&
-      !image.didCancel &&
-      image.assets
-    ) {
-      const imageList = [...image.assets];
+    if (image.length > 0) {
+      const imageList = [...image];
 
       if (action == 'add') imagesDispatch(chosenImageActions.add(imageList));
       else imagesDispatch(chosenImageActions.new(imageList));
@@ -57,20 +52,12 @@ const MoreMessageOptions = memo(function ({
 
   // event handler: take picture form camera
   const handleOnTakePicture = async (action: 'new' | 'add') => {
-    const picture = await launchCamera({
+    const picture = await openCamera({
       mediaType: 'photo',
-      quality: 0.5,
-      cameraType: 'back',
-      // saveToPhotos: true,
     });
 
-    if (
-      !picture.errorCode &&
-      !picture.errorMessage &&
-      !picture.didCancel &&
-      picture.assets
-    ) {
-      const imageList = [...picture.assets];
+    if (picture) {
+      const imageList = [picture];
 
       if (action == 'add') imagesDispatch(chosenImageActions.add(imageList));
       else imagesDispatch(chosenImageActions.new(imageList));
@@ -90,6 +77,13 @@ const MoreMessageOptions = memo(function ({
     imagesDispatch(chosenImageActions.removeAll());
   }, [extraClearImages]);
 
+  useEffect(() => {
+    return () => {
+      // clean temp file
+      clean();
+    };
+  }, []);
+
   return (
     visible && (
       <View style={styles.container}>
@@ -102,7 +96,7 @@ const MoreMessageOptions = memo(function ({
               contentContainerStyle={styles.imagesView}
               showsHorizontalScrollIndicator={false}>
               <ImageIsChosen
-                uri={imagesData[imagesData.length - 1].uri!}
+                uri={imagesData[imagesData.length - 1].path}
                 more={imagesData.length - 1}
                 onPress={_ => {
                   setImageListVisible(true);

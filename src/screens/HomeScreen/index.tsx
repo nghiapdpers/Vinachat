@@ -16,15 +16,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actionFriendListStart } from '../../redux/actions/friendAction';
 import loginEpic from '../../redux/epics/loginEpic';
 
+firestore().useEmulator('127.0.0.1', 8080)
 const database = firestore();
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
   const datafriend = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
   );
+
   const user = useSelector((state: any) => state.user);
   const userExternal = useSelector((state: any) => state?.userExternal);
   const list = useSelector((state: any) => state.groupChat?.data);

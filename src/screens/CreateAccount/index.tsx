@@ -82,11 +82,12 @@ const CreateAccount = () => {
     }
 
     if (message) {
-      Alert.alert('Thông báo', message, [
+      Alert.alert('Thông báo', message.message, [
         {
           text: 'OK',
           onPress: () => {
             dispatch(actionClearUser);
+            navigation.goBack();
           },
         },
       ]);

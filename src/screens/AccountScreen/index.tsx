@@ -23,6 +23,7 @@ import LoadingOverlay from '../../components/LoadingOverlay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
 import { actionClearGroupChat } from '../../redux/actions/listGroupChat';
+import { listChatActions } from '../../redux/actions/listChatActions';
 
 const datauser = [
   {
@@ -97,7 +98,7 @@ export default function AccountScreen() {
     // Gọi action Logout
     dispatch(actionLogoutStart);
     // Xóa dữ liệu Redux
-    dispatch(actionClearGroupChat)
+    dispatch(actionClearGroupChat);
     dispatch(actionClearMessage);
     // Xóa dữ liệu trong Local
     await removeData(LOCALSTORAGE.user);
@@ -108,6 +109,8 @@ export default function AccountScreen() {
 
     // sign out firebase auth.
     auth().signOut();
+
+    dispatch(listChatActions.clear());
   };
 
   return (

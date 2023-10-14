@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -13,9 +13,10 @@ import CardRequest from '../../components/CardRequest';
 import CardFriends from '../../components/CardFriends';
 import apiReplyRequest from '../../apis/apiReplyRequest';
 import firestore from '@react-native-firebase/firestore';
-import { useDispatch, useSelector } from 'react-redux';
-import { actionFriendListStart } from '../../redux/actions/friendAction';
-import { RequestListActions } from '../../redux/actions/requestListAction';
+import {useDispatch, useSelector} from 'react-redux';
+import {actionFriendListStart} from '../../redux/actions/friendAction';
+import {RequestListActions} from '../../redux/actions/requestListAction';
+import {actionListGroupChatStart} from '../../redux/actions/listGroupChat';
 
 const database = firestore();
 
@@ -40,7 +41,7 @@ const Friends = () => {
 
   const ListEmptyComponent = () => {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={styles.textEmpty}>Chưa có bạn bè</Text>
       </View>
     );
@@ -87,7 +88,16 @@ const Friends = () => {
     apiReplyRequest({
       ref: ref,
       reply: 'accept',
-    });
+    })
+      .then(_ => {
+        setTimeout(() => {
+          dispatch(actionFriendListStart);
+          dispatch(actionListGroupChatStart());
+        }, 200);
+      })
+      .catch(err => {
+        console.warn('ACCEPT REQUEST ERROR >> ', err);
+      });
   };
 
   // event handler: deny request
@@ -112,7 +122,7 @@ const Friends = () => {
         }}
         contentContainerStyle={styles.requestContentList}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => {
+        renderItem={({item}) => {
           return (
             <CardRequest
               name={item.fullname}
@@ -145,9 +155,9 @@ const Friends = () => {
       <Text style={styles.title}>Friends</Text>
       <FlatList
         data={data}
-        style={{ marginTop: 10 }}
+        style={{marginTop: 10}}
         ListEmptyComponent={ListEmptyComponent}
-        renderItem={({ item }: { item: any }) => {
+        renderItem={({item}: {item: any}) => {
           return (
             <CardFriends
               key={item?.id}

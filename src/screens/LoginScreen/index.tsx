@@ -140,6 +140,7 @@ export default function LoginScreen() {
     }
     // Gọi action đang nhập
     dispatch(actionLoginStart(isPhone, isPassword));
+    // navigation.navigate('BottomScreen')
     CheckPasswordIfNotExists(isPassword);
   };
 
