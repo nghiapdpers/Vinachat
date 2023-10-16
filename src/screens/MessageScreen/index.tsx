@@ -43,8 +43,6 @@ import LoadingOverlay from '../../components/LoadingOverlay';
  */
 
 const database = firestore();
-// const groupRef = 'dAkcblIwZ36CS2WNDPu9';
-// const total_member = 2;
 
 export default function MessageScreen() {
   const {hasPermission, requestPermission} = useCameraPermission();
@@ -53,11 +51,9 @@ export default function MessageScreen() {
 
   const {groupRef, total_member, groupName}: any = route.params;
 
-
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
   const myName = useSelector((s: any) => s.user.data.fullname);
-
 
   const listChatData = useSelector((s: any) => s.listChat.data);
   const loadmore = useSelector((s: any) => s.listChat.lmLoading);
@@ -124,7 +120,7 @@ export default function MessageScreen() {
                     status: 'sended',
                     from: item.doc.data().from,
                     message: item.doc.data().message,
-                    sent_time: item.doc.data().sent_time.seconds,
+                    sent_time: item.doc.data().sent_time.toMillis(),
                     type: item.doc.data().type,
                     images: item.doc.data().images
                       ? item.doc.data().images.map((url: any) => ({url: url}))
@@ -167,69 +163,6 @@ export default function MessageScreen() {
       listenMessage();
     };
   }, []);
-
-  // useEffect(() => {
-  //   // ignore initial listen
-  //   let notFirstRender = false;
-  //   const listenMessagetoRealm = database
-  //     .collection('groups')
-  //     .doc(groupRef)
-  //     .collection('messages')
-  //     .orderBy('sent_time', 'desc')
-  //     .onSnapshot(
-  //       snapshot => {
-  //         if (notFirstRender) {
-  //           snapshot.docChanges().forEach(item => {
-  //             if (item.type === 'added') {
-  //               realm.write(() => {
-  //                 let groupChat: GroupChat = realm
-  //                   .objects<GroupChat>('GroupChat')
-  //                   .filtered(`ref = '${groupRef}'`)[0];
-  //                 if (!groupChat) {
-  //                   groupChat = realm.create<GroupChat>('GroupChat', {
-  //                     ref: groupRef,
-  //                     name: '',
-  //                     total_member: 0,
-  //                     adminRef: '',
-  //                     latest_message_from: '',
-  //                     latest_message_from_name: '',
-  //                     latest_message_text: '',
-  //                     latest_message_type: '',
-  //                     latest_message_sent_time: 0,
-  //                     member: [],
-  //                     messages: [],
-  //                   });
-  //                 }
-  //                 const newMessage = {
-  //                   ref: item.doc.id,
-  //                   status: 'sended',
-  //                   from: item.doc.data().from,
-  //                   message: item.doc.data().message,
-  //                   sent_time: item.doc.data().sent_time.seconds,
-  //                   type: item.doc.data().type,
-  //                 };
-  //                 groupChat.messages.push(newMessage);
-  //               });
-  //             }
-  //           });
-  //         }
-  //       },
-  //       err => {
-  //         console.warn(err);
-  //       },
-  //     );
-
-  //   const specificGroup = realm
-  //     .objects('GroupChat')
-  //     .filtered(`ref = '${groupRef}'`)[0];
-  //   console.log(specificGroup);
-  //   // unsubcribe firestore chat group
-  //   return () => {
-  //     listenMessagetoRealm();
-  //   };
-  // }, []);
-
-  //   const yourRef = useRef(null);
 
   const renderItem = ({item, index}: any) => {
     const messageFromMe = item.from === ref;
@@ -298,12 +231,12 @@ export default function MessageScreen() {
     );
   };
 
-  //   useEffect(() => {
-  //     FetchDataRealm()
-  // }, []);
-
   // useEffect(() => {
-  // }, [testfromid, data]);
+  //   const specificGroup = realm
+  //     .objects('GroupChat')
+  //     .filtered(`ref = '${groupRef}'`)[0];
+  //   console.log(specificGroup.messages);
+  // }, []);
 
   // event handler: open emoji picker
   const handleOpenEmoji = useCallback(() => {
@@ -476,9 +409,11 @@ export default function MessageScreen() {
         </View>
 
         <View style={styles.bodyMessage}>
-          <Pressable
+          <View
             style={styles.MessageView}
-            onPress={() => {
+            onMoveShouldSetResponder={() => false}
+            onStartShouldSetResponder={() => true}
+            onResponderRelease={() => {
               handleCloseEmoji();
               handleCloseMoreOpt();
               Keyboard.dismiss();
@@ -494,7 +429,7 @@ export default function MessageScreen() {
               onEndReached={handleLoadmore}
               windowSize={21}
             />
-          </Pressable>
+          </View>
 
           <View style={styles.MessageInput}>
             <TouchableOpacity

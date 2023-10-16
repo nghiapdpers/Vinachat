@@ -14,9 +14,12 @@ import {useNavigation} from '@react-navigation/native';
 import Header3 from '../../components/Header3';
 import data from './data';
 import apiCreateGroup from '../../apis/apiCreateGroup';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {actionListGroupChatStart} from '../../redux/actions/listGroupChat';
 
 export default function CreateGroupChat() {
+  const dispatch = useDispatch();
+
   const navigation = useNavigation();
   const [memberSelected, setmemberSelected] = useState([]);
   const [groupname, setgroupname] = useState('');
@@ -59,6 +62,7 @@ export default function CreateGroupChat() {
         refs: JSON.stringify(memberSelected.map(item => item?.ref)),
         name: groupname,
       }).then(async (resposne: any) => {
+        dispatch(actionListGroupChatStart());
         navigation.goBack();
       });
     } catch (error) {

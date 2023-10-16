@@ -14,7 +14,6 @@ export const FRIENDS_LIST_URL = `${DOMAIN}/api/user/getFriendList`;
 export const LOADMORE_MESSAGE = `${DOMAIN}/api/group/getListMessage`;
 export const FRIENDS_REQUEST_URL = `${DOMAIN}/api/user/requestFriend`;
 
-
 export default {
   LOGIN_URL,
   REGISTER_URL,
@@ -28,5 +27,5 @@ export default {
   CREATE_GROUP_URL,
   FRIENDS_LIST_URL,
   LOADMORE_MESSAGE,
-  FRIENDS_REQUEST_URL
+  FRIENDS_REQUEST_URL,
 };
