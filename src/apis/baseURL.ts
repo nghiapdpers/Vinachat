@@ -13,6 +13,8 @@ export const CREATE_GROUP_URL = `${DOMAIN}/api/group/create`;
 export const FRIENDS_LIST_URL = `${DOMAIN}/api/user/getFriendList`;
 export const LOADMORE_MESSAGE = `${DOMAIN}/api/group/getListMessage`;
 export const FRIENDS_REQUEST_URL = `${DOMAIN}/api/user/requestFriend`;
+export const MESSAGE_SYNCHRONOUS_URL = `${DOMAIN}/api/group/synchronous`;
+
 
 export default {
   LOGIN_URL,
@@ -28,4 +30,5 @@ export default {
   FRIENDS_LIST_URL,
   LOADMORE_MESSAGE,
   FRIENDS_REQUEST_URL,
+  MESSAGE_SYNCHRONOUS_URL
 };

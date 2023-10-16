@@ -57,8 +57,7 @@ export default function LoginScreen() {
           const storedMobile: any = await AsyncStorage.getItem(
             '@UserRegisted_Biometrics',
           );
-
-          console.log(resultObject);
+          console.log("Respose biometrics", resultObject);
           if (storedMobile) {
             const mobile = storedMobile;
             console.log(mobile);
@@ -69,7 +68,11 @@ export default function LoginScreen() {
               const { password } = credentials;
               // Gọi action đang nhập
               CheckPasswordIfNotExists(password);
-              dispatch(actionLoginStart(mobile, password));
+              if (resultObject.success === true) {
+                dispatch(actionLoginStart(mobile, password));
+              } else {
+                console.log('Biometric undefined');
+              }
             } else {
               console.log('No item found in Keychain with Touch ID.');
             }

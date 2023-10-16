@@ -1,7 +1,7 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import mainTheme from '../../assets/colors';
-import {SCREEN} from '../../global';
-const {height: HeightScreen, width: WidthScreen} = Dimensions.get('window');
+import { SCREEN } from '../../global';
+const { height: HeightScreen, width: WidthScreen } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     flex: 1,
+    width: WidthScreen
   },
   borderMessage: {
     margin: 5,

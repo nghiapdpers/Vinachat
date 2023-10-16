@@ -13,22 +13,24 @@ import {
   Keyboard,
   Pressable,
 } from 'react-native';
-import images, {component, screen} from '../../assets/images';
+import images, { component, screen } from '../../assets/images';
 import GroupChat from '../../realm/GroupChat';
-import {useRealm} from '@realm/react';
+import { useRealm } from '@realm/react';
 import Message from '../../realm/Message';
-import React, {useCallback, useEffect, useState, useRef} from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import Header from '../../components/Header';
 import EmojiKeyboard from '../../components/EmojiKeyboard';
 import styles from './styles';
 import mainTheme from '../../assets/colors';
 import MoreMessageOptions from '../../components/MoreMessageOptions';
-import {Image as ImageAsset} from 'react-native-image-crop-picker';
-import {useCameraPermission} from 'react-native-vision-camera';
-import {useDispatch, useSelector} from 'react-redux';
-import {listChatActions} from '../../redux/actions/listChatActions';
-import {useRoute} from '@react-navigation/native';
+import { Image as ImageAsset } from 'react-native-image-crop-picker';
+import { useCameraPermission } from 'react-native-vision-camera';
+import { useDispatch, useSelector } from 'react-redux';
+import { listChatActions } from '../../redux/actions/listChatActions';
+import { useRoute } from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
+import apiHelper from '../../apis/apiHelper';
+import apiSynchronous from '../../apis/apiSynchronous';
 
 // Màn hình chat:
 /**
@@ -45,11 +47,11 @@ import LoadingOverlay from '../../components/LoadingOverlay';
 const database = firestore();
 
 export default function MessageScreen() {
-  const {hasPermission, requestPermission} = useCameraPermission();
+  const { hasPermission, requestPermission } = useCameraPermission();
 
   const route = useRoute();
 
-  const {groupRef, total_member, groupName}: any = route.params;
+  const { groupRef, total_member, groupName }: any = route.params;
 
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
@@ -120,10 +122,10 @@ export default function MessageScreen() {
                     status: 'sended',
                     from: item.doc.data().from,
                     message: item.doc.data().message,
-                    sent_time: item.doc.data().sent_time.toMillis(),
+                    sent_time: item.doc.data().sent_time.seconds,
                     type: item.doc.data().type,
                     images: item.doc.data().images
-                      ? item.doc.data().images.map((url: any) => ({url: url}))
+                      ? item.doc.data().images.map((url: any) => ({ url: url }))
                       : [],
                   };
                   groupChat.messages.push(newMessage);
@@ -148,6 +150,7 @@ export default function MessageScreen() {
                   })),
                 ),
               );
+
             }
             notFirstRender = true;
             setIsReady(true);
@@ -164,7 +167,72 @@ export default function MessageScreen() {
     };
   }, []);
 
-  const renderItem = ({item, index}: any) => {
+
+
+  // useEffect(() => {
+  //   // ignore initial listen
+  //   let notFirstRender = false;
+  //   const listenMessagetoRealm = database
+  //     .collection('groups')
+  //     .doc(groupRef)
+  //     .collection('messages')
+  //     .orderBy('sent_time', 'desc')
+  //     .onSnapshot(
+  //       snapshot => {
+  //         if (notFirstRender) {
+  //           snapshot.docChanges().forEach(item => {
+  //             if (item.type === 'added') {
+  //               realm.write(() => {
+  //                 let groupChat: GroupChat = realm
+  //                   .objects<GroupChat>('GroupChat')
+  //                   .filtered(`ref = '${groupRef}'`)[0];
+  //                 if (!groupChat) {
+  //                   groupChat = realm.create<GroupChat>('GroupChat', {
+  //                     ref: groupRef,
+  //                     name: '',
+  //                     total_member: 0,
+  //                     adminRef: '',
+  //                     latest_message_from: '',
+  //                     latest_message_from_name: '',
+  //                     latest_message_text: '',
+  //                     latest_message_type: '',
+  //                     latest_message_sent_time: 0,
+  //                     member: [],
+  //                     messages: [],
+  //                   });
+  //                 }
+  //                 const newMessage = {
+  //                   ref: item.doc.id,
+  //                   status: 'sended',
+  //                   from: item.doc.data().from,
+  //                   message: item.doc.data().message,
+  //                   sent_time: item.doc.data().sent_time.seconds,
+  //                   type: item.doc.data().type,
+  //                 };
+  //                 groupChat.messages.push(newMessage);
+  //               });
+  //             }
+  //           });
+  //         }
+  //       },
+  //       err => {
+  //         console.warn(err);
+  //       },
+  //     );
+
+  //   const specificGroup = realm
+  //     .objects('GroupChat')
+  //     .filtered(`ref = '${groupRef}'`)[0];
+  //   console.log(specificGroup);
+  //   // unsubcribe firestore chat group
+  //   return () => {
+  //     listenMessagetoRealm();
+  //   };
+  // }, []);
+
+  //   const yourRef = useRef(null);
+
+  const renderItem = ({ item, index }: any) => {
     const messageFromMe = item.from === ref;
 
     const lastMessageSameFrom = listChatData[index + 1]?.from === item.from;
@@ -173,9 +241,17 @@ export default function MessageScreen() {
       <View
         style={[
           styles.messageContainer,
-          {alignSelf: messageFromMe ? 'flex-end' : 'flex-start'},
-          {marginTop: lastMessageSameFrom ? 0 : 18},
-        ]}>
+          { alignSelf: messageFromMe ? 'flex-end' : 'flex-start' },
+          { marginTop: lastMessageSameFrom ? 0 : 18 },
+        ]}
+        onMoveShouldSetResponder={() => false}
+        onStartShouldSetResponder={() => true}
+        onResponderRelease={() => {
+          handleCloseEmoji();
+          handleCloseMoreOpt();
+          Keyboard.dismiss();
+        }}
+      >
         {!messageFromMe && total_member > 2 && !lastMessageSameFrom && (
           <Text style={[styles.messageFromName]}>{item.from_name}</Text>
         )}
@@ -202,19 +278,19 @@ export default function MessageScreen() {
                 style={[
                   styles.imageMessage,
                   messageFromMe
-                    ? {alignSelf: 'flex-end', marginRight: 10}
-                    : {alignSelf: 'flex-start', marginLeft: 10},
+                    ? { alignSelf: 'flex-end', marginRight: 10 }
+                    : { alignSelf: 'flex-start', marginLeft: 10 },
                 ]}>
                 <Image
                   source={
                     image == 'dang-tai-anh-len-server'
                       ? images.screen.message.loading
-                      : {uri: image}
+                      : { uri: image }
                   }
                   style={
                     image == 'dang-tai-anh-len-server'
-                      ? {width: 64, height: 64, alignSelf: 'center'}
-                      : {width: '100%', height: '100%', borderRadius: 10}
+                      ? { width: 64, height: 64, alignSelf: 'center' }
+                      : { width: '100%', height: '100%', borderRadius: 10 }
                   }
                 />
               </View>
@@ -231,12 +307,62 @@ export default function MessageScreen() {
     );
   };
 
-  // useEffect(() => {
-  //   const specificGroup = realm
-  //     .objects('GroupChat')
-  //     .filtered(`ref = '${groupRef}'`)[0];
-  //   console.log(specificGroup.messages);
-  // }, []);
+  const getMessageLastest = async () => {
+    let getMessageLatest = realm
+      .objects('GroupChat')
+      .filtered(`ref = '${groupRef}'`)[0];
+    const messages: any = getMessageLatest?.messages
+    const latestMessage = messages?.sorted('sent_time', true)[0];
+    console.log('Reposne', latestMessage?.ref);
+    console.log(getMessageLatest);
+
+
+    await apiSynchronous({ group_ref: groupRef, last_chat_ref: latestMessage?.ref }).then((response: any) => {
+      realm.write(() => {
+        if (!getMessageLatest) {
+          getMessageLatest = realm.create<GroupChat>('GroupChat', {
+            ref: groupRef,
+            name: '',
+            total_member: 0,
+            adminRef: '',
+            latest_message_from: '',
+            latest_message_from_name: '',
+            latest_message_text: '',
+            latest_message_type: '',
+            latest_message_sent_time: 0,
+            member: [],
+            messages: [],
+          });
+        }
+
+
+        response.data.map((item: any) => {
+          const newMessage = {
+            ref: item.ref,
+            from: item.from,
+            from_name: item.from_name,
+            message: item.message,
+            sent_time: item.sent_time._seconds,
+            type: item.type,
+            images: item.images
+              ? item.images.map((url: any) => ({ url: url }))
+              : [],
+          };
+          getMessageLatest.messages.push(newMessage);
+
+        })
+      })
+      console.log(response);
+
+
+    })
+  };
+
+  useEffect(() => {
+    getMessageLastest()
+  }, []);
+
+
 
   // event handler: open emoji picker
   const handleOpenEmoji = useCallback(() => {
@@ -321,7 +447,7 @@ export default function MessageScreen() {
       }
 
       setValue('');
-      listRef.current.scrollToOffset({animated: true, offset: 0});
+      listRef.current.scrollToOffset({ animated: true, offset: 0 });
 
       if (imagesData.length == 0) {
         // write to firestore
@@ -411,13 +537,7 @@ export default function MessageScreen() {
         <View style={styles.bodyMessage}>
           <View
             style={styles.MessageView}
-            onMoveShouldSetResponder={() => false}
-            onStartShouldSetResponder={() => true}
-            onResponderRelease={() => {
-              handleCloseEmoji();
-              handleCloseMoreOpt();
-              Keyboard.dismiss();
-            }}>
+          >
             {loadmore && <Text style={styles.loadmoreText}>Tải thêm</Text>}
             <FlatList
               data={listChatData}
