@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {
   actionListGroupChatStart,
   actionUpdateLatestMessage,
@@ -13,10 +13,10 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import { screen } from '../../assets/images';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { actionFriendListStart } from '../../redux/actions/friendAction';
+import {screen} from '../../assets/images';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {actionFriendListStart} from '../../redux/actions/friendAction';
 
 const database = firestore();
 
@@ -109,14 +109,14 @@ export default function HomeScreen() {
     }
   };
 
-  const renderFriendActive = ({ item }: { item: any }) => {
+  const renderFriendActive = ({item}: {item: any}) => {
     console.log('friend active item', item);
 
     return (
       <TouchableOpacity
         style={styles.viewfriendActive}
         onPress={() => {
-          navigation.navigate('MessageScreen', { ref: String(item.ref) });
+          navigation.navigate('MessageScreen', {ref: String(item.ref)});
         }}>
         <View style={styles.borderfriendActive}>
           <Text>{getFirstLetters(item.fullname)}</Text>
@@ -128,10 +128,10 @@ export default function HomeScreen() {
     );
   };
 
-  const Flatlistrender = ({ item }: { item: any }) => {
+  const Flatlistrender = ({item}: {item: any}) => {
     console.log(
       (user?.data?.fullname || userExternal?.data?.fullname) ===
-      item?.latest_message_from_name && item?.latest_message_type === 'image',
+        item?.latest_message_from_name && item?.latest_message_type === 'image',
     );
 
     return item?.latest_message_type ? (
@@ -153,13 +153,13 @@ export default function HomeScreen() {
           <Text style={styles.textnameMessage}>{item.name}</Text>
           <Text>
             {(user?.data?.fullname || userExternal?.data?.fullname) ===
-              item?.latest_message_from_name
+            item?.latest_message_from_name
               ? item?.latest_message_type === 'image'
                 ? `You: Hình ảnh`
                 : `You: ${item.latest_message_text}`
               : item?.latest_message_type === 'image'
-                ? `${item.latest_message_from_name}: Hình ảnh`
-                : `${item.latest_message_from_name}: ${item.latest_message_text}`}
+              ? `${item.latest_message_from_name}: Hình ảnh`
+              : `${item.latest_message_from_name}: ${item.latest_message_text}`}
           </Text>
         </View>
       </TouchableOpacity>
@@ -181,13 +181,13 @@ export default function HomeScreen() {
         <View style={styles.Message}>
           <Text style={styles.textnameMessage}>{item.name}</Text>
           <Text>
-            Bạn vừa kết bạn với {item?.name}
+            {item.total_member == 2
+              ? ` Bạn vừa kết bạn với ${item?.name}`
+              : 'Nhóm vừa được tạo ra'}
           </Text>
         </View>
       </TouchableOpacity>
     );
-
-
   };
 
   return (
