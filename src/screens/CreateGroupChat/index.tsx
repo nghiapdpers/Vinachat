@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './styles';
 import {
   Image,
@@ -8,14 +8,15 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
+  Alert,
 } from 'react-native';
-import {screen, component} from '../../assets/images';
-import {useNavigation} from '@react-navigation/native';
+import { screen, component } from '../../assets/images';
+import { useNavigation } from '@react-navigation/native';
 import Header3 from '../../components/Header3';
 import data from './data';
 import apiCreateGroup from '../../apis/apiCreateGroup';
-import {useDispatch, useSelector} from 'react-redux';
-import {actionListGroupChatStart} from '../../redux/actions/listGroupChat';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionListGroupChatStart } from '../../redux/actions/listGroupChat';
 
 export default function CreateGroupChat() {
   const dispatch = useDispatch();
@@ -71,14 +72,18 @@ export default function CreateGroupChat() {
   };
 
   const handleCreateGroupChat = async () => {
-    if (memberSelected.length >= 2) {
-      FetchCreateGroup();
-    } else {
-      console.log('ai cho tao');
+    if (!groupname) {
+      Alert.alert('Thông báo', 'Vui lòng nhập tên nhóm chat.')
+      return;
     }
+    if (memberSelected.length < 2) {
+      Alert.alert('Thông báo', 'Nhóm chat phải từ 3 người trở lên')
+      return;
+    }
+    FetchCreateGroup();
   };
 
-  const renderItem = ({item}: {item: any}) => {
+  const renderItem = ({ item }: { item: any }) => {
     const isSelected = memberSelected.some(
       (selectedMember: any) => selectedMember.ref === item.ref,
     );
@@ -105,7 +110,7 @@ export default function CreateGroupChat() {
     );
   };
 
-  const rendermemeberSelected = ({item}: {item: any}) => {
+  const rendermemeberSelected = ({ item }: { item: any }) => {
     return (
       <View style={styles.SelectBottomItem}>
         <View style={styles.imageBottomSelect}>

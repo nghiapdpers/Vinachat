@@ -69,7 +69,12 @@ export default function LoginScreen() {
               const { password } = credentials;
               // Gọi action đang nhập
               CheckPasswordIfNotExists(password);
-              dispatch(actionLoginStart(mobile, password));
+              CheckPasswordIfNotExists(password);
+              if (resultObject.success === true) {
+                dispatch(actionLoginStart(mobile, password));
+              } else {
+                console.log('Biometric undefined');
+              }
             } else {
               console.log('No item found in Keychain with Touch ID.');
             }
@@ -230,7 +235,7 @@ export default function LoginScreen() {
               onPress={() => handleLogin()}
             />
 
-            <TouchableOpacity onPress={handleLoginBiometrics}>
+            <TouchableOpacity onPress={() => handleLoginBiometrics()}>
               <Image
                 source={
                   checkBiometrics === 'TouchID is supported' ||

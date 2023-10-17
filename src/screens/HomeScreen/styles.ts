@@ -1,6 +1,6 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import mainTheme from '../../assets/colors';
-const {height: HeightScreen, width: WidthScreen} = Dimensions.get('window');
+const { height: HeightScreen, width: WidthScreen } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     width: WidthScreen * 0.95,
     height: 80,
     margin: 5,
+    paddingRight: 16,
     borderRadius: 10,
     flexDirection: 'row',
   },

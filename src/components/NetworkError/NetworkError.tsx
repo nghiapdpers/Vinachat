@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import Animated, { SlideInUp, SlideOutUp } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
-import { clientInitialApiStart } from '../../redux/actions/appActions';
+import { actionInitialStart } from '../../redux/actions/appActions';
 import { NoInternetError } from './NoInternetError';
 import { TimeoutError } from './TimeoutError';
 import NetInfo, { NetInfoSubscription } from '@react-native-community/netinfo';
@@ -23,7 +23,7 @@ export default function CustomNetworkError() {
   const timeoutThrottle = useCallback((visible: boolean) => {
     if (visible) {
       timeoutThrottleInterval = setInterval(() => {
-        dispatch(clientInitialApiStart);
+        dispatch(actionInitialStart);
       }, 20000);
     }
     if (!visible) {
@@ -36,7 +36,7 @@ export default function CustomNetworkError() {
     if (visible) {
       noInternetSubcribe = NetInfo.addEventListener((state: any) => {
         if (state.isConnected) {
-          dispatch(clientInitialApiStart);
+          dispatch(actionInitialStart);
         }
       });
     } else {

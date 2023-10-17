@@ -1,6 +1,6 @@
 import EmojiModal from 'react-native-emoji-modal';
 
-import {SCREEN} from '../../global';
+import { SCREEN } from '../../global';
 import styles from './styles';
 import mainTheme from '../../assets/colors';
 
@@ -9,7 +9,7 @@ type Props = {
   visible: boolean;
 };
 
-export default function ({onEmojiSelected, visible}: Props) {
+export default function ({ onEmojiSelected, visible }: Props) {
   return (
     visible && (
       <EmojiModal

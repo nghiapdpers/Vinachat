@@ -1,7 +1,7 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import mainTheme from '../../assets/colors';
-import {SCREEN} from '../../global';
-const {height: HeightScreen, width: WidthScreen} = Dimensions.get('window');
+import { SCREEN } from '../../global';
+const { height: HeightScreen, width: WidthScreen } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -179,6 +179,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: mainTheme.white,
   },
+  containerCategoryEmoji: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 8,
+    marginHorizontal: 12,
+    justifyContent: 'space-between',
+    marginTop: 4
+  },
+  categoryEmoji: {
+    fontSize: 24,
+    color: mainTheme.white,
+  },
+  selectedCategoryEmoji: {
+    borderBottomColor: mainTheme.logo,
+    borderBottomWidth: 2
+  }
 });
 
 export default styles;
