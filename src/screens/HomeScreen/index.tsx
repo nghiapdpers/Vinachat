@@ -92,7 +92,24 @@ export default function HomeScreen() {
 
   // Gọi api Group Chat
   useEffect(() => {
-    dispatch(actionListGroupChatStart());
+    const listenGroups = firestore()
+      .collection('users')
+      .doc(user?.data?.ref)
+      .onSnapshot(
+        res => {
+          if (res.data()?.groups.length != list.length) {
+            dispatch(actionListGroupChatStart());
+          }
+        },
+        err => {
+          console.log('LISTEN GROUP ERROR >> ', err);
+        },
+      );
+
+    // unsubcribe group
+    return () => {
+      listenGroups();
+    };
   }, []);
 
   const getFirstLetters = (inputString: any) => {
