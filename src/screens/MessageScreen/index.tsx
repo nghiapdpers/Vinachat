@@ -11,6 +11,7 @@ import {
   Image,
   TextInput,
   Keyboard,
+  Pressable
 } from 'react-native';
 import images, { component, screen } from '../../assets/images';
 import GroupChat from '../../realm/GroupChat';
