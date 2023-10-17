@@ -17,6 +17,7 @@ import data from './data';
 import apiCreateGroup from '../../apis/apiCreateGroup';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionListGroupChatStart } from '../../redux/actions/listGroupChat';
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 export default function CreateGroupChat() {
   const dispatch = useDispatch();
@@ -24,6 +25,7 @@ export default function CreateGroupChat() {
   const navigation = useNavigation();
   const [memberSelected, setmemberSelected] = useState([]);
   const [groupname, setgroupname] = useState('');
+  const [loading, setLoading] = useState(false);
   const yourRef = useRef(null);
   const datafriend = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
@@ -59,15 +61,17 @@ export default function CreateGroupChat() {
   // Fetch API tạo nhóm
   const FetchCreateGroup = async () => {
     try {
+      setLoading(true);
       return await apiCreateGroup({
         refs: JSON.stringify(memberSelected.map(item => item?.ref)),
         name: groupname,
       }).then(async (resposne: any) => {
-        dispatch(actionListGroupChatStart());
+        setLoading(false);
         navigation.goBack();
       });
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -131,6 +135,7 @@ export default function CreateGroupChat() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {loading && <LoadingOverlay />}
       <View style={styles.header}>
         <Header3 text={'Tạo nhóm chat'} />
       </View>

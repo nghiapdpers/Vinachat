@@ -27,6 +27,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { listChatActions } from '../../redux/actions/listChatActions';
 import { useRoute } from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
+import apiHelper from '../../apis/apiHelper';
+import apiSynchronous from '../../apis/apiSynchronous';
 
 // Màn hình chat:
 /**
@@ -123,7 +125,7 @@ export default function MessageScreen() {
                     status: 'sended',
                     from: item.doc.data().from,
                     message: item.doc.data().message,
-                    sent_time: item.doc.data().sent_time.toMillis(),
+                    sent_time: item.doc.data().sent_time.seconds,
                     type: item.doc.data().type,
                     images: item.doc.data().images
                       ? item.doc.data().images.map((url: any) => ({ url: url }))
@@ -134,27 +136,19 @@ export default function MessageScreen() {
               }
             });
           } else {
-            if (
-              (listChatData.length > 0 &&
-                listChatData[0]?.ref !== snapshot.docs[0]?.id) ||
-              listChatData.length == 0
-            ) {
-              dispatch(listChatActions.clear());
-
-              dispatch(
-                listChatActions.merge(
-                  snapshot.docs.map(item => ({
-                    ...item.data(),
-                    ref: item.id,
-                    status: 'sended',
-                    from_name: item.data().from_name,
-                  })),
-                ),
-              );
-            }
-            notFirstRender = true;
-            setIsReady(true);
+            dispatch(
+              listChatActions.merge(
+                snapshot.docs.map(item => ({
+                  ...item.data(),
+                  ref: item.id,
+                  status: 'sended',
+                  from_name: item.data().from_name,
+                })),
+              ),
+            );
           }
+          notFirstRender = true;
+          setIsReady(true);
         },
         err => {
           console.warn(err);
@@ -163,11 +157,11 @@ export default function MessageScreen() {
 
     // unsubcribe firestore chat group
     return () => {
+      dispatch(listChatActions.clear());
       listenMessage();
     };
   }, []);
 
-  // console.log('value:>>', value)
 
   const renderItem = ({ item, index }: any) => {
     const messageFromMe = item.from === ref;
@@ -175,10 +169,14 @@ export default function MessageScreen() {
     const lastMessageSameFrom = listChatData[index + 1]?.from === item.from;
 
     return (
-      <View
+      <Pressable
+        onPress={() => {
+          handleCloseEmoji();
+          handleCloseMoreOpt();
+          Keyboard.dismiss();
+        }}
         style={[
           styles.messageContainer,
-          { alignSelf: messageFromMe ? 'flex-end' : 'flex-start' },
           { marginTop: lastMessageSameFrom ? 0 : 18 },
         ]}>
         {!messageFromMe && total_member > 2 && !lastMessageSameFrom && (
@@ -186,17 +184,18 @@ export default function MessageScreen() {
         )}
 
         {item.message.length > 0 && (
-          <View
+          <Text
             style={[
               styles.borderMessage,
               {
+                alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
                 backgroundColor: messageFromMe
                   ? mainTheme.lowerFillLogo
                   : mainTheme.white,
               },
             ]}>
-            <Text style={styles.textMessage}>{item.message}</Text>
-          </View>
+            {item.message}
+          </Text>
         )}
 
         {item.images && item.images.length > 0 && (
@@ -232,16 +231,66 @@ export default function MessageScreen() {
             {item.status == 'sending' ? 'Đang gửi' : 'Đã gửi'}
           </Text>
         )}
-      </View>
+      </Pressable>
     );
   };
 
-  // useEffect(() => {
-  //   const specificGroup = realm
-  //     .objects('GroupChat')
-  //     .filtered(`ref = '${groupRef}'`)[0];
-  //   console.log(specificGroup.messages);
-  // }, []);
+  const getMessageLastest = async () => {
+    let getMessageLatest = realm
+      .objects('GroupChat')
+      .filtered(`ref = '${groupRef}'`)[0];
+    const messages: any = getMessageLatest?.messages
+    const latestMessage = messages?.sorted('sent_time', true)[0];
+    console.log('Reposne', latestMessage?.ref);
+    console.log(getMessageLatest);
+
+
+    await apiSynchronous({ group_ref: groupRef, last_chat_ref: latestMessage?.ref }).then((response: any) => {
+      realm.write(() => {
+        if (!getMessageLatest) {
+          getMessageLatest = realm.create<GroupChat>('GroupChat', {
+            ref: groupRef,
+            name: '',
+            total_member: 0,
+            adminRef: '',
+            latest_message_from: '',
+            latest_message_from_name: '',
+            latest_message_text: '',
+            latest_message_type: '',
+            latest_message_sent_time: 0,
+            member: [],
+            messages: [],
+          });
+        }
+
+
+        response.data.map((item: any) => {
+          const newMessage = {
+            ref: item.ref,
+            from: item.from,
+            from_name: item.from_name,
+            message: item.message,
+            sent_time: item.sent_time._seconds,
+            type: item.type,
+            images: item.images
+              ? item.images.map((url: any) => ({ url: url }))
+              : [],
+          };
+          getMessageLatest.messages.push(newMessage);
+
+        })
+      })
+      console.log(response);
+
+
+    })
+  };
+
+  useEffect(() => {
+    getMessageLastest()
+  }, []);
+
+
 
   // event handler: open emoji picker
   const handleOpenEmoji = useCallback(() => {
@@ -435,15 +484,7 @@ export default function MessageScreen() {
         </View>
 
         <View style={styles.bodyMessage}>
-          <View
-            style={styles.MessageView}
-            onMoveShouldSetResponder={() => false}
-            onStartShouldSetResponder={() => true}
-            onResponderRelease={() => {
-              handleCloseEmoji();
-              handleCloseMoreOpt();
-              Keyboard.dismiss();
-            }}>
+          <View style={styles.MessageView}>
             {loadmore && <Text style={styles.loadmoreText}>Tải thêm</Text>}
             <FlatList
               data={listChatData}

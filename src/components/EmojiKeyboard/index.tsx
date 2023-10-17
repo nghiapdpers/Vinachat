@@ -1,4 +1,4 @@
-import EmojiModal from 'react-native-emoji-modal';
+// import EmojiContainer from 'react-native-emoji-container';
 
 import { SCREEN } from '../../global';
 import styles from './styles';
@@ -12,18 +12,22 @@ type Props = {
 export default function ({ onEmojiSelected, visible }: Props) {
   return (
     visible && (
-      <EmojiModal
-        onEmojiSelected={onEmojiSelected}
-        backgroundStyle={styles.background}
-        emojiStyle={styles.emoji}
-        containerStyle={styles.container}
-        columns={Math.floor(SCREEN.width / 42)}
-        modalStyle={styles.modal}
-        shortcutColor={mainTheme.background}
-        activeShortcutColor={mainTheme.logo}
-        headerStyle={{
-          color: mainTheme.logo,
+      <EmojiContainer
+        enableTitle={false}
+        onPressEmoji={data => {
+          console.log(data);
         }}
+        // onEmojiSelected={onEmojiSelected}
+        // backgroundStyle={styles.background}
+        // emojiStyle={styles.emoji}
+        // containerStyle={styles.container}
+        // columns={Math.floor(SCREEN.width / 42)}
+        // modalStyle={styles.modal}
+        // shortcutColor={mainTheme.background}
+        // activeShortcutColor={mainTheme.logo}
+        // headerStyle={{
+        //   color: mainTheme.logo,
+        // }}
       />
     )
   );

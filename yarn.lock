@@ -5151,16 +5151,6 @@ jsonfile@^4.0.0:
     object.assign "^4.1.4"
     object.values "^1.1.6"
 
-just-group-by@2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/just-group-by/-/just-group-by-2.1.2.tgz#256aeb3812a04e1318d9ce2dee336a5420e88e09"
-  integrity sha512-pl5PjWr/WAQx0XL7igWUMwQoiyhYt+tc/8STlNgjENqZjRch4V9dExBF1vd9SRob75vGXrUKyL2Dp4kRVeadPQ==
-
-just-map-values@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/just-map-values/-/just-map-values-3.1.1.tgz#b7681783a94364a9ec28907bd92af934f8890c74"
-  integrity sha512-te7sWH0edcRLXCDLZu+kNr7mBPOBON4hTxnE6/pIWjUiyv08MvdTUo2Iw9nySwb5TfoMNb5ZdodER8RD1Zu5jA==
-
 keyv@^4.5.3:
   version "4.5.3"
   resolved "https://registry.yarnpkg.com/keyv/-/keyv-4.5.3.tgz#00873d2b046df737963157bd04f294ca818c9c25"
@@ -6520,17 +6510,6 @@ react-native-biometrics@^3.0.1:
   resolved "https://registry.yarnpkg.com/react-native-biometrics/-/react-native-biometrics-3.0.1.tgz#23c5a0bdbae1fcb1e08b22936223fe0fc4af846e"
   integrity sha512-Ru80gXRa9KG04sl5AB9HyjLjVbduhqZVjA+AiOSGqr+fNqCDmCu9y5WEksnjbnniNLmq1yGcw+qcLXmR1ddLDQ==
 
-react-native-emoji-modal@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/react-native-emoji-modal/-/react-native-emoji-modal-0.2.4.tgz#3fdaac43f7bbd3117ac95b0ecb7544e9c745f14d"
-  integrity sha512-A8rwI6Cfrmm3VbCsC2cSi1nCrn+Fq706tf76CyTwD7939dIXcnx3s2ifLKhhiKJTVhUrsrSI7Gei0soOMJiIIg==
-  dependencies:
-    just-group-by "2.1.2"
-    just-map-values "3.1.1"
-    react ">=17.0.0"
-    react-native ">=0.64.0"
-    react-native-vector-icons "^9.0.0"
-
 react-native-gesture-handler@^2.13.0:
   version "2.13.1"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.13.1.tgz#bad89caacd62c4560b9953b02f85f37ee42d5d4c"
@@ -6613,14 +6592,6 @@ react-native-vector-icons@^10.0.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native-vector-icons@^9.0.0:
-  version "9.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-9.2.0.tgz#3c0c82e95defd274d56363cbe8fead8d53167ebd"
-  integrity sha512-wKYLaFuQST/chH3AJRjmOLoLy3JEs1JR6zMNgTaemFpNoXs0ztRnTxcxFD9xhX7cJe1/zoN5BpQYe7kL0m5yyA==
-  dependencies:
-    prop-types "^15.7.2"
-    yargs "^16.1.1"
-
 react-native-view-shot@^3.7.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/react-native-view-shot/-/react-native-view-shot-3.7.0.tgz#0c773500e7aac5d115a9dee3b83fa5156c950ed0"
@@ -6675,7 +6646,7 @@ react-native@0.72.4:
     ws "^6.2.2"
     yargs "^17.6.2"
 
-react-native@>=0.64.0, react-native@>=0.68:
+react-native@>=0.68:
   version "0.72.5"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.72.5.tgz#2c343fa6f3ead362cf07376634a33a4078864357"
   integrity sha512-oIewslu5DBwOmo7x5rdzZlZXCqDIna0R4dUwVpfmVteORYLr4yaZo5wQnMeR+H7x54GaMhmgeqp0ZpULtulJFg==
@@ -6751,7 +6722,7 @@ react-test-renderer@18.2.0:
     react-shallow-renderer "^16.15.0"
     scheduler "^0.23.0"
 
-react@18.2.0, react@>=17.0.0:
+react@18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
