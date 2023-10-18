@@ -15,16 +15,15 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 1,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     topbody: {
-        flex: 1,
         width: WidthScreen,
         flexDirection: 'row',
         alignItems: 'center',
     },
     searchbody: {
-        flex: 1,
+        paddingVertical: 10,
         width: WidthScreen,
         justifyContent: 'center',
         alignItems: 'center',
@@ -71,7 +70,7 @@ const styles = StyleSheet.create({
     },
     borderseach: {
         width: '90%',
-        height: '55%',
+        height: 40,
         backgroundColor: mainTheme.white,
         borderRadius: 40,
         flexDirection: 'row',
@@ -168,7 +167,7 @@ const styles = StyleSheet.create({
     SelectBottomItem: {
         width: 60,
         height: '100%',
-        marginTop : 5,
+        marginTop: 5,
         marginLeft: 10,
         alignItems: 'center',
     },
@@ -182,9 +181,9 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20,
     },
-    potisionremove  : {
-        position :'absolute',
-        right : 0,
+    potisionremove: {
+        position: 'absolute',
+        right: 0,
     }
 
 })

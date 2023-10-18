@@ -12,6 +12,7 @@ export default function SearchScreen({ route }: { route: any }) {
   const navigation = useNavigation();
   const [value, setvalue] = useState('');
   const [data, setData] = useState(null);
+  const [status, setStatus] = useState('');
 
   const FetchSearch = async () => {
     try {
@@ -40,6 +41,7 @@ export default function SearchScreen({ route }: { route: any }) {
     try {
       return await apiFriendRequest({ ref: friendRef }).then((response: any) => {
         console.log(response);
+        setStatus(response.status);
       })
     } catch (error) {
       console.log(error);
@@ -50,6 +52,8 @@ export default function SearchScreen({ route }: { route: any }) {
     switch (status) {
       case 'N':
         return 'Kết bạn'
+      case 'ID':
+        return 'Kết bạn'
       case 'R':
         return 'Đã gửi lời mời'
       case 'F':
@@ -57,10 +61,16 @@ export default function SearchScreen({ route }: { route: any }) {
     }
   }
 
+  useEffect(() => {
+    console.log(status);
+    FetchSearch()
+  }, [status, data])
+
   const renderItem = ({ item }: { item: any }) => {
+    console.log(item.ref);
 
     return (
-      <View style={styles.borderFind}>
+      <TouchableOpacity style={styles.borderFind} onPress={() => { navigation.navigate('ProfileScreen', { item: item }) }}>
         <View style={styles.topItem}>
           <View style={styles.imageItem}>
 
@@ -71,13 +81,13 @@ export default function SearchScreen({ route }: { route: any }) {
           <Text style={styles.mobile}>{item?.mobile}</Text>
         </View>
         <View style={styles.endItem}>
-          <TouchableOpacity style={[styles.btnstatusfriend, { backgroundColor: item?.status === 'N' || item?.status === 'R' ? mainTheme.logo : '#e3e3e3' }]}
+          <TouchableOpacity style={[styles.btnstatusfriend, { backgroundColor: item?.status === 'N' || item?.status === 'R' || item?.status === 'ID' ? mainTheme.logo : '#e3e3e3' }]}
             onPress={() => { handleFriendRequest(item.ref) }}
           >
-            <Text>{ConvertStatusFriend(item.status)}</Text>
+            <Text>{ConvertStatusFriend(status === '' ? item.status : status)}</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
 

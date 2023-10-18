@@ -36,11 +36,13 @@ import GroupChat from './src/realm/GroupChat';
 import Message from './src/realm/Message';
 import User from './src/realm/User';
 import Images from './src/realm/Images';
+import ProfileScreen from './src/screens/AccountScreen/OptionAccount/Profile';
+import EditUserScreen from './src/screens/AccountScreen/OptionAccount/EditUser';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const HOST = '192.168.0.123';
+const HOST = '192.168.0.134';
 
 // use fierstore emulator
 firestore().useEmulator(HOST, 8080);
@@ -108,6 +110,8 @@ export default function App() {
           <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
           <Stack.Screen name="Biometrics" component={Biometrics} />
           <Stack.Screen name="CreateGroupChat" component={CreateGroupChat} />
+          <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+          <Stack.Screen name="EditUserScreen" component={EditUserScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </RealmProvider>
