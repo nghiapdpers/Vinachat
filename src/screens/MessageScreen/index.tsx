@@ -30,6 +30,7 @@ import { useRoute } from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import apiHelper from '../../apis/apiHelper';
 import apiSynchronous from '../../apis/apiSynchronous';
+import EmojiBoard from 'react-native-emoji-board'
 
 // Màn hình chat:
 /**
@@ -46,7 +47,7 @@ import apiSynchronous from '../../apis/apiSynchronous';
 const database = firestore();
 
 // Dữ liệu Emoji (JSON)
-const groupJson = require('unicode-emoji-json/data-by-group.json');
+// const groupJson = require('unicode-emoji-json/data-by-group.json');
 
 export default function MessageScreen() {
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -74,7 +75,7 @@ export default function MessageScreen() {
   const realm = useRealm();
   const [isReady, setIsReady] = useState(false);
   const [selectedCategoryEmoji, setSelectedCategoryEmoji] = useState('Smileys & Emotion');
-  const itemsPerRow = 11; // Số emoji trên mỗi hàng
+  const itemsPerRow = 10; // Số emoji trên mỗi hàng
 
   // side effect: subcribe to listen chat
   useEffect(() => {
@@ -291,8 +292,6 @@ export default function MessageScreen() {
     getMessageLastest()
   }, []);
 
-
-
   // event handler: open emoji picker
   const handleOpenEmoji = useCallback(() => {
     setEmoPicker(true);
@@ -444,26 +443,34 @@ export default function MessageScreen() {
     }
   };
 
-
-  const renderEmojiList = (category: any) => {
-    return (
-      <FlatList
-        style={{ flex: 1 }}
-        data={groupJson[category]}
-        numColumns={itemsPerRow}
-        renderItem={({ item }) => {
-          return (
-            <TouchableOpacity
-              onPress={() => setValue(v => (v += item.emoji))}
-              key={item?.emoji}
-              style={{ margin: 5, alignItems: 'center', width: `${100 / itemsPerRow}%` }}>
-              <Text style={styles.categoryEmoji}>{item.emoji}</Text>
-            </TouchableOpacity>
-          )
-        }}
-      />
-    );
+  const onClick = (emoji: any) => {
+    // console.log(emoji);
+    setValue(v => (v += emoji.code))
   };
+
+  const onRemove = () => {
+    setValue(v => v.slice(0, v.length - 2));
+  }
+
+
+  // const renderEmojiList = (category: any) => {
+  //   return (
+  //     <FlatList
+  //       style={{ flex: 1 }}
+  //       data={groupJson[category]}
+  //       numColumns={itemsPerRow}
+  //       renderItem={({ item }) => (
+  //         <TouchableOpacity
+  //           onPress={() => setValue(v => (v += item.emoji))}
+  //           key={item?.emoji}
+  //           style={{ margin: 5, alignItems: 'center', width: `${100 / itemsPerRow}%` }}>
+  //           <Text style={styles.categoryEmoji}>{item.emoji}</Text>
+  //         </TouchableOpacity>
+  //       )
+  //       }
+  //     />
+  //   );
+  // };
 
   return (
     <KeyboardAvoidingView
@@ -536,8 +543,7 @@ export default function MessageScreen() {
             </View>
           </View>
         </View>
-
-
+        {/* 
         {emoPicker ? (
           < View style={{ height: '40%' }}>
 
@@ -557,15 +563,30 @@ export default function MessageScreen() {
             {emoPicker && selectedCategoryEmoji && renderEmojiList(selectedCategoryEmoji)}
 
           </View>
-        ) : null}
+        ) : null} */}
+        {emoPicker ? (
+          <EmojiBoard
+            showBoard={true}
+            containerStyle={{ backgroundColor: mainTheme.background }}
+            onClick={onClick}
+            categoryIconSize={24}
+            tabBarPosition='bottom'
+            categoryDefautColor={mainTheme.text}
+            categoryHighlightColor={mainTheme.logo}
+            hideBackSpace={false}
+            onRemove={onRemove}
+            tabBarStyle={{ backgroundColor: mainTheme.white, borderTopWidth: 1, borderBottomWidth: 0, borderColor: mainTheme.logo }}
+            labelStyle={{ fontSize: 16, color: '#000000' }} />) : null}
 
         <MoreMessageOptions
           visible={moreOptVisible}
           onImagesUpdate={setImagesData}
           extraClearImages={isSend}
         />
+
       </SafeAreaView>
     </KeyboardAvoidingView >
+
   );
 }
 

@@ -40,7 +40,7 @@ import Images from './src/realm/Images';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const HOST = '192.168.0.123';
+const HOST = '192.168.150.12';
 
 // use fierstore emulator
 firestore().useEmulator(HOST, 8080);
