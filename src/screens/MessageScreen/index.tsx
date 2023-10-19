@@ -237,6 +237,7 @@ export default function MessageScreen() {
     );
   };
 
+  // Lưu trữ tất cả tin nhắn vào Realm kể từ tin nhắn cuối cùng khi thoát app
   const getMessageLastest = async () => {
     let getMessageLatest = realm
       .objects('GroupChat')

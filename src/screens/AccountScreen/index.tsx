@@ -31,7 +31,7 @@ const datauser = [
     icon: screen.account.profile,
     title: 'Trang cá nhân',
     description: 'Xem trang cá nhân của bạn',
-    navigation: '',
+    navigation: 'ProfileScreen',
   },
   {
     id: 2,

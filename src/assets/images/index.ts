@@ -62,6 +62,22 @@ export const screen = {
     camera: require('./Screen/CreateGroupChat/camera.png'),
     remove: require('./Screen/CreateGroupChat/remove.png'),
   },
+  profile: {
+    more: require('./Screen/ProfileScreen/more.png'),
+    usermale: require('./Screen/ProfileScreen/UserMale.png'),
+    userfemale: require('./Screen/ProfileScreen/UserFemale.png'),
+    chat: require('./Screen/ProfileScreen/chat.png'),
+    friend: require('./Screen/ProfileScreen/friend.png'),
+    addfriend: require('./Screen/ProfileScreen/addfriend.png'),
+    friendrequested: require('./Screen/ProfileScreen/friendrequested.png'),
+    edituser: require('./Screen/ProfileScreen/edituser.png'),
+    signature: require('./Screen/ProfileScreen/signature.png'),
+    phone: require('./Screen/ProfileScreen/phone.png'),
+    email: require('./Screen/ProfileScreen/email.png'),
+    sex: require('./Screen/ProfileScreen/sex.png'),
+    birthday: require('./Screen/ProfileScreen/birthday.png'),
+    fullname: require('./Screen/ProfileScreen/fullname.png')
+  }
 };
 
 const images = {

@@ -13,7 +13,6 @@ import {
 import { screen, component } from '../../assets/images';
 import { useNavigation } from '@react-navigation/native';
 import Header3 from '../../components/Header3';
-import data from './data';
 import apiCreateGroup from '../../apis/apiCreateGroup';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionListGroupChatStart } from '../../redux/actions/listGroupChat';
@@ -26,10 +25,21 @@ export default function CreateGroupChat() {
   const [memberSelected, setmemberSelected] = useState([]);
   const [groupname, setgroupname] = useState('');
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState('');
   const yourRef = useRef(null);
   const datafriend = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
   );
+
+  // Research bạn bè theo tên và số điện thoại
+  const filterSearchFriend = datafriend?.filter((item: any) => {
+    const searchTerm = search.toLowerCase();
+    return (
+      item?.fullname?.toLowerCase().includes(searchTerm) ||
+      item?.mobile?.toLowerCase().includes(searchTerm)
+    );
+  });
+
 
   // Chọn bạn bè để tạo nhóm
   const handleMemberSelection = (member: any) => {
@@ -63,7 +73,7 @@ export default function CreateGroupChat() {
     try {
       setLoading(true);
       return await apiCreateGroup({
-        refs: JSON.stringify(memberSelected.map(item => item?.ref)),
+        refs: JSON.stringify(memberSelected.map((item: any) => item?.ref)),
         name: groupname,
       }).then(async (resposne: any) => {
         setLoading(false);
@@ -165,12 +175,16 @@ export default function CreateGroupChat() {
             <TouchableOpacity>
               <Image style={styles.imagesearch} source={screen.home.search} />
             </TouchableOpacity>
-            <TextInput style={styles.textinput} placeholder="Tìm kiếm bạn bè" />
+            <TextInput
+              style={styles.textinput}
+              placeholder="Tìm kiếm bạn bè"
+              value={search}
+              onChangeText={text => setSearch(text)} />
           </View>
         </View>
         <View style={styles.friendbody}>
           <FlatList
-            data={datafriend}
+            data={filterSearchFriend}
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             showsVerticalScrollIndicator={false}

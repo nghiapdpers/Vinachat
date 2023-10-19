@@ -14,6 +14,8 @@ export const FRIENDS_LIST_URL = `${DOMAIN}/api/user/getFriendList`;
 export const LOADMORE_MESSAGE = `${DOMAIN}/api/group/getListMessage`;
 export const FRIENDS_REQUEST_URL = `${DOMAIN}/api/user/requestFriend`;
 export const MESSAGE_SYNCHRONOUS_URL = `${DOMAIN}/api/group/synchronous`;
+export const UPDATE_PROFILE_URL = `${DOMAIN}/api/user/update`;
+
 
 
 export default {
@@ -30,5 +32,6 @@ export default {
   FRIENDS_LIST_URL,
   LOADMORE_MESSAGE,
   FRIENDS_REQUEST_URL,
-  MESSAGE_SYNCHRONOUS_URL
+  MESSAGE_SYNCHRONOUS_URL,
+  UPDATE_PROFILE_URL
 };
