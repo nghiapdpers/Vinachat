@@ -46,9 +46,6 @@ import EmojiBoard from 'react-native-emoji-board'
 
 const database = firestore();
 
-// Dữ liệu Emoji (JSON)
-// const groupJson = require('unicode-emoji-json/data-by-group.json');
-
 export default function MessageScreen() {
   const { hasPermission, requestPermission } = useCameraPermission();
 
@@ -444,34 +441,34 @@ export default function MessageScreen() {
     }
   };
 
+  // Chọn emoji
   const onClick = (emoji: any) => {
-    // console.log(emoji);
+    // console.log(emoji.code);
+    const emojis = emoji.code;
+    const unicode = emojis.codePointAt(0).toString(16);
+    const code2 = [...emojis].map(e => e.codePointAt(0).toString(16)).join(`-`);
+    // let emo = String.fromCodePoint("0x" + unicode);
+    // console.log('unicodeEmoji:>>', unicode, emo);
+    console.log('code 2:>>', code2);
     setValue(v => (v += emoji.code))
   };
 
+  // Xóa emoji
   const onRemove = () => {
-    setValue(v => v.slice(0, v.length - 2));
+
+    function removeLastEmoji(text: string) {
+      const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF][\uD800-\uDBFF][\uDC00-\uDFFF]$/;
+      if (emojiRegex.test(text)) {
+        console.log('trường hợp 2 emoji');
+        return text.slice(0, -4);
+      }
+      return text.slice(0, -2);
+    }
+
+    setValue(removeLastEmoji(value))
   }
 
-
-  // const renderEmojiList = (category: any) => {
-  //   return (
-  //     <FlatList
-  //       style={{ flex: 1 }}
-  //       data={groupJson[category]}
-  //       numColumns={itemsPerRow}
-  //       renderItem={({ item }) => (
-  //         <TouchableOpacity
-  //           onPress={() => setValue(v => (v += item.emoji))}
-  //           key={item?.emoji}
-  //           style={{ margin: 5, alignItems: 'center', width: `${100 / itemsPerRow}%` }}>
-  //           <Text style={styles.categoryEmoji}>{item.emoji}</Text>
-  //         </TouchableOpacity>
-  //       )
-  //       }
-  //     />
-  //   );
-  // };
+  console.log('value:>>', value);
 
   return (
     <KeyboardAvoidingView
@@ -544,27 +541,7 @@ export default function MessageScreen() {
             </View>
           </View>
         </View>
-        {/* 
-        {emoPicker ? (
-          < View style={{ height: '40%' }}>
 
-            <View style={styles.containerCategoryEmoji}>
-              {Object.keys(groupJson).map((category) => {
-                return (
-                  <TouchableOpacity
-                    key={category}
-                    onPress={() => setSelectedCategoryEmoji(category)}>
-                    <Text style={[styles.categoryEmoji, selectedCategoryEmoji === category ? styles.selectedCategoryEmoji : null]}>{groupJson[category][0]?.emoji}</Text>
-                  </TouchableOpacity>
-                )
-              }
-              )}
-            </View>
-
-            {emoPicker && selectedCategoryEmoji && renderEmojiList(selectedCategoryEmoji)}
-
-          </View>
-        ) : null} */}
         {emoPicker ? (
           <EmojiBoard
             showBoard={true}
@@ -572,7 +549,7 @@ export default function MessageScreen() {
             onClick={onClick}
             categoryIconSize={24}
             tabBarPosition='bottom'
-            categoryDefautColor={mainTheme.text}
+            categoryDefautColor={mainTheme.lowerFillLogo}
             categoryHighlightColor={mainTheme.logo}
             hideBackSpace={false}
             onRemove={onRemove}
@@ -590,10 +567,3 @@ export default function MessageScreen() {
 
   );
 }
-
-{/* <EmojiKeyboard
-          onEmojiSelected={function (e) {
-            setValue(v => (v += e + ' '));
-          }}
-          visible={emoPicker}
-        /> */}

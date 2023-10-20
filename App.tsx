@@ -42,12 +42,12 @@ import EditUserScreen from './src/screens/AccountScreen/OptionAccount/EditUser';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const HOST = '192.168.150.12';
+// const HOST = '192.168.0.134';
 
-// use fierstore emulator
-firestore().useEmulator(HOST, 8080);
-auth().useEmulator(`http://${HOST}:9099`);
-storage().useEmulator(HOST, 9199);
+// // use fierstore emulator
+// firestore().useEmulator(HOST, 8080);
+// auth().useEmulator(`http://${HOST}:9099`);
+// storage().useEmulator(HOST, 9199);
 
 export default function App() {
   const dispatch = useDispatch();
