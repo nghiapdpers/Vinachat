@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
         backgroundColor: mainTheme.background,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: 16
+        paddingHorizontal: 16,
     },
     title: {
         fontFamily: 'lobster',

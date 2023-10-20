@@ -30,6 +30,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import apiHelper from '../../apis/apiHelper';
 import apiSynchronous from '../../apis/apiSynchronous';
+import EmojiBoard from 'react-native-emoji-board';
 
 // Màn hình chat:
 /**
@@ -44,9 +45,6 @@ import apiSynchronous from '../../apis/apiSynchronous';
  */
 
 const database = firestore();
-
-// Dữ liệu Emoji (JSON)
-const groupJson = require('unicode-emoji-json/data-by-group.json');
 
 export default function MessageScreen() {
   const {hasPermission, requestPermission} = useCameraPermission();
@@ -76,7 +74,7 @@ export default function MessageScreen() {
   const [isReady, setIsReady] = useState(false);
   const [selectedCategoryEmoji, setSelectedCategoryEmoji] =
     useState('Smileys & Emotion');
-  const itemsPerRow = 11; // Số emoji trên mỗi hàng
+  const itemsPerRow = 10; // Số emoji trên mỗi hàng
 
   // side effect: subcribe to listen chat
   useEffect(() => {
@@ -449,29 +447,34 @@ export default function MessageScreen() {
     }
   };
 
-  const renderEmojiList = (category: any) => {
-    return (
-      <FlatList
-        style={{flex: 1}}
-        data={groupJson[category]}
-        numColumns={itemsPerRow}
-        renderItem={({item}) => {
-          return (
-            <TouchableOpacity
-              onPress={() => setValue(v => (v += item.emoji))}
-              key={item?.emoji}
-              style={{
-                margin: 5,
-                alignItems: 'center',
-                width: `${100 / itemsPerRow}%`,
-              }}>
-              <Text style={styles.categoryEmoji}>{item.emoji}</Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
-    );
+  // Chọn emoji
+  const onClick = (emoji: any) => {
+    // console.log(emoji.code);
+    const emojis = emoji.code;
+    const unicode = emojis.codePointAt(0).toString(16);
+    const code2 = [...emojis].map(e => e.codePointAt(0).toString(16)).join(`-`);
+    // let emo = String.fromCodePoint("0x" + unicode);
+    // console.log('unicodeEmoji:>>', unicode, emo);
+    console.log('code 2:>>', code2);
+    setValue(v => (v += emoji.code));
   };
+
+  // Xóa emoji
+  const onRemove = () => {
+    function removeLastEmoji(text: string) {
+      const emojiRegex =
+        /[\uD800-\uDBFF][\uDC00-\uDFFF][\uD800-\uDBFF][\uDC00-\uDFFF]$/;
+      if (emojiRegex.test(text)) {
+        console.log('trường hợp 2 emoji');
+        return text.slice(0, -4);
+      }
+      return text.slice(0, -2);
+    }
+
+    setValue(removeLastEmoji(value));
+  };
+
+  console.log('value:>>', value);
 
   return (
     <KeyboardAvoidingView
@@ -546,31 +549,24 @@ export default function MessageScreen() {
         </View>
 
         {emoPicker ? (
-          <View style={{height: '40%'}}>
-            <View style={styles.containerCategoryEmoji}>
-              {Object.keys(groupJson).map(category => {
-                return (
-                  <TouchableOpacity
-                    key={category}
-                    onPress={() => setSelectedCategoryEmoji(category)}>
-                    <Text
-                      style={[
-                        styles.categoryEmoji,
-                        selectedCategoryEmoji === category
-                          ? styles.selectedCategoryEmoji
-                          : null,
-                      ]}>
-                      {groupJson[category][0]?.emoji}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-
-            {emoPicker &&
-              selectedCategoryEmoji &&
-              renderEmojiList(selectedCategoryEmoji)}
-          </View>
+          <EmojiBoard
+            showBoard={true}
+            containerStyle={{backgroundColor: mainTheme.background}}
+            onClick={onClick}
+            categoryIconSize={24}
+            tabBarPosition="bottom"
+            categoryDefautColor={mainTheme.lowerFillLogo}
+            categoryHighlightColor={mainTheme.logo}
+            hideBackSpace={false}
+            onRemove={onRemove}
+            tabBarStyle={{
+              backgroundColor: mainTheme.white,
+              borderTopWidth: 1,
+              borderBottomWidth: 0,
+              borderColor: mainTheme.logo,
+            }}
+            labelStyle={{fontSize: 16, color: '#000000'}}
+          />
         ) : null}
 
         <MoreMessageOptions
@@ -581,13 +577,4 @@ export default function MessageScreen() {
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
-}
-
-{
-  /* <EmojiKeyboard
-          onEmojiSelected={function (e) {
-            setValue(v => (v += e + ' '));
-          }}
-          visible={emoPicker}
-        /> */
 }

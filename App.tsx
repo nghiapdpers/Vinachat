@@ -45,7 +45,7 @@ const Stack = createStackNavigator();
 
 // const HOST = '192.168.0.134';
 
-// use fierstore emulator
+// use firestore emulator
 // firestore().useEmulator(HOST, 8080);
 // auth().useEmulator(`http://${HOST}:9099`);
 // storage().useEmulator(HOST, 9199);

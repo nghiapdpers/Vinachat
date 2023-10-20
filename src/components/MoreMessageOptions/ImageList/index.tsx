@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import styles from './styles';
-import {memo, useEffect, useState} from 'react';
+import { memo, useEffect, useState } from 'react';
 import images from '../../../assets/images';
 import {
   chosenImageActions,
@@ -20,7 +20,7 @@ type Props = {
   onClose: () => void;
 };
 
-function ImageList({visible, onClose}: Props) {
+function ImageList({ visible, onClose }: Props) {
   const data = useChosenImageContext();
   const dispatch = useChosenImageDispatch();
 
@@ -36,9 +36,9 @@ function ImageList({visible, onClose}: Props) {
         data={data}
         style={styles.container}
         contentContainerStyle={styles.listContent}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <View>
-            <Image source={{uri: item.path}} style={styles.image} />
+            <Image source={{ uri: item.path }} style={styles.image} />
             <TouchableOpacity
               style={styles.closeView}
               onPress={() => handleDeleteImage(index)}>
