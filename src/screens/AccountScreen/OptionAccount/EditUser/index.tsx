@@ -72,13 +72,13 @@ export default function EditUserScreen() {
 
     const handleGender = (value: any) => {
         setSex(value)
-        console.log("value", value);
+        // console.log("value", value);
 
     }
 
-    useEffect(() => {
-        console.log("sex", sex);
-    }, [sex])
+    // useEffect(() => {
+    //     console.log("sex", sex);
+    // }, [sex])
 
     const FetchEditProfile = async () => {
         try {

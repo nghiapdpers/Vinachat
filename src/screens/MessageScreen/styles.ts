@@ -1,7 +1,7 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 import mainTheme from '../../assets/colors';
-import { SCREEN } from '../../global';
-const { height: HeightScreen, width: WidthScreen } = Dimensions.get('window');
+import {SCREEN} from '../../global';
+const {height: HeightScreen, width: WidthScreen} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     fontSize: 14,
     color: 'black',
-    textAlign: 'center',
+    // textAlign: 'center',
     maxWidth: '70%',
   },
   messageStatus: {
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     padding: 8,
     marginHorizontal: 12,
     justifyContent: 'space-between',
-    marginTop: 4
+    marginTop: 4,
   },
   categoryEmoji: {
     fontSize: 24,
@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
   },
   selectedCategoryEmoji: {
     borderBottomColor: mainTheme.logo,
-    borderBottomWidth: 2
-  }
+    borderBottomWidth: 2,
+  },
 });
 
 export default styles;

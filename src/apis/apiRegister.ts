@@ -9,7 +9,7 @@ export default async function apiRegister(data: any) {
     const url = baseURL.REGISTER_URL;
 
     const res = await apiHelper(url, data);
-    console.log('res:>>', res);
+    // console.log('res:>>', res);
 
     switch (res?.code) {
       case NETWORK.SUCCESS:

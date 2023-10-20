@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {
   actionListGroupChatStart,
   actionUpdateLatestMessage,
@@ -13,10 +13,10 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import { screen } from '../../assets/images';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { actionFriendListStart } from '../../redux/actions/friendAction';
+import {screen} from '../../assets/images';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {actionFriendListStart} from '../../redux/actions/friendAction';
 
 const database = firestore();
 
@@ -32,11 +32,11 @@ export default function HomeScreen() {
   const list = useSelector((state: any) => state.groupChat?.data);
   const status = useSelector((state: any) => state.groupChat?.status);
 
-  console.log('user:>>', user?.data?.fullname);
+  // console.log('user:>>', user?.data?.fullname);
 
-  useEffect(() => {
-    console.log('list:>>', list);
-  }, [list]);
+  // useEffect(() => {
+  //   console.log('list:>>', list);
+  // }, [list]);
 
   // Khi thành công
   function onResultGroups(QuerySnapshot: any) {
@@ -49,7 +49,7 @@ export default function HomeScreen() {
       groupDataArray.push(data);
     });
 
-    console.log('groupDataArray:>>', groupDataArray);
+    // console.log('groupDataArray:>>', groupDataArray);
     // Nạp dữ liệu lên redux
     dispatch(actionUpdateLatestMessage(groupDataArray));
   }
@@ -72,7 +72,7 @@ export default function HomeScreen() {
     if (status === 'done') {
       const listRef = list.map((e: any) => e.ref);
 
-      console.log('listRef:>>', listRef);
+      // console.log('listRef:>>', listRef);
 
       if (listRef.length > 0) {
         // Bắt đầu lắng nghe dữ liệu từ collection "groups"
@@ -110,7 +110,7 @@ export default function HomeScreen() {
     return () => {
       listenGroups();
     };
-  }, []);
+  }, [user.data]);
 
   const getFirstLetters = (inputString: any) => {
     const words = inputString.trim().split(' ');
@@ -126,14 +126,14 @@ export default function HomeScreen() {
     }
   };
 
-  const renderFriendActive = ({ item }: { item: any }) => {
-    console.log('friend active item', item);
+  const renderFriendActive = ({item}: {item: any}) => {
+    // console.log('friend active item', item);
 
     return (
       <TouchableOpacity
         style={styles.viewfriendActive}
         onPress={() => {
-          navigation.navigate('MessageScreen', { ref: String(item.ref) });
+          navigation.navigate('MessageScreen', {ref: String(item.ref)});
         }}>
         <View style={styles.borderfriendActive}>
           <Text>{getFirstLetters(item.fullname)}</Text>
@@ -145,11 +145,11 @@ export default function HomeScreen() {
     );
   };
 
-  const Flatlistrender = ({ item }: { item: any }) => {
-    console.log(
-      (user?.data?.fullname || userExternal?.data?.fullname) ===
-      item?.latest_message_from_name && item?.latest_message_type === 'image',
-    );
+  const Flatlistrender = ({item}: {item: any}) => {
+    // console.log(
+    //   (user?.data?.fullname || userExternal?.data?.fullname) ===
+    //     item?.latest_message_from_name && item?.latest_message_type === 'image',
+    // );
 
     return item?.latest_message_type ? (
       <TouchableOpacity
@@ -168,17 +168,15 @@ export default function HomeScreen() {
         </View>
         <View style={styles.Message}>
           <Text style={styles.textnameMessage}>{item.name}</Text>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode='tail'>
+          <Text numberOfLines={1} ellipsizeMode="tail">
             {(user?.data?.fullname || userExternal?.data?.fullname) ===
-              item?.latest_message_from_name
+            item?.latest_message_from_name
               ? item?.latest_message_type === 'image'
                 ? `You: Hình ảnh`
                 : `You: ${item.latest_message_text}`
               : item?.latest_message_type === 'image'
-                ? `${item.latest_message_from_name}: Hình ảnh`
-                : `${item.latest_message_from_name}: ${item.latest_message_text}`}
+              ? `${item.latest_message_from_name}: Hình ảnh`
+              : `${item.latest_message_from_name}: ${item.latest_message_text}`}
           </Text>
         </View>
       </TouchableOpacity>

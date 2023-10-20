@@ -64,9 +64,9 @@ export default function CreateGroupChat() {
     setmemberSelected(updatedMembers);
   };
 
-  useEffect(() => {
-    console.log(memberSelected);
-  }, [memberSelected]);
+  // useEffect(() => {
+  //   console.log(memberSelected);
+  // }, [memberSelected]);
 
   // Fetch API tạo nhóm
   const FetchCreateGroup = async () => {

@@ -1,4 +1,4 @@
-const DOMAIN = 'http://192.168.0.134:5000';
+const DOMAIN = 'http://192.168.0.121:3000';
 
 export const LOGIN_URL = `${DOMAIN}/api/user/login`;
 export const LOGIN_EXTERNAL_URL = `${DOMAIN}/api/user/loginWithExternal`;
@@ -16,8 +16,6 @@ export const FRIENDS_REQUEST_URL = `${DOMAIN}/api/user/requestFriend`;
 export const MESSAGE_SYNCHRONOUS_URL = `${DOMAIN}/api/group/synchronous`;
 export const UPDATE_PROFILE_URL = `${DOMAIN}/api/user/update`;
 
-
-
 export default {
   LOGIN_URL,
   REGISTER_URL,
@@ -33,5 +31,5 @@ export default {
   LOADMORE_MESSAGE,
   FRIENDS_REQUEST_URL,
   MESSAGE_SYNCHRONOUS_URL,
-  UPDATE_PROFILE_URL
+  UPDATE_PROFILE_URL,
 };

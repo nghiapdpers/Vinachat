@@ -10,7 +10,7 @@ export default async function apiLoginWithExternal(data: any) {
 
     const res = await apiHelper(url, data);
 
-    console.log('resLoginWithExternal:>>', res);
+    // console.log('resLoginWithExternal:>>', res);
 
     switch (res?.code) {
       case NETWORK.SUCCESS:

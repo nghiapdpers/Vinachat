@@ -23,7 +23,7 @@ export default function UserReducer(state = initialState, action: AnyAction) {
         loading: true,
       };
     case LOGIN.END:
-      console.log('REDUCER LOGIN >>', action.payload);
+      // console.log('REDUCER LOGIN >>', action.payload);
 
       return {
         ...action.payload,
@@ -34,7 +34,7 @@ export default function UserReducer(state = initialState, action: AnyAction) {
         },
       };
     case LOGIN.FAIL:
-      console.log('acdf: >>', action.payload);
+      // console.log('acdf: >>', action.payload);
       return {
         ...state,
         loading: false,

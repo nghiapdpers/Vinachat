@@ -10,7 +10,7 @@ export default async function apiSearch(data: any) {
 
     const res = await apiHelper(url, data, apiKey);
 
-    console.log('res:>>', res);
+    // console.log('res:>>', res);
 
     switch (res?.code) {
       case NETWORK.SUCCESS:
