@@ -1,0 +1,185 @@
+diff --git a/node_modules/react-native-emoji-board/component/CategoryTabBar.js b/node_modules/react-native-emoji-board/component/CategoryTabBar.js
+index 155fade..19e133d 100644
+--- a/node_modules/react-native-emoji-board/component/CategoryTabBar.js
++++ b/node_modules/react-native-emoji-board/component/CategoryTabBar.js
+@@ -8,10 +8,11 @@ import {
+ } from 'react-native';
+ import MaIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+ import FontIcon from 'react-native-vector-icons/FontAwesome';
+-import {isIphoneXorAbove} from '../utils';
+-import {IconType} from '../constant';
++import { isIphoneXorAbove } from '../utils';
++import { IconType } from '../constant';
++import mainTheme from '../../../src/assets/colors'
+ 
+-const {width} = Dimensions.get('window');
++const { width } = Dimensions.get('window');
+ const styles = StyleSheet.create({
+     tabs: {
+         height: 30,
+@@ -66,7 +67,7 @@ const CategoryTabBar = ({
+                             : categoryDefautColor;
+                     const iconObj =
+                         categories.find(item => tab === item.name) || {};
+-                    const {iconType, icon} = iconObj;
++                    const { iconType, icon } = iconObj;
+                     return (
+                         <TouchableOpacity
+                             key={tab}
+@@ -96,7 +97,7 @@ const CategoryTabBar = ({
+                     <MaIcon
+                         name={'backspace-outline'}
+                         size={24}
+-                        color={'#000'}
++                        color={mainTheme.logo}
+                     />
+                 </TouchableOpacity>
+             )}
+diff --git a/node_modules/react-native-emoji-board/component/CategoryView.js b/node_modules/react-native-emoji-board/component/CategoryView.js
+index 992984a..830c15f 100644
+--- a/node_modules/react-native-emoji-board/component/CategoryView.js
++++ b/node_modules/react-native-emoji-board/component/CategoryView.js
+@@ -1,12 +1,12 @@
+-import React, {useState} from 'react';
+-import {Text, View, StyleSheet, Dimensions} from 'react-native';
++import React, { useState } from 'react';
++import { Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+ import _ from 'lodash';
+ import PropTypes from 'prop-types';
+ import ScrollableTabView from 'react-native-scrollable-tab-view';
+ import SkinBox from './SkinBox';
+ import EmojiIcon from './EmojiIcon';
+ 
+-const {width} = Dimensions.get('window');
++const { width } = Dimensions.get('window');
+ 
+ const styles = StyleSheet.create({
+     categoryView: {
+@@ -65,13 +65,13 @@ const CategoryView = ({
+         }
+     };
+ 
+-    const tabBar = () => {
+-        return (
+-            <View style={styles.categoryLabel}>
+-                <Text style={[styles.labelText, labelStyle]}>{category}</Text>
+-            </View>
+-        );
+-    };
++    // const tabBar = () => {
++    //     return (
++    //         <View style={styles.categoryLabel}>
++    //             <Text style={[styles.labelText, labelStyle]}>{category}</Text>
++    //         </View>
++    //     );
++    // };
+ 
+     const renderCategory = () => {
+         if (!emojis.length) {
+@@ -105,7 +105,11 @@ const CategoryView = ({
+                 </View>
+             );
+         }
+-        return categoryView;
++        return (
++            <ScrollView>
++                {categoryView}
++            </ScrollView>
++        )
+     };
+     return (
+         <View tabLabel={category} style={styles.categoryView}>
+@@ -117,12 +121,7 @@ const CategoryView = ({
+                     emojiSize={emojiSize}
+                 />
+             )}
+-            <ScrollableTabView
+-                tabBarPosition="top"
+-                renderTabBar={() => tabBar()}
+-                initialPage={0}>
+-                {renderCategory()}
+-            </ScrollableTabView>
++            {renderCategory()}
+         </View>
+     );
+ };
+diff --git a/node_modules/react-native-emoji-board/component/EmojiIcon.js b/node_modules/react-native-emoji-board/component/EmojiIcon.js
+index 7958229..5c939e8 100644
+--- a/node_modules/react-native-emoji-board/component/EmojiIcon.js
++++ b/node_modules/react-native-emoji-board/component/EmojiIcon.js
+@@ -1,6 +1,6 @@
+ import React from 'react';
+ import PropTypes from 'prop-types';
+-import {Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
++import { Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+ 
+ const styles = StyleSheet.create({
+     emojiTouch: {
+@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
+         justifyContent: 'center'
+     },
+     emoji: {
++        color: '#FFFFFF',
+         textAlign: 'center'
+     },
+     emojiImg: {
+@@ -24,15 +25,15 @@ const EmojiIcon = ({
+     emojiWidth,
+     emojiSize
+ }) => {
+-    const {code, img} = emoji;
++    const { code, img } = emoji;
+     return (
+         <TouchableOpacity
+-            style={[styles.emojiTouch, {width: emojiWidth}]}
++            style={[styles.emojiTouch, { width: emojiWidth }]}
+             onLongPress={() => (longPressEmoji ? longPressEmoji(emoji) : null)}
+             onPress={() => clickEmoji(emoji)}>
+             {code ?
+-                <Text style={[styles.emoji, {fontSize: emojiSize}]}>{code}</Text> :
+-                <Image source={{uri: img}} style={[styles.emojiImg, {width: emojiSize, height: emojiSize}]} />
++                <Text style={[styles.emoji, { fontSize: emojiSize }]}>{code}</Text> :
++                <Image source={{ uri: img }} style={[styles.emojiImg, { width: emojiSize, height: emojiSize }]} />
+             }
+         </TouchableOpacity>
+     );
+diff --git a/node_modules/react-native-emoji-board/index.js b/node_modules/react-native-emoji-board/index.js
+index f2b99ab..357046c 100644
+--- a/node_modules/react-native-emoji-board/index.js
++++ b/node_modules/react-native-emoji-board/index.js
+@@ -1,5 +1,5 @@
+-import React, {useState, useEffect} from 'react';
+-import {Animated, StyleSheet, Dimensions} from 'react-native';
++import React, { useState, useEffect } from 'react';
++import { Animated, StyleSheet, Dimensions } from 'react-native';
+ import emojiSource from 'emoji-datasource';
+ import PropTypes from 'prop-types';
+ import _ from 'lodash';
+@@ -12,15 +12,15 @@ import {
+ } from './utils';
+ import CategoryTabBar from './component/CategoryTabBar';
+ import CategoryView from './component/CategoryView';
+-import {defaultProps, IconType} from './constant';
++import { defaultProps, IconType } from './constant';
+ 
+-const {width} = Dimensions.get('window');
++const { width } = Dimensions.get('window');
+ 
+ const styles = StyleSheet.create({
+     container: {
+         backgroundColor: '#EAEBEF',
+         width: width,
+-        position: 'absolute',
++        // position: 'absolute',
+         zIndex: 10,
+         overflow: 'visible',
+         bottom: 0,
+@@ -88,7 +88,7 @@ const EmojiBoard = ({
+     }
+     let groupsView = [];
+     _.each(categories, (category, key) => {
+-        const {name} = category;
++        const { name } = category;
+         groupsView.push(
+             <CategoryView
+                 category={name}
