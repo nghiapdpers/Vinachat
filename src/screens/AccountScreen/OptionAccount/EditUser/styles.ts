@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     btntext: {
         fontSize: 18
     },
-    viewbtngender: {
+    viewbtn: {
         flex: 1,
         height: '100%',
         flexDirection: 'row',
@@ -83,14 +83,19 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         marginHorizontal: 10
     },
+    viewbirthday: {
+        flex: 1,
+        height: '100%',
+        justifyContent: 'center'
+    },
     borderbtngender: {
         width: 100,
         height: '85%',
         borderWidth: 1,
-        borderColor: 'black', 
+        borderColor: 'black',
         borderRadius: 35,
-        alignItems :'center',
-        justifyContent :'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 });
 

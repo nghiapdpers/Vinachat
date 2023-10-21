@@ -129,7 +129,10 @@ export default function ProfileScreen({ route }: { route: any }) {
                         <View style={styles.borderheaderprofile}>
                             <View style={styles.flexboxheader}>
                                 <View style={styles.boderavatar}>
-                                    <Image style={styles.converAvatar} source={screen.profile.usermale} />
+                                    <Image style={styles.converAvatar}
+                                        source={user?.data?.gender === '1' || userExternal?.data?.gender === '1'
+                                            ? screen.profile.usermale
+                                            : screen.profile.userfemale} />
                                 </View>
                             </View>
                             <View style={styles.flexboxinfo}>

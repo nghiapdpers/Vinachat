@@ -26,7 +26,6 @@ export default function SearchScreen({route}: {route: any}) {
     try {
       return await apiSearch({keyword: value}).then((resposne: any) => {
         setData(resposne.data);
-        // console.log(resposne.data);
       });
     } catch (error) {
       console.log(error);
@@ -46,8 +45,7 @@ export default function SearchScreen({route}: {route: any}) {
 
   const handleFriendRequest = async (friendRef: any) => {
     try {
-      return await apiFriendRequest({ref: friendRef}).then((response: any) => {
-        // console.log(response);
+      return await apiFriendRequest({ ref: friendRef }).then((response: any) => {
         setStatus(response.status);
       });
     } catch (error) {
@@ -69,13 +67,10 @@ export default function SearchScreen({route}: {route: any}) {
   };
 
   useEffect(() => {
-    // console.log(status);
-    FetchSearch();
-  }, [status, data]);
+    FetchSearch()
+  }, [status, data])
 
-  const renderItem = ({item}: {item: any}) => {
-    console.log(item.ref);
-
+  const renderItem = ({ item }: { item: any }) => {
     return (
       <TouchableOpacity
         style={styles.borderFind}
