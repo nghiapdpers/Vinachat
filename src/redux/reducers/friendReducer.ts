@@ -13,6 +13,10 @@ const initialState = {
 export default function FriendListReducer(state = initialState, action: AnyAction) {
     switch (action.type) {
         case FRIENDLIST.START:
+            return {
+                ...state,
+                loading: true,
+            }
         case FRIENDLIST.END:
             return {
                 ...state,
