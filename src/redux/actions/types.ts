@@ -70,3 +70,7 @@ export enum FRIENDLIST {
   END = 'FRIENDLIST_END',
   FAIL = 'FRIENDLIST_FAIL',
 }
+
+export enum INPUT {
+  UPDATE_VALUE = 'UPDATE_VALUE'
+}

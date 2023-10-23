@@ -80,7 +80,8 @@ export default function MessageScreen() {
   useEffect(() => {
     console.log('listChatData:>>', listChatData);
   }, [listChatData])
-  const itemsPerRow = 11; // Số emoji trên mỗi hàng
+
+  const itemsPerRow = Platform.OS === 'android' ? 11 : 10; // Số emoji trên mỗi hàng
 
   // side effect: subcribe to listen chat
   useEffect(() => {
@@ -467,7 +468,7 @@ export default function MessageScreen() {
             <TouchableOpacity
               onPress={() => setValue(v => (v += item.emoji))}
               key={item?.emoji}
-              style={{ margin: 5, alignItems: 'center', width: `${100 / itemsPerRow}%` }}>
+              style={{ margin: 5, alignItems: 'center', width: `${100 / itemsPerRow}%`, flexWrap: 'wrap' }}>
               <Text style={styles.categoryEmoji}>{item.emoji}</Text>
             </TouchableOpacity>
           )

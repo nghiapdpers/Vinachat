@@ -1,7 +1,7 @@
-import {storeData} from '../storage';
-import apiHelper, {NETWORK} from './apiHelper';
+import { storeData } from '../storage';
+import apiHelper, { NETWORK } from './apiHelper';
 import baseURL from './baseURL';
-import {LOCALSTORAGE} from '../storage/direct';
+import { LOCALSTORAGE } from '../storage/direct';
 import auth from '@react-native-firebase/auth';
 
 export default async function apiLogin(data: any) {
@@ -22,7 +22,7 @@ export default async function apiLogin(data: any) {
           // sign in firebase auth
           auth()
             .signInWithCustomToken(res?.data.firebaseToken)
-            .then(res => {})
+            .then(res => { })
             .catch(err => {
               console.warn(
                 'API LOGIN - SIGN IN WITH CUSTOM TOKEN ERROR >> : ',

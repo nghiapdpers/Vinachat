@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef, useCallback, MutableRefObject } from 'react';
 import {
   SafeAreaView,
   Text,
@@ -6,14 +6,15 @@ import {
   View,
   Alert,
   TouchableOpacity,
+  Platform
 } from 'react-native';
 import styles from './styes';
 import mainTheme from '../../assets/colors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import OtpInputs from 'react-native-otp-inputs';
-import {useNavigation} from '@react-navigation/native';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import OtpInputs, { OtpInputsRef } from 'react-native-otp-inputs';
+import { useNavigation } from '@react-navigation/native';
 
 const SignUp = () => {
   const navigation = useNavigation();
@@ -76,7 +77,7 @@ const SignUp = () => {
         const res = await confirm.confirm(otp);
         console.log('res:>>', res);
         setIsShowCODE(false);
-        navigation.navigate('CreateAccount', {phone: isPhone});
+        navigation.navigate('CreateAccount', { phone: isPhone });
         setIsPhone('');
       } catch (error) {
         console.log('error:>>', error);
@@ -119,6 +120,13 @@ const SignUp = () => {
     return isSecond.toString();
   };
 
+  const otpRef: MutableRefObject<OtpInputsRef | undefined> = useRef<OtpInputsRef>();
+
+  // Reset Input OTP
+  const resetOTP = useCallback(() => {
+    otpRef.current?.reset();
+  }, [])
+
   return (
     <SafeAreaView style={styles.container}>
       <Modal
@@ -136,6 +144,7 @@ const SignUp = () => {
             </Text>
 
             <OtpInputs
+              ref={otpRef as React.RefObject<OtpInputsRef>}
               autofillFromClipboard={false}
               numberOfInputs={6}
               style={{
@@ -145,11 +154,18 @@ const SignUp = () => {
                 width: '100%',
                 marginTop: 16,
               }}
-              inputContainerStyles={{
-                backgroundColor: '#FFFFFF',
-                marginHorizontal: 4,
-              }}
-              inputStyles={{fontSize: 22, textAlign: 'center'}}
+              inputContainerStyles={
+                Platform.OS === 'ios' ? {
+                  backgroundColor: '#FFFFFF',
+                  marginHorizontal: 4,
+                  width: 40,
+                  height: 50,
+                } : {
+                  backgroundColor: '#FFFFFF',
+                  marginHorizontal: 4,
+                }
+              }
+              inputStyles={{ fontSize: 22, textAlign: 'center' }}
               keyboardType="phone-pad"
               handleChange={code => {
                 setOtp(code);
@@ -165,7 +181,7 @@ const SignUp = () => {
                 justifyContent: 'flex-end',
               }}>
               {isSecond === 0 ? null : (
-                <Text style={{color: mainTheme.logo, fontSize: 16}}>
+                <Text style={{ color: mainTheme.logo, fontSize: 16 }}>
                   0:{formatSecond()}
                 </Text>
               )}
@@ -180,8 +196,8 @@ const SignUp = () => {
                   style={[
                     styles.textResentOTP,
                     isSecond === 0
-                      ? {color: mainTheme.logo}
-                      : {color: '#C2C2C2'},
+                      ? { color: mainTheme.logo }
+                      : { color: '#C2C2C2' },
                   ]}>
                   Gửi lại mã OTP
                 </Text>
@@ -190,9 +206,10 @@ const SignUp = () => {
 
             <Button
               onPress={() => verifyCode()}
-              style={{position: 'absolute', bottom: 16}}
+              style={{ position: 'absolute', bottom: 16 }}
               title="Verify"
             />
+
           </View>
         </View>
       </Modal>
@@ -201,7 +218,7 @@ const SignUp = () => {
 
       <Input
         disableInput={isSendingOTP ? false : true}
-        style={{marginTop: 16}}
+        style={{ marginTop: 16 }}
         title="Phone Number"
         value={isPhone}
         onChange={(text: string) => setIsPhone(text)}
@@ -213,7 +230,7 @@ const SignUp = () => {
         styleText={{}}
         title={'Send OTP'}
         onPress={() => sendOTP(isPhone)}
-        style={{marginTop: 16}}
+        style={{ marginTop: 16 }}
         disable={isSendingOTP}
         loading={isSendingOTP ? true : false}
       />

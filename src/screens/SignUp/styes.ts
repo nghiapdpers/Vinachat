@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import mainTheme from "../../assets/colors";
+import { SCREEN } from "../../global";
 
 const styles = StyleSheet.create({
     container: {
@@ -23,8 +24,8 @@ const styles = StyleSheet.create({
     },
     centeredView: {
         backgroundColor: mainTheme.background,
-        width: 300,
-        height: 230,
+        width: SCREEN.width * 0.68,
+        height: SCREEN.height * 0.3,
         borderRadius: 7,
         padding: 16,
         alignItems: 'center',
