@@ -51,10 +51,12 @@ const Stack = createStackNavigator();
 
 // const HOST = '192.168.0.123';
 
+
 // // use firestore emulator
 // firestore().useEmulator(HOST, 8080);
 // auth().useEmulator(`http://${HOST}:9099`);
 // storage().useEmulator(HOST, 9199);
+
 
 export default function App() {
   const dispatch = useDispatch();

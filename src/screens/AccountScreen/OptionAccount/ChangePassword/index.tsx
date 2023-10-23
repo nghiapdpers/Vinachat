@@ -15,6 +15,11 @@ import { screen, component } from '../../../../assets/images';
 import Header3 from '../../../../components/Header3';
 import mainTheme from '../../../../assets/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import apiChangePassword from '../../../../apis/apiChangePassword';
+import { LOCALSTORAGE } from '../../../../storage/direct';
+import { storeData } from '../../../../storage';
+import { useNavigation } from '@react-navigation/native';
+
 
 export default function ChangePassword() {
     const [password, setpassword] = useState('');
@@ -26,6 +31,7 @@ export default function ChangePassword() {
     const [passwordWrong, setpasswordWrong] = useState(false);
     const [newpasswordWrong, setnewpasswordWrong] = useState(false);
     const [confirmpasswordWrong, setconfirmpasswordWrong] = useState(false);
+    const navigation = useNavigation();
 
 
     const onChangeSecureTextPassword = () => {
@@ -38,6 +44,36 @@ export default function ChangePassword() {
         setisShownConfirmPassword(!isShownConfirmPassword);
     };
 
+    const CheckPasswordIfNotExists = async (newPassword: any) => {
+        try {
+            const existingPassword = await AsyncStorage.getItem('@PasswordUser');
+            if (existingPassword !== newPassword) {
+                await AsyncStorage.setItem('@PasswordUser', newPassword);
+                console.log('Password set successfully:', newPassword);
+            } else {
+                console.log(
+                    'Password is the same as existing password:',
+                    existingPassword,
+                );
+            }
+        } catch (error) {
+            console.error('Error setting password:', error);
+        }
+    };
+
+    const FetchChangePassword = async () => {
+        try {
+            return await apiChangePassword({ old_password: password, new_password: newpassword }).then((response: any) => {
+                if (response.message === 'success') {
+                    CheckPasswordIfNotExists(newpassword);
+                    storeData(LOCALSTORAGE.apikey, response?.apiKey);
+                    navigation.goBack()
+                }
+            })
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
 
     const data = [
         {
@@ -92,6 +128,9 @@ export default function ChangePassword() {
                 setconfirmpasswordWrong(true);
             } else {
                 setconfirmpasswordWrong(false);
+            }
+            if (passwordWrong === false && newpasswordWrong === false && confirmpasswordWrong === false) {
+                FetchChangePassword()
             }
         });
     }
