@@ -14,6 +14,7 @@ export default async function apiListGroupChat(data: any) {
 
     switch (res?.code) {
       case NETWORK.SUCCESS:
+        storeData(LOCALSTORAGE.apikey, res?.data?.apiKey);
         storeData(LOCALSTORAGE.groupChat, res?.data);
 
         return Promise.resolve(res?.data);

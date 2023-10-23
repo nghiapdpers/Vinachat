@@ -16,30 +16,18 @@ const CreateAccount = () => {
   const dispatch = useDispatch();
   const route = useRoute();
   const navigation = useNavigation();
-  const {phone} = route?.params || {};
+  const {phone, data}: any = route?.params || {};
 
-  const user = useSelector((state: any) => state?.user);
-  const userExternal = useSelector((state: any) => state?.userExternal);
   const isRegisted = useSelector((state: any) => state?.user?.register?.status);
   const message = useSelector((state: any) => state?.user?.register?.message);
-  // Dữ liệu tài khoản khttest
-  const dataUserExternal = useSelector(
-    (state: any) => state?.userExternal?.data,
-  );
 
   const [isChecked, setIsChecked] = useState(false);
-  const [isPhone, setIsPhone] = useState(
-    dataUserExternal ? dataUserExternal?.mobile : phone,
-  );
-  const [isFullName, setIsFullName] = useState(
-    dataUserExternal ? dataUserExternal?.fullname : '',
-  );
+  const [isPhone, setIsPhone] = useState(data ? data?.mobile : phone);
+  const [isFullName, setIsFullName] = useState(data ? data?.fullname : '');
   const [isPassword, setIsPassword] = useState('');
 
-  // Get vinateks_id từ Redux
-  const vid = dataUserExternal?.vinateks_id
-    ? dataUserExternal?.vinateks_id
-    : '';
+  // Get vinateks_id từ route
+  const vid = data?.vinateks_id ? data?.vinateks_id : '';
 
   // console.log('userLogin:>>', user);
   // console.log('userExternalLogin:>>', userExternal);

@@ -31,8 +31,10 @@ import LoadingOverlay from '../../components/LoadingOverlay';
 import apiHelper from '../../apis/apiHelper';
 import apiSynchronous from '../../apis/apiSynchronous';
 import EmojiBoard from 'react-native-emoji-board';
+import useNetworkErr from '../../config/hooks/useNetworkErr';
+import apiUpdateLatestMessage from '../../apis/apiUpdateLatestMessage';
 
-var groupJson = require('unicode-emoji-json/data-by-group.json')
+var groupJson = require('unicode-emoji-json/data-by-group.json');
 
 // Màn hình chat:
 /**
@@ -51,6 +53,8 @@ const database = firestore();
 export default function MessageScreen() {
   const { hasPermission, requestPermission } = useCameraPermission();
 
+  const networkErr = useNetworkErr();
+
   const route = useRoute();
   const navigation = useNavigation();
 
@@ -65,6 +69,7 @@ export default function MessageScreen() {
   const totalMessage = useSelector((s: any) => s.listChat.lmTotal);
   const currentMessage = useSelector((s: any) => s.listChat.lmCurrent);
 
+  const currentOfflineRef = useRef(0);
   const [isSend, setIsSend] = useState(false);
   const [imagesData, setImagesData] = useState<ImageAsset[]>([]);
   const [moreOptVisible, setMoreOptVisible] = useState(false);
@@ -87,91 +92,94 @@ export default function MessageScreen() {
   useEffect(() => {
     // ignore initial listen
     let notFirstRender = false;
+    let listenMessage: () => void = () => { };
 
-    const listenMessage = database
-      .collection('groups')
-      .doc(groupRef)
-      .collection('messages')
-      // .orderBy('sent_time', 'desc')
-      // .limit(20)
-      .onSnapshot(
-        snapshot => {
-          console.log('snapshot:>>', snapshot.docs);
+    if (!networkErr) {
+      listenMessage = database
+        .collection('groups')
+        .doc(groupRef)
+        .collection('messages')
+        .orderBy('sent_time', 'desc')
+        .limit(20)
+        .onSnapshot(
+          snapshot => {
+            if (notFirstRender) {
+              snapshot.docChanges().forEach(item => {
+                if (item.type === 'added') {
+                  dispatch(
+                    listChatActions.add({
+                      ...item.doc.data(),
+                      ref: item.doc.id,
+                      status: 'sended',
+                      from_name: item.doc.data().from_name,
+                    }),
+                  );
 
-          if (notFirstRender) {
-            snapshot.docChanges().forEach(item => {
-              if (item.type === 'added') {
-                dispatch(
-                  listChatActions.add({
-                    ...item.doc.data(),
-                    ref: item.doc.id,
+                  realm.write(() => {
+                    let groupChat: GroupChat = realm
+                      .objects<GroupChat>('GroupChat')
+                      .filtered(`ref = '${groupRef}'`)[0];
+                    if (!groupChat) {
+                      groupChat = realm.create<GroupChat>('GroupChat', {
+                        ref: groupRef,
+                        name: '',
+                        total_member: 0,
+                        adminRef: '',
+                        latest_message_from: '',
+                        latest_message_from_name: '',
+                        latest_message_text: '',
+                        latest_message_type: '',
+                        latest_message_sent_time: 0,
+                        member: [],
+                        messages: [],
+                      });
+                    }
+
+                    const newMessage = {
+                      ref: item.doc.id,
+                      status: 'sended',
+                      from: item.doc.data().from,
+                      from_name: item.doc.data().from_name,
+                      message: item.doc.data().message,
+                      sent_time: item.doc.data().sent_time.seconds,
+                      type: item.doc.data().type,
+                      images: item.doc.data().images
+                        ? item.doc.data().images.map((url: any) => ({ url: url }))
+                        : [],
+                    };
+                    groupChat.messages.push(newMessage);
+                  });
+                }
+              });
+            } else {
+              dispatch(
+                listChatActions.merge(
+                  snapshot.docs.map(item => ({
+                    ...item.data(),
+                    ref: item.id,
                     status: 'sended',
-                    from_name: item.doc.data().from_name,
-                  }),
-                );
-
-                realm.write(() => {
-                  let groupChat: GroupChat = realm
-                    .objects<GroupChat>('GroupChat')
-                    .filtered(`ref = '${groupRef}'`)[0];
-                  if (!groupChat) {
-                    groupChat = realm.create<GroupChat>('GroupChat', {
-                      ref: groupRef,
-                      name: '',
-                      total_member: 0,
-                      adminRef: '',
-                      latest_message_from: '',
-                      latest_message_from_name: '',
-                      latest_message_text: '',
-                      latest_message_type: '',
-                      latest_message_sent_time: 0,
-                      member: [],
-                      messages: [],
-                    });
-                  }
-
-                  const newMessage = {
-                    ref: item.doc.id,
-                    status: 'sended',
-                    from: item.doc.data().from,
-                    message: item.doc.data().message,
-                    sent_time: item.doc.data().sent_time.seconds,
-                    type: item.doc.data().type,
-                    images: item.doc.data().images
-                      ? item.doc.data().images.map((url: any) => ({ url: url }))
-                      : [],
-                  };
-                  groupChat.messages.push(newMessage);
-                });
-              }
-            });
-          } else {
-
-            dispatch(
-              listChatActions.merge(
-                snapshot.docs.map(item => ({
-                  ...item.data(),
-                  ref: item.id,
-                  status: 'sended',
-                  from_name: item.data().from_name,
-                })),
-              ),
-            );
-          }
-          notFirstRender = true;
-          setIsReady(true);
-        },
-        err => {
-          console.warn(err);
-        },
-      );
+                    from_name: item.data().from_name,
+                  })),
+                ),
+              );
+            }
+            notFirstRender = true;
+            setIsReady(true);
+          },
+          err => {
+            console.warn(err);
+          },
+        );
+    } else {
+      setIsReady(true);
+    }
 
     // unsubcribe firestore chat group
     return () => {
       dispatch(listChatActions.clear());
       listenMessage();
     };
-  }, []);
+  }, [networkErr]);
 
   const renderItem = ({ item, index }: any) => {
     const messageFromMe = item.from === ref;
@@ -262,44 +270,69 @@ export default function MessageScreen() {
     // console.log('Reposne', latestMessage?.ref);
     // console.log(getMessageLatest);
 
+    // if had no internet, get message from realm
+    if (networkErr) {
+      let messageObject = realm
+        .objects('GroupChat')
+        .filtered(`ref = '${groupRef}'`)[0];
+      const messages: any = messageObject?.messages;
+      const sortMessages = messages?.sorted('sent_time', true);
+
+      dispatch(
+        listChatActions.merge(
+          sortMessages.slice(
+            currentOfflineRef.current,
+            currentOfflineRef.current + 20,
+          ),
+        ),
+      );
+    }
+
     await apiSynchronous({
       group_ref: groupRef,
       last_chat_ref: latestMessage?.ref,
-    }).then((response: any) => {
-      realm.write(() => {
-        if (!getMessageLatest) {
-          getMessageLatest = realm.create<GroupChat>('GroupChat', {
-            ref: groupRef,
-            name: '',
-            total_member: 0,
-            adminRef: '',
-            latest_message_from: '',
-            latest_message_from_name: '',
-            latest_message_text: '',
-            latest_message_type: '',
-            latest_message_sent_time: 0,
-            member: [],
-            messages: [],
-          });
-        }
+    })
+      .then((response: any) => {
+        realm.write(() => {
+          if (!getMessageLatest) {
+            getMessageLatest = realm.create<GroupChat>('GroupChat', {
+              ref: groupRef,
+              name: '',
+              total_member: 0,
+              adminRef: '',
+              latest_message_from: '',
+              latest_message_from_name: '',
+              latest_message_text: '',
+              latest_message_type: '',
+              latest_message_sent_time: 0,
+              member: [],
+              messages: [],
+            });
+          }
 
-        response.data.map((item: any) => {
-          const newMessage = {
-            ref: item.ref,
-            from: item.from,
-            from_name: item.from_name,
-            message: item.message,
-            sent_time: item.sent_time._seconds,
-            type: item.type,
-            images: item.images
-              ? item.images.map((url: any) => ({ url: url }))
-              : [],
-          };
-          getMessageLatest.messages.push(newMessage);
+          response.data.map((item: any) => {
+            const newMessage = {
+              ref: item.ref,
+              from: item.from,
+              from_name: item.from_name,
+              message: item.message,
+              sent_time: item.sent_time._seconds,
+              type: item.type,
+              images: item.images
+                ? item.images.map((url: any) => ({ url: url }))
+                : [],
+            };
+            getMessageLatest.messages.push(newMessage);
+          });
         });
+        // console.log(response);
+      })
+      .catch(err => {
+        console.log(
+          ':::: MESSAGE SCREEEN / API-GET-LATEST-MESSAGE ERROR >> ::::\n',
+          err,
+        );
       });
-      // console.log(response);
-    });
   };
 
   useEffect(() => {
@@ -346,113 +379,151 @@ export default function MessageScreen() {
 
   // event handler: send message
   const handleSendMessage = async () => {
-    try {
-      // create message ref
-      const messageRef = firestore()
-        .collection('groups')
-        .doc(groupRef)
-        .collection('messages')
-        .doc().id;
-
-      // timestamp
-      const now = firestore.Timestamp.now();
-
-      if (imagesData.length == 0) {
-        // save to redux
-        dispatch(
-          listChatActions.add({
-            ref: messageRef,
-            from: ref,
-            message: value,
-            sent_time: now,
-            status: 'sending',
-            type: 'text',
-            from_name: myName,
-          }),
-        );
-      } else {
-        // save to redux
-        dispatch(
-          listChatActions.add({
-            ref: messageRef,
-            from: ref,
-            message: value,
-            sent_time: now,
-            status: 'sending',
-            type: 'image',
-            from_name: myName,
-            images: new Array(imagesData.length).fill(
-              'dang-tai-anh-len-server',
-            ),
-          }),
-        );
-      }
-
-      setValue('');
-      listRef.current.scrollToOffset({ animated: true, offset: 0 });
-
-      if (imagesData.length == 0) {
-        // write to firestore
-        await firestore()
+    if (value.length > 0 || imagesData.length > 0) {
+      try {
+        // create message ref
+        const messageRef = firestore()
           .collection('groups')
           .doc(groupRef)
           .collection('messages')
-          .doc(messageRef)
-          .set({
-            from: ref,
-            message: value,
-            sent_time: now,
-            type: 'text',
-            from_name: myName,
+          .doc().id;
+
+        // timestamp
+        const now = firestore.Timestamp.now();
+
+        if (imagesData.length == 0) {
+          // save to redux
+          dispatch(
+            listChatActions.add({
+              ref: messageRef,
+              from: ref,
+              message: value,
+              sent_time: now,
+              status: 'sending',
+              type: 'text',
+              from_name: myName,
+            }),
+          );
+        } else {
+          // save to redux
+          dispatch(
+            listChatActions.add({
+              ref: messageRef,
+              from: ref,
+              message: value,
+              sent_time: now,
+              status: 'sending',
+              type: 'image',
+              from_name: myName,
+              images: new Array(imagesData.length).fill(
+                'dang-tai-anh-len-server',
+              ),
+            }),
+          );
+        }
+
+        setValue('');
+        listRef.current.scrollToOffset({ animated: true, offset: 0 });
+
+        if (imagesData.length == 0) {
+          // write to firestore
+          await firestore()
+            .collection('groups')
+            .doc(groupRef)
+            .collection('messages')
+            .doc(messageRef)
+            .set({
+              from: ref,
+              message: value,
+              sent_time: now,
+              type: 'text',
+              from_name: myName,
+            });
+        } else {
+          const imagesPromise = imagesData.map(async (item: ImageAsset) => {
+            // cut filename from path (android)
+            let fileName;
+            if (Platform.OS === 'ios') {
+              fileName = item.filename;
+            } else {
+              const splitPath = item.path.split('/');
+              fileName = splitPath[splitPath.length - 1];
+            }
+
+            const ref = storage().ref(`/groups/${groupRef}/${fileName}`);
+            await ref.putFile(item.path);
+            return ref.getDownloadURL();
           });
-      } else {
-        const imagesPromise = imagesData.map(async (item: ImageAsset) => {
-          // cut filename from path (android)
-          let fileName;
-          if (Platform.OS === 'ios') {
-            fileName = item.filename;
-          } else {
-            const splitPath = item.path.split('/');
-            fileName = splitPath[splitPath.length - 1];
-          }
 
-          const ref = storage().ref(`/groups/${groupRef}/${fileName}`);
-          await ref.putFile(item.path);
-          return ref.getDownloadURL();
-        });
+          const images = await Promise.all(imagesPromise);
 
-        const images = await Promise.all(imagesPromise);
+          // write to firestore
+          await firestore()
+            .collection('groups')
+            .doc(groupRef)
+            .collection('messages')
+            .doc(messageRef)
+            .set({
+              from: ref,
+              message: value,
+              sent_time: now,
+              type: 'image',
+              from_name: myName,
+              images,
+            });
+        }
 
-        // write to firestore
-        await firestore()
-          .collection('groups')
-          .doc(groupRef)
-          .collection('messages')
-          .doc(messageRef)
-          .set({
-            from: ref,
-            message: value,
-            sent_time: now,
-            type: 'image',
-            from_name: myName,
-            images,
+        // for production
+        await apiUpdateLatestMessage({
+          group_ref: groupRef,
+          message_ref: messageRef,
+        })
+          .then(res => {
+            console.log('update latest message', res);
+          })
+          .catch(err => {
+            console.log(':::: UPDATE-LATEST-MESSAGE ERROR :::: >>\n', err);
           });
+
+        setIsSend(!isSend);
+      } catch (error) {
+        console.log('SEND MESSAGE ERROR >> ', error);
       }
-
-      setIsSend(!isSend);
-    } catch (error) {
-      console.warn('SEND MESSAGE ERROR >> ', error);
     }
   };
 
   // event handler: loadmore
   const handleLoadmore = () => {
-    if (currentMessage < totalMessage && listChatData.length >= 20) {
+    if (
+      currentMessage < totalMessage &&
+      listChatData.length >= 20 &&
+      !networkErr
+    ) {
       dispatch(
         listChatActions.loadmore_start(
           groupRef,
           listChatData[listChatData.length - 1].ref,
         ),
+      );
+    }
+
+    if (networkErr) {
+      currentOfflineRef.current = currentOfflineRef.current + 20;
+
+      let messageObject = realm
+        .objects('GroupChat')
+        .filtered(`ref = '${groupRef}'`)[0];
+      const messages: any = messageObject?.messages;
+      const sortMessages = messages?.sorted('sent_time', true);
+      dispatch(
+        listChatActions.loadmore_end({
+          data: {
+            chats: sortMessages.slice(
+              currentOfflineRef.current,
+              currentOfflineRef.current + 20,
+            ),
+          },
+        }),
       );
     }
   };
@@ -471,7 +542,7 @@ export default function MessageScreen() {
               style={{ margin: 5, alignItems: 'center', width: `${100 / itemsPerRow}%`, flexWrap: 'wrap' }}>
               <Text style={styles.categoryEmoji}>{item.emoji}</Text>
             </TouchableOpacity>
-          )
+          );
         }}
       />
     );
@@ -504,8 +575,6 @@ export default function MessageScreen() {
     setValue(removeLastEmoji(value));
   };
 
-  console.log('value:>>', value);
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -531,7 +600,7 @@ export default function MessageScreen() {
             <FlatList
               data={listChatData}
               renderItem={renderItem}
-              keyExtractor={(item) => item.ref}
+              keyExtractor={item => item.ref}
               showsVerticalScrollIndicator={false}
               inverted
               ref={listRef}
@@ -579,23 +648,30 @@ export default function MessageScreen() {
         </View>
 
         {emoPicker ? (
-          < View style={{ height: '40%' }}>
-
+          <View style={{ height: '40%' }}>
             <View style={styles.containerCategoryEmoji}>
-              {Object.keys(groupJson).map((category) => {
+              {Object.keys(groupJson).map(category => {
                 return (
                   <TouchableOpacity
                     key={category}
                     onPress={() => setSelectedCategoryEmoji(category)}>
-                    <Text style={[styles.categoryEmoji, selectedCategoryEmoji === category ? styles.selectedCategoryEmoji : null]}>{groupJson[category][0]?.emoji}</Text>
+                    <Text
+                      style={[
+                        styles.categoryEmoji,
+                        selectedCategoryEmoji === category
+                          ? styles.selectedCategoryEmoji
+                          : null,
+                      ]}>
+                      {groupJson[category][0]?.emoji}
+                    </Text>
                   </TouchableOpacity>
-                )
-              }
-              )}
+                );
+              })}
             </View>
 
-            {emoPicker && selectedCategoryEmoji && renderEmojiList(selectedCategoryEmoji)}
-
+            {emoPicker &&
+              selectedCategoryEmoji &&
+              renderEmojiList(selectedCategoryEmoji)}
           </View>
         ) : null}
 
@@ -609,8 +685,8 @@ export default function MessageScreen() {
   );
 }
 
-
-{/* {emoPicker ? (
+{
+  /* {emoPicker ? (
           <EmojiBoard
             showBoard={true}
             containerStyle={{ backgroundColor: mainTheme.background }}
@@ -629,4 +705,5 @@ export default function MessageScreen() {
             }}
             labelStyle={{ fontSize: 16, color: '#000000' }}
           />
-        ) : null} */}
+        ) : null} */
+}

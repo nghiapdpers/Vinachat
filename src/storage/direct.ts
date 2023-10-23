@@ -1,13 +1,15 @@
 export enum LOCALSTORAGE {
-    // store apikey (apikey: string)
-    apikey = 'apikey',
+  // store apikey (apikey: string)
+  apikey = 'apikey',
 
-    // app data
-    app = 'app',
+  // app data
+  app = 'app',
 
-    user = 'user',
+  user = 'user',
 
-    userExternal = 'userExternal',
+  userExternal = 'userExternal',
 
-    groupChat = 'groupChat'
+  groupChat = 'groupChat',
+
+  friendList = 'friendList',
 }

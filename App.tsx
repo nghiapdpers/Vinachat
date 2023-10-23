@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 
 import SignUp from './src/screens/SignUp';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import CreateAccount from './src/screens/CreateAccount';
 import Friends from './src/screens/Friends';
-import { Image, StyleSheet, View, Platform, StatusBar, Text } from 'react-native';
+import {Image, StyleSheet, View, Platform, StatusBar, Text} from 'react-native';
 import LoginScreen from './src/screens/LoginScreen';
-import { useDispatch, useSelector } from 'react-redux';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {useDispatch, useSelector} from 'react-redux';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../Vinachat/src/screens/HomeScreen';
 import AccountScreen from './src/screens/AccountScreen';
 import MessageScreen from './src/screens/MessageScreen';
 import SearchScreen from './src/screens/SearchScreen';
-import { screen } from './src/assets/images';
+import {screen} from './src/assets/images';
 import mainTheme from './src/assets/colors';
 import SplashScreen from 'react-native-splash-screen';
-import { getData } from './src/storage';
-import { LOCALSTORAGE } from './src/storage/direct';
+import {getData} from './src/storage';
+import {LOCALSTORAGE} from './src/storage/direct';
 import {
   actionLoginEnd,
   actionLoginExternalEnd,
@@ -31,7 +31,7 @@ import ScanQrCode from './src/screens/ScanQrCode';
 import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
 import CreateGroupChat from './src/screens/CreateGroupChat';
 import 'react-native-reanimated';
-import { RealmProvider } from '@realm/react';
+import {RealmProvider} from '@realm/react';
 import GroupChat from './src/realm/GroupChat';
 import Message from './src/realm/Message';
 import User from './src/realm/User';
@@ -39,6 +39,9 @@ import Images from './src/realm/Images';
 import ProfileScreen from './src/screens/AccountScreen/OptionAccount/Profile';
 import EditUserScreen from './src/screens/AccountScreen/OptionAccount/EditUser';
 import DetailImageScreen from './src/screens/DetailImageScreen';
+import useNetworkErr from './src/config/hooks/useNetworkErr';
+import {actionFriendListEnd} from './src/redux/actions/friendAction';
+import {actionListGroupChatEnd} from './src/redux/actions/listGroupChat';
 import AccountSecurity from './src/screens/AccountScreen/OptionAccount/Account&Security';
 import ChangePassword from './src/screens/AccountScreen/OptionAccount/ChangePassword';
 import Privacy from './src/screens/AccountScreen/OptionAccount/Privacy';
@@ -46,38 +49,43 @@ import Privacy from './src/screens/AccountScreen/OptionAccount/Privacy';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// const HOST = '192.168.0.126';
+// const HOST = '192.168.0.123';
 
-// // use fierstore emulator
+// // use firestore emulator
 // firestore().useEmulator(HOST, 8080);
 // auth().useEmulator(`http://${HOST}:9099`);
 // storage().useEmulator(HOST, 9199);
 
 export default function App() {
   const dispatch = useDispatch();
+  const networkErr = useNetworkErr();
 
   const [isC, setC] = useState(false);
 
   // Lấy dữ liệu dưới local và nạp lên Redux
   const getApiKey = async () => {
-    const [res, resExternal] = await Promise.all([
+    const [user, friendList, groupChat] = await Promise.all([
       getData(LOCALSTORAGE.user),
-      getData(LOCALSTORAGE.userExternal),
+      getData(LOCALSTORAGE.friendList),
+      getData(LOCALSTORAGE.groupChat),
     ]);
 
-    if (res) {
+    if (user) {
       setC(true);
-      dispatch(actionLoginEnd(res));
+      dispatch(actionLoginEnd(user));
     }
 
-    if (resExternal) {
-      setC(true);
-      dispatch(actionLoginExternalEnd(resExternal));
+    if (friendList) {
+      dispatch(actionFriendListEnd(friendList));
+    }
+
+    if (groupChat) {
+      dispatch(actionListGroupChatEnd(groupChat));
     }
 
     setTimeout(() => {
       SplashScreen.hide();
-    }, 100);
+    }, 200);
   };
 
   // side effect: hide splash screen
@@ -92,6 +100,9 @@ export default function App() {
 
   return (
     <RealmProvider schema={[GroupChat, Message, User, Images]}>
+      {networkErr && (
+        <Text style={styles.networkError}>Lỗi mạng, đang kết nối lại...</Text>
+      )}
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -116,7 +127,10 @@ export default function App() {
           <Stack.Screen name="CreateGroupChat" component={CreateGroupChat} />
           <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
           <Stack.Screen name="EditUserScreen" component={EditUserScreen} />
-          <Stack.Screen name="DetailImageScreen" component={DetailImageScreen}/>
+          <Stack.Screen
+            name="DetailImageScreen"
+            component={DetailImageScreen}
+          />
           <Stack.Screen name="AccountSecurity" component={AccountSecurity} />
           <Stack.Screen name="ChangePassword" component={ChangePassword} />
           <Stack.Screen name="Privacy" component={Privacy} />
@@ -255,6 +269,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
+
+  networkError: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: mainTheme.logo,
+    paddingVertical: 3,
+    textAlign: 'center',
+  },
 });
 
 export type RootStackParamList = {
@@ -271,6 +293,6 @@ export type RootStackParamList = {
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList { }
+    interface RootParamList extends RootStackParamList {}
   }
 }

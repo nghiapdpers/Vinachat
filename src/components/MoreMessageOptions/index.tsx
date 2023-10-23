@@ -35,33 +35,37 @@ const MoreMessageOptions = memo(function ({
 
   // event handler: choose image from library
   const handleOnPickImage = async (action: 'new' | 'add') => {
-    const image = await openPicker({
-      multiple: true,
-      maxFiles: 10,
-      minFiles: 0,
-      mediaType: 'photo',
-    });
+    try {
+      const image = await openPicker({
+        multiple: true,
+        maxFiles: 10,
+        minFiles: 0,
+        mediaType: 'photo',
+      });
 
-    if (image.length > 0) {
-      const imageList = [...image];
+      if (image.length > 0) {
+        const imageList = [...image];
 
-      if (action == 'add') imagesDispatch(chosenImageActions.add(imageList));
-      else imagesDispatch(chosenImageActions.new(imageList));
-    }
+        if (action == 'add') imagesDispatch(chosenImageActions.add(imageList));
+        else imagesDispatch(chosenImageActions.new(imageList));
+      }
+    } catch (error) {}
   };
 
   // event handler: take picture form camera
   const handleOnTakePicture = async (action: 'new' | 'add') => {
-    const picture = await openCamera({
-      mediaType: 'photo',
-    });
+    try {
+      const picture = await openCamera({
+        mediaType: 'photo',
+      });
 
-    if (picture) {
-      const imageList = [picture];
+      if (picture) {
+        const imageList = [picture];
 
-      if (action == 'add') imagesDispatch(chosenImageActions.add(imageList));
-      else imagesDispatch(chosenImageActions.new(imageList));
-    }
+        if (action == 'add') imagesDispatch(chosenImageActions.add(imageList));
+        else imagesDispatch(chosenImageActions.new(imageList));
+      }
+    } catch (error) {}
   };
 
   // side effect: whenever images data has change

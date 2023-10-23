@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   actionListGroupChatStart,
   actionUpdateLatestMessage,
@@ -14,35 +14,42 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import { screen } from '../../assets/images';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { actionFriendListStart } from '../../redux/actions/friendAction';
-import lottieHome from '../../assets/lottiefile/home/lottieHome.json'
-import lottieLoadingChat from '../../assets/lottiefile/home/lottieLoadingChat.json'
+import {screen} from '../../assets/images';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {actionFriendListStart} from '../../redux/actions/friendAction';
+import useNetworkErr from '../../config/hooks/useNetworkErr';
+import lottieHome from '../../assets/lottiefile/home/lottieHome.json';
+import lottieLoadingChat from '../../assets/lottiefile/home/lottieLoadingChat.json';
 import LottieView from 'lottie-react-native';
-import { SCREEN } from '../../global';
+import {SCREEN} from '../../global';
 
 const database = firestore();
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const networkErr = useNetworkErr();
+
   const datafriend = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
   );
-  const loadingFriend = useSelector(
-    (state: any) => state?.friendlist?.loading,
-  );
+  const loadingFriend = useSelector((state: any) => state?.friendlist?.loading);
 
   console.log('loadingFriend:>>', loadingFriend);
-
 
   const user = useSelector((state: any) => state.user);
   const userExternal = useSelector((state: any) => state?.userExternal);
   const list = useSelector((state: any) => state.groupChat?.data);
   const status = useSelector((state: any) => state.groupChat?.status);
-  const loadingGroupChat = useSelector((state: any) => state.groupChat?.loading);
+
+  // useEffect(() => {
+  //   console.log('list:>>', list);
+  // }, [list]);
+  const loadingGroupChat = useSelector(
+    (state: any) => state.groupChat?.loading,
+  );
 
   // Khi thành công
   function onResultGroups(QuerySnapshot: any) {
@@ -59,15 +66,6 @@ export default function HomeScreen() {
     // Nạp dữ liệu lên redux
     dispatch(actionUpdateLatestMessage(groupDataArray));
   }
-
-  useEffect(() => {
-    dispatch(actionFriendListStart);
-  }, []);
-
-  // Gọi api Group Chat
-  useEffect(() => {
-    dispatch(actionListGroupChatStart());
-  }, []);
 
   // Khi lỗi
   function onErrorGroups(error: any) {
@@ -93,8 +91,11 @@ export default function HomeScreen() {
   }, [status]);
 
   useEffect(() => {
-    dispatch(actionFriendListStart);
-  }, []);
+    if (!networkErr) {
+      dispatch(actionFriendListStart);
+      dispatch(actionListGroupChatStart());
+    }
+  }, [networkErr]);
 
   // Gọi api Group Chat
   useEffect(() => {
@@ -132,18 +133,25 @@ export default function HomeScreen() {
     }
   };
 
-  const renderFriendActive = ({ item }: { item: any }) => {
+  const renderFriendActive = ({item}: {item: any}) => {
     // console.log('friend active item', item);
 
     return (
       <TouchableOpacity
         style={styles.viewfriendActive}
         onPress={() => {
-          navigation.navigate('MessageScreen', { ref: String(item.ref) });
+          navigation.navigate('MessageScreen', {ref: String(item.ref)});
         }}>
-        <View style={styles.borderfriendActive}>
-          <Text>{getFirstLetters(item.fullname)}</Text>
-        </View>
+        {item.avatar ? (
+          <Image
+            source={{uri: item.avatar}}
+            style={styles.borderfriendActive}
+          />
+        ) : (
+          <View style={styles.borderfriendActive}>
+            <Text>{getFirstLetters(item.fullname)}</Text>
+          </View>
+        )}
         <Text numberOfLines={1} style={styles.textnameActive}>
           {item.fullname}
         </Text>
@@ -151,7 +159,7 @@ export default function HomeScreen() {
     );
   };
 
-  const Flatlistrender = ({ item }: { item: any }) => {
+  const Flatlistrender = ({item}: {item: any}) => {
     return item?.latest_message_type ? (
       <TouchableOpacity
         style={styles.BorderMessage}
@@ -163,21 +171,28 @@ export default function HomeScreen() {
           });
         }}>
         <View style={styles.MessageAvatar}>
-          <View style={styles.borderfriendActive}>
-            <Text>{getFirstLetters(item.name)}</Text>
-          </View>
+          {item.groupAvatar ? (
+            <Image
+              source={{uri: item.groupAvatar}}
+              style={styles.borderfriendActive}
+            />
+          ) : (
+            <View style={styles.borderfriendActive}>
+              <Text>{getFirstLetters(item.name)}</Text>
+            </View>
+          )}
         </View>
         <View style={styles.Message}>
           <Text style={styles.textnameMessage}>{item.name}</Text>
           <Text numberOfLines={1} ellipsizeMode="tail">
             {(user?.data?.fullname || userExternal?.data?.fullname) ===
-              item?.latest_message_from_name
+            item?.latest_message_from_name
               ? item?.latest_message_type === 'image'
                 ? `You: Hình ảnh`
                 : `You: ${item.latest_message_text}`
               : item?.latest_message_type === 'image'
-                ? `${item.latest_message_from_name}: Hình ảnh`
-                : `${item.latest_message_from_name}: ${item.latest_message_text}`}
+              ? `${item.latest_message_from_name}: Hình ảnh`
+              : `${item.latest_message_from_name}: ${item.latest_message_text}`}
           </Text>
         </View>
       </TouchableOpacity>
@@ -192,9 +207,16 @@ export default function HomeScreen() {
           });
         }}>
         <View style={styles.MessageAvatar}>
-          <View style={styles.borderfriendActive}>
-            <Text>{getFirstLetters(item.name)}</Text>
-          </View>
+          {item.groupAvatar ? (
+            <Image
+              source={{uri: item.groupAvatar}}
+              style={styles.borderfriendActive}
+            />
+          ) : (
+            <View style={styles.borderfriendActive}>
+              <Text>{getFirstLetters(item.name)}</Text>
+            </View>
+          )}
         </View>
         <View style={styles.Message}>
           <Text style={styles.textnameMessage}>{item.name}</Text>
@@ -221,8 +243,8 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
       <View style={styles.FriendActive}>
-        {loadingFriend === false ?
-          datafriend?.length > 0 ?
+        {loadingFriend === false ? (
+          datafriend?.length > 0 ? (
             <FlatList
               data={datafriend}
               renderItem={renderFriendActive}
@@ -230,7 +252,8 @@ export default function HomeScreen() {
               horizontal={true}
               showsHorizontalScrollIndicator={false}
             />
-            : <LottieView
+          ) : (
+            <LottieView
               source={lottieLoadingChat}
               loop
               autoPlay
@@ -241,7 +264,10 @@ export default function HomeScreen() {
               }}
               speed={1}
             />
-          : <ActivityIndicator size='small' />}
+          )
+        ) : (
+          <ActivityIndicator size="small" />
+        )}
       </View>
       <View style={styles.optionView}>
         <View style={styles.createGroup}>
@@ -258,15 +284,16 @@ export default function HomeScreen() {
         </View>
       </View>
       <View style={styles.listMessage}>
-        {loadingGroupChat === false ?
-          datafriend?.length > 0 ?
+        {loadingGroupChat === false ? (
+          datafriend?.length > 0 ? (
             <FlatList
               data={list}
               renderItem={Flatlistrender}
               keyExtractor={(item, index) => index.toString()}
               showsVerticalScrollIndicator={false}
             />
-            : <LottieView
+          ) : (
+            <LottieView
               source={lottieHome}
               loop
               autoPlay
@@ -279,7 +306,13 @@ export default function HomeScreen() {
               }}
               speed={1}
             />
-          : <ActivityIndicator size='large' style={{ flex: 1, justifyContent: 'center' }} />}
+          )
+        ) : (
+          <ActivityIndicator
+            size="large"
+            style={{flex: 1, justifyContent: 'center'}}
+          />
+        )}
       </View>
     </SafeAreaView>
   );

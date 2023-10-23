@@ -14,17 +14,13 @@ export default async function apiLoginWithExternal(data: any) {
 
     switch (res?.code) {
       case NETWORK.SUCCESS:
-        storeData(LOCALSTORAGE.userExternal, res?.data);
-        // Khi đăng nhập với tài khoản khtest mà dữ liệu
-        //trả về là unlinked acccount và không có apiKey
-        // thì không lưu apiKey vào Local.
-        {
-          res?.data?.apiKey
-            ? storeData(LOCALSTORAGE.apikey, res?.data?.apiKey)
-            : null;
-        }
-
         if (res?.data.message === 'success') {
+          storeData(LOCALSTORAGE.userExternal, res?.data);
+          // Khi đăng nhập với tài khoản khtest mà dữ liệu
+          //trả về là unlinked acccount và không có apiKey
+          // thì không lưu apiKey vào Local.
+          storeData(LOCALSTORAGE.apikey, res?.data?.apiKey);
+
           // sign in firebase auth
           auth()
             .signInWithCustomToken(res?.data.firebaseToken)

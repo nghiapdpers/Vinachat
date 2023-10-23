@@ -3,13 +3,14 @@ import apiHelper, {NETWORK} from './apiHelper';
 import baseURL from './baseURL';
 import {LOCALSTORAGE} from '../storage/direct';
 
-export default async function apiGetRequestList(data: any) {
+export default async function apiUpdateLatestMessage(data: any) {
   try {
-    const url = baseURL.GET_REQUEST_LIST;
-
+    const url = baseURL.UPDATE_LATEST_MESSAGE;
     const apiKey = await getData(LOCALSTORAGE.apikey);
 
     const res = await apiHelper(url, data, apiKey);
+
+    // console.log('res:>>', res);
 
     switch (res?.code) {
       case NETWORK.SUCCESS:

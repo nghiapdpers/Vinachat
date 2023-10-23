@@ -74,3 +74,9 @@ export enum FRIENDLIST {
 export enum INPUT {
   UPDATE_VALUE = 'UPDATE_VALUE'
 }
+
+export enum GET_DETAIL_USER {
+  START = 'GET-DETAIL-USER-START',
+  END = 'GET-DETAIL-USER-END',
+  FAIL = 'GET-DETAIL-USER-FAIL',
+}
