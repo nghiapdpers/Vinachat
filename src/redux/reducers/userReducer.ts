@@ -1,4 +1,4 @@
-import {CLEAR, LOGIN, LOGOUT, REGISTER} from '../actions/types';
+import {CLEAR, LOGIN, LOGOUT, REGISTER, LOGIN_EXTERNAL} from '../actions/types';
 import {AnyAction} from 'redux';
 
 const initialState = {
@@ -18,6 +18,7 @@ export default function UserReducer(state = initialState, action: AnyAction) {
     case REGISTER.START:
     case LOGIN.START:
     case LOGOUT.START:
+    case LOGIN_EXTERNAL.START:
       return {
         ...state,
         loading: true,
@@ -29,7 +30,7 @@ export default function UserReducer(state = initialState, action: AnyAction) {
         ...action.payload,
         loading: false,
         login: {
-          status: true,
+          status: action.payload.message == 'success' ? true : false,
           message: action.payload?.message,
         },
       };

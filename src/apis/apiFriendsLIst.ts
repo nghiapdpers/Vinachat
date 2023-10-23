@@ -15,6 +15,7 @@ export default async function apiFriendsList(data: any) {
     switch (res?.code) {
       case NETWORK.SUCCESS:
         storeData(LOCALSTORAGE.apikey, res?.data?.apiKey);
+        storeData(LOCALSTORAGE.friendList, res?.data);
 
         return Promise.resolve(res?.data);
       case NETWORK.ERROR:

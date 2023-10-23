@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   actionListGroupChatStart,
   actionUpdateLatestMessage,
@@ -17,12 +17,16 @@ import {screen} from '../../assets/images';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {actionFriendListStart} from '../../redux/actions/friendAction';
+import useNetworkErr from '../../config/hooks/useNetworkErr';
 
 const database = firestore();
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const networkErr = useNetworkErr();
+
   const datafriend = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
   );
@@ -31,8 +35,6 @@ export default function HomeScreen() {
   const userExternal = useSelector((state: any) => state?.userExternal);
   const list = useSelector((state: any) => state.groupChat?.data);
   const status = useSelector((state: any) => state.groupChat?.status);
-
-  // console.log('user:>>', user?.data?.fullname);
 
   // useEffect(() => {
   //   console.log('list:>>', list);
@@ -53,15 +55,6 @@ export default function HomeScreen() {
     // Nạp dữ liệu lên redux
     dispatch(actionUpdateLatestMessage(groupDataArray));
   }
-
-  useEffect(() => {
-    dispatch(actionFriendListStart);
-  }, []);
-
-  // Gọi api Group Chat
-  useEffect(() => {
-    dispatch(actionListGroupChatStart());
-  }, []);
 
   // Khi lỗi
   function onErrorGroups(error: any) {
@@ -87,8 +80,11 @@ export default function HomeScreen() {
   }, [status]);
 
   useEffect(() => {
-    dispatch(actionFriendListStart);
-  }, []);
+    if (!networkErr) {
+      dispatch(actionFriendListStart);
+      dispatch(actionListGroupChatStart());
+    }
+  }, [networkErr]);
 
   // Gọi api Group Chat
   useEffect(() => {
@@ -135,9 +131,16 @@ export default function HomeScreen() {
         onPress={() => {
           navigation.navigate('MessageScreen', {ref: String(item.ref)});
         }}>
-        <View style={styles.borderfriendActive}>
-          <Text>{getFirstLetters(item.fullname)}</Text>
-        </View>
+        {item.avatar ? (
+          <Image
+            source={{uri: item.avatar}}
+            style={styles.borderfriendActive}
+          />
+        ) : (
+          <View style={styles.borderfriendActive}>
+            <Text>{getFirstLetters(item.fullname)}</Text>
+          </View>
+        )}
         <Text numberOfLines={1} style={styles.textnameActive}>
           {item.fullname}
         </Text>
@@ -162,9 +165,16 @@ export default function HomeScreen() {
           });
         }}>
         <View style={styles.MessageAvatar}>
-          <View style={styles.borderfriendActive}>
-            <Text>{getFirstLetters(item.name)}</Text>
-          </View>
+          {item.groupAvatar ? (
+            <Image
+              source={{uri: item.groupAvatar}}
+              style={styles.borderfriendActive}
+            />
+          ) : (
+            <View style={styles.borderfriendActive}>
+              <Text>{getFirstLetters(item.name)}</Text>
+            </View>
+          )}
         </View>
         <View style={styles.Message}>
           <Text style={styles.textnameMessage}>{item.name}</Text>
@@ -191,9 +201,16 @@ export default function HomeScreen() {
           });
         }}>
         <View style={styles.MessageAvatar}>
-          <View style={styles.borderfriendActive}>
-            <Text>{getFirstLetters(item.name)}</Text>
-          </View>
+          {item.groupAvatar ? (
+            <Image
+              source={{uri: item.groupAvatar}}
+              style={styles.borderfriendActive}
+            />
+          ) : (
+            <View style={styles.borderfriendActive}>
+              <Text>{getFirstLetters(item.name)}</Text>
+            </View>
+          )}
         </View>
         <View style={styles.Message}>
           <Text style={styles.textnameMessage}>{item.name}</Text>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -9,35 +9,36 @@ import {
   Keyboard,
   Alert,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { StackActions, useNavigation } from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {StackActions, useNavigation} from '@react-navigation/native';
 import styles from './styles';
 import Input from '../../components/Input';
 import TextButton from '../../components/TextButton';
 import Button from '../../components/Button';
-import { screen } from '../../assets/images';
+import {screen} from '../../assets/images';
 import {
   actionClearMessage,
   actionLoginExternalStart,
   actionLoginStart,
 } from '../../redux/actions/userActions';
 import LoadingOverlay from '../../components/LoadingOverlay';
-import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
+import {User} from 'realm/dist/bundle';
+import {actionClearGroupChat} from '../../redux/actions/listGroupChat';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
+  const user = useSelector((state: any) => state?.user);
   const message = useSelector((state: any) => state?.user?.login?.message);
-  const messageExternal = useSelector((state: any) => state?.userExternal?.login?.message);
+
   const loading = useSelector((state: any) => state.user?.loading);
-  const loadingExternal = useSelector((state: any) => state.userExternal?.loading);
 
   const [isPhone, setIsPhone] = useState('');
   const [isPassword, setIsPassword] = useState('');
-
 
   const rnBiometrics = new ReactNativeBiometrics({
     allowDeviceCredentials: true,
@@ -52,12 +53,12 @@ export default function LoginScreen() {
   const handleLoginBiometrics = async () => {
     try {
       rnBiometrics
-        .simplePrompt({ promptMessage: 'Confirm biometrics' })
+        .simplePrompt({promptMessage: 'Confirm biometrics'})
         .then(async (resultObject: any) => {
           const storedMobile: any = await AsyncStorage.getItem(
             '@UserRegisted_Biometrics',
           );
-          console.log("Respose biometrics", resultObject);
+          console.log('Respose biometrics', resultObject);
           if (storedMobile) {
             const mobile = storedMobile;
             console.log(mobile);
@@ -65,7 +66,7 @@ export default function LoginScreen() {
               service: `myKeychainService_${mobile}`,
             });
             if (credentials) {
-              const { password } = credentials;
+              const {password} = credentials;
               // Gọi action đang nhập
               CheckPasswordIfNotExists(password);
               if (resultObject.success === true) {
@@ -105,7 +106,7 @@ export default function LoginScreen() {
 
   const CheckSupported = async () => {
     rnBiometrics.isSensorAvailable().then((resultObject: any) => {
-      const { available, biometryType } = resultObject;
+      const {available, biometryType} = resultObject;
       if (available && biometryType === BiometryTypes.TouchID) {
         setcheckBiometrics('TouchID is supported');
       } else if (available && biometryType === BiometryTypes.FaceID) {
@@ -160,13 +161,17 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (message == 'success') {
-      setIsPhone('')
-      setIsPassword('')
+      setIsPhone('');
+      setIsPassword('');
       navigation.dispatch(StackActions.replace('BottomScreen'));
-      return;
     }
 
-    if (message && message != 'success') {
+    if (message == 'unlinked account') {
+      navigation.navigate('CreateAccount', {data: user.data});
+      dispatch(actionClearMessage);
+    }
+
+    if (message && message != 'success' && message != 'unlinked account') {
       Alert.alert('Thông báo', message, [
         {
           text: 'OK',
@@ -176,35 +181,12 @@ export default function LoginScreen() {
         },
       ]);
     }
-
-    console.log('login screen >> ', message);
   }, [message]);
 
-  useEffect(() => {
-    if (messageExternal && messageExternal == 'success') {
-      navigation.navigate('BottomScreen');
-      return;
-    }
-
-    if (messageExternal && messageExternal == 'unlinked account') {
-      navigation.navigate('CreateAccount');
-      dispatch(actionClearMessage);
-    } else if (messageExternal && messageExternal != 'unlinked account') {
-      Alert.alert('Thông báo', messageExternal, [
-        {
-          text: 'OK',
-          onPress: () => {
-            dispatch(actionClearMessage);
-          },
-        },
-      ]);
-    }
-  }, [messageExternal]);
-
   return (
-    <Pressable onPress={() => Keyboard.dismiss()} style={{ flex: 1 }}>
+    <Pressable onPress={() => Keyboard.dismiss()} style={{flex: 1}}>
       <SafeAreaView style={styles.container}>
-        <LoadingOverlay visible={loading || loadingExternal} />
+        <LoadingOverlay visible={loading} />
         <Text style={styles.title}>login</Text>
         <View style={styles.inputView}>
           <Input
@@ -237,7 +219,7 @@ export default function LoginScreen() {
               <Image
                 source={
                   checkBiometrics === 'TouchID is supported' ||
-                    checkBiometrics === 'Biometrics is supported'
+                  checkBiometrics === 'Biometrics is supported'
                     ? screen.login.fingerprint
                     : screen.login.faceid
                 }

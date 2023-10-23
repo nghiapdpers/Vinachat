@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import styles from './styles';
 import {
   Image,
@@ -9,13 +9,14 @@ import {
   FlatList,
   TextInput,
   Alert,
+  ImageBackground,
 } from 'react-native';
-import { screen, component } from '../../assets/images';
-import { useNavigation } from '@react-navigation/native';
+import {screen, component} from '../../assets/images';
+import {useNavigation} from '@react-navigation/native';
 import Header3 from '../../components/Header3';
 import apiCreateGroup from '../../apis/apiCreateGroup';
-import { useDispatch, useSelector } from 'react-redux';
-import { actionListGroupChatStart } from '../../redux/actions/listGroupChat';
+import {useDispatch, useSelector} from 'react-redux';
+import {actionListGroupChatStart} from '../../redux/actions/listGroupChat';
 import LoadingOverlay from '../../components/LoadingOverlay';
 
 export default function CreateGroupChat() {
@@ -39,7 +40,6 @@ export default function CreateGroupChat() {
       item?.mobile?.toLowerCase().includes(searchTerm)
     );
   });
-
 
   // Chọn bạn bè để tạo nhóm
   const handleMemberSelection = (member: any) => {
@@ -87,17 +87,17 @@ export default function CreateGroupChat() {
 
   const handleCreateGroupChat = async () => {
     if (!groupname) {
-      Alert.alert('Thông báo', 'Vui lòng nhập tên nhóm chat.')
+      Alert.alert('Thông báo', 'Vui lòng nhập tên nhóm chat.');
       return;
     }
     if (memberSelected.length < 2) {
-      Alert.alert('Thông báo', 'Nhóm chat phải từ 3 người trở lên')
+      Alert.alert('Thông báo', 'Nhóm chat phải từ 3 người trở lên');
       return;
     }
     FetchCreateGroup();
   };
 
-  const renderItem = ({ item }: { item: any }) => {
+  const renderItem = ({item}: {item: any}) => {
     const isSelected = memberSelected.some(
       (selectedMember: any) => selectedMember.ref === item.ref,
     );
@@ -114,7 +114,11 @@ export default function CreateGroupChat() {
           </TouchableOpacity>
         </View>
         <View style={styles.ImageFlex}>
-          <View style={styles.imageItem}></View>
+          {item.avatar ? (
+            <Image source={{uri: item.avatar}} style={styles.imageItem} />
+          ) : (
+            <View style={styles.imageItem}></View>
+          )}
         </View>
         <View style={styles.NameFlex}>
           <Text style={styles.textnameItem}>{item.fullname}</Text>
@@ -124,21 +128,39 @@ export default function CreateGroupChat() {
     );
   };
 
-  const rendermemeberSelected = ({ item }: { item: any }) => {
+  const rendermemeberSelected = ({item}: {item: any}) => {
     return (
       <View style={styles.SelectBottomItem}>
-        <View style={styles.imageBottomSelect}>
-          <TouchableOpacity
-            style={styles.potisionremove}
-            onPress={() => {
-              handleremovemember(item);
-            }}>
-            <Image
-              style={styles.imageremove}
-              source={screen.creategroupchat.remove}
-            />
-          </TouchableOpacity>
-        </View>
+        {item.avatar ? (
+          <ImageBackground
+            source={{uri: item.avatar}}
+            style={styles.imageBottomSelect}
+            borderRadius={180}>
+            <TouchableOpacity
+              style={styles.potisionremove}
+              onPress={() => {
+                handleremovemember(item);
+              }}>
+              <Image
+                style={styles.imageremove}
+                source={screen.creategroupchat.remove}
+              />
+            </TouchableOpacity>
+          </ImageBackground>
+        ) : (
+          <View style={styles.imageBottomSelect}>
+            <TouchableOpacity
+              style={styles.potisionremove}
+              onPress={() => {
+                handleremovemember(item);
+              }}>
+              <Image
+                style={styles.imageremove}
+                source={screen.creategroupchat.remove}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   };
@@ -179,7 +201,8 @@ export default function CreateGroupChat() {
               style={styles.textinput}
               placeholder="Tìm kiếm bạn bè"
               value={search}
-              onChangeText={text => setSearch(text)} />
+              onChangeText={text => setSearch(text)}
+            />
           </View>
         </View>
         <View style={styles.friendbody}>

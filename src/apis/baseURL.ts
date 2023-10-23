@@ -1,4 +1,7 @@
-const DOMAIN = 'http://192.168.0.121:3000';
+// develop domain
+const DOMAIN = 'http://192.168.0.123:5000';
+// production domain
+// const DOMAIN = 'https://shiny-gray-crow.cyclic.app';
 
 export const LOGIN_URL = `${DOMAIN}/api/user/login`;
 export const LOGIN_EXTERNAL_URL = `${DOMAIN}/api/user/loginWithExternal`;
@@ -15,6 +18,7 @@ export const LOADMORE_MESSAGE = `${DOMAIN}/api/group/getListMessage`;
 export const FRIENDS_REQUEST_URL = `${DOMAIN}/api/user/requestFriend`;
 export const MESSAGE_SYNCHRONOUS_URL = `${DOMAIN}/api/group/synchronous`;
 export const UPDATE_PROFILE_URL = `${DOMAIN}/api/user/update`;
+export const GET_DETAIL_USER = `${DOMAIN}/api/user/getDetail`;
 
 export default {
   LOGIN_URL,
@@ -32,4 +36,5 @@ export default {
   FRIENDS_REQUEST_URL,
   MESSAGE_SYNCHRONOUS_URL,
   UPDATE_PROFILE_URL,
+  GET_DETAIL_USER,
 };

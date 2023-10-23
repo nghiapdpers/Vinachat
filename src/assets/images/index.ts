@@ -41,6 +41,9 @@ export const screen = {
     profile: require('./Screen/AccountScreen/profileuser.png'),
     padlock: require('./Screen/AccountScreen/padlock.png'),
     encrypted: require('./Screen/AccountScreen/encrypted.png'),
+    optionalAccount: {
+      changeAvatar: require('./Screen/AccountScreen/OptionalAccount/Profile/avatar-change.png'),
+    },
   },
   message: {
     phonecall: require('./Screen/MessageScreen/phone-call.png'),
@@ -76,8 +79,8 @@ export const screen = {
     email: require('./Screen/ProfileScreen/email.png'),
     sex: require('./Screen/ProfileScreen/sex.png'),
     birthday: require('./Screen/ProfileScreen/birthday.png'),
-    fullname: require('./Screen/ProfileScreen/fullname.png')
-  }
+    fullname: require('./Screen/ProfileScreen/fullname.png'),
+  },
 };
 
 const images = {

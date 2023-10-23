@@ -39,42 +39,50 @@ import Images from './src/realm/Images';
 import ProfileScreen from './src/screens/AccountScreen/OptionAccount/Profile';
 import EditUserScreen from './src/screens/AccountScreen/OptionAccount/EditUser';
 import DetailImageScreen from './src/screens/DetailImageScreen';
+import useNetworkErr from './src/config/hooks/useNetworkErr';
+import {actionFriendListEnd} from './src/redux/actions/friendAction';
+import {actionListGroupChatEnd} from './src/redux/actions/listGroupChat';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// const HOST = '192.168.0.134';
+const HOST = '192.168.0.123';
 
 // use firestore emulator
-// firestore().useEmulator(HOST, 8080);
-// auth().useEmulator(`http://${HOST}:9099`);
-// storage().useEmulator(HOST, 9199);
+firestore().useEmulator(HOST, 8080);
+auth().useEmulator(`http://${HOST}:9099`);
+storage().useEmulator(HOST, 9199);
 
 export default function App() {
   const dispatch = useDispatch();
+  const networkErr = useNetworkErr();
 
   const [isC, setC] = useState(false);
 
   // Lấy dữ liệu dưới local và nạp lên Redux
   const getApiKey = async () => {
-    const [res, resExternal] = await Promise.all([
+    const [user, friendList, groupChat] = await Promise.all([
       getData(LOCALSTORAGE.user),
-      getData(LOCALSTORAGE.userExternal),
+      getData(LOCALSTORAGE.friendList),
+      getData(LOCALSTORAGE.groupChat),
     ]);
 
-    if (res) {
+    if (user) {
       setC(true);
-      dispatch(actionLoginEnd(res));
+      dispatch(actionLoginEnd(user));
     }
 
-    if (resExternal) {
-      setC(true);
-      dispatch(actionLoginExternalEnd(resExternal));
+    if (friendList) {
+      dispatch(actionFriendListEnd(friendList));
+    }
+
+    if (groupChat) {
+      dispatch(actionListGroupChatEnd(groupChat));
     }
 
     setTimeout(() => {
       SplashScreen.hide();
-    }, 100);
+    }, 200);
   };
 
   // side effect: hide splash screen
@@ -89,6 +97,9 @@ export default function App() {
 
   return (
     <RealmProvider schema={[GroupChat, Message, User, Images]}>
+      {networkErr && (
+        <Text style={styles.networkError}>Lỗi mạng, đang kết nối lại...</Text>
+      )}
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -251,6 +262,14 @@ const styles = StyleSheet.create({
     color: mainTheme.logo,
     fontSize: 13,
     fontWeight: '600',
+  },
+
+  networkError: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: mainTheme.logo,
+    paddingVertical: 3,
+    textAlign: 'center',
   },
 });
 

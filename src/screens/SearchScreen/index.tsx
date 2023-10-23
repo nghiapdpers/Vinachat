@@ -58,7 +58,7 @@ export default function SearchScreen({route}: {route: any}) {
   const ConvertStatusFriend = (status: any) => {
     switch (status) {
       case 'N':
-        return 'Kết bạn';
+      case 'D':
       case 'ID':
         return 'Kết bạn';
       case 'R':
@@ -68,14 +68,12 @@ export default function SearchScreen({route}: {route: any}) {
     }
   };
 
-  useEffect(() => {
-    // console.log(status);
-    FetchSearch();
-  }, [status, data]);
+  // useEffect(() => {
+  //   // console.log(status);
+  //   FetchSearch();
+  // }, [status, data]);
 
   const renderItem = ({item}: {item: any}) => {
-    console.log(item.ref);
-
     return (
       <TouchableOpacity
         style={styles.borderFind}
@@ -83,7 +81,11 @@ export default function SearchScreen({route}: {route: any}) {
           navigation.navigate('ProfileScreen', {item: item});
         }}>
         <View style={styles.topItem}>
-          <View style={styles.imageItem}></View>
+          {item.avatar ? (
+            <Image style={styles.imageItem} source={{uri: item.avatar}} />
+          ) : (
+            <View style={styles.imageItem}></View>
+          )}
         </View>
         <View style={styles.bodyItem}>
           <Text style={styles.textItemName}>{item?.fullname}</Text>
@@ -97,7 +99,8 @@ export default function SearchScreen({route}: {route: any}) {
                 backgroundColor:
                   item?.status === 'N' ||
                   item?.status === 'R' ||
-                  item?.status === 'ID'
+                  item?.status === 'ID' ||
+                  item?.status === 'D'
                     ? mainTheme.logo
                     : '#e3e3e3',
               },

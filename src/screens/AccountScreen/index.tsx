@@ -6,24 +6,24 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './styles';
 import Header from '../../components/Header';
-import { component, screen } from '../../assets/images';
-import { useDispatch, useSelector } from 'react-redux';
-import { getData, removeData } from '../../storage';
-import { LOCALSTORAGE } from '../../storage/direct';
+import {component, screen} from '../../assets/images';
+import {useDispatch, useSelector} from 'react-redux';
+import {getData, removeData} from '../../storage';
+import {LOCALSTORAGE} from '../../storage/direct';
 import {
   actionClearMessage,
   actionClearUser,
   actionLogoutStart,
 } from '../../redux/actions/userActions';
-import { StackActions, useNavigation } from '@react-navigation/native';
+import {StackActions, useNavigation} from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
-import { actionClearGroupChat } from '../../redux/actions/listGroupChat';
-import { listChatActions } from '../../redux/actions/listChatActions';
+import {actionClearGroupChat} from '../../redux/actions/listGroupChat';
+import {listChatActions} from '../../redux/actions/listChatActions';
 
 const datauser = [
   {
@@ -73,7 +73,7 @@ export default function AccountScreen() {
   // console.log('userAccountScreen:>>', user);
   // console.log('userAccountScreen:>>', userExternal);
 
-  const renderItem = ({ item }: { item: any }) => {
+  const renderItem = ({item}: {item: any}) => {
     return (
       <TouchableOpacity
         style={styles.BorderOption}
@@ -81,7 +81,7 @@ export default function AccountScreen() {
           navigation.navigate(item.navigation);
         }}>
         <View style={styles.FlexboxIcon}>
-          <Image style={{ width: 30, height: 30 }} source={item.icon} />
+          <Image style={{width: 30, height: 30}} source={item.icon} />
         </View>
         <View style={styles.FlexboxTitle}>
           <Text style={styles.textTitle}>{item.title}</Text>
@@ -122,7 +122,14 @@ export default function AccountScreen() {
           <View style={styles.topAccount}>
             <View style={styles.headerTopAccount}>
               <View style={styles.AvatarUserFlexbox}>
-                <View style={styles.AvatarUser}></View>
+                {user?.data?.avatar ? (
+                  <Image
+                    style={styles.AvatarUser}
+                    source={{uri: user.data.avatar}}
+                  />
+                ) : (
+                  <View style={styles.AvatarUser}></View>
+                )}
               </View>
               <View style={styles.NameUserFlexbox}>
                 <Text style={styles.UserName}>

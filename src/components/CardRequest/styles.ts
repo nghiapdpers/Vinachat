@@ -11,9 +11,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
   },
   icon: {
-    width: 60,
-    height: 60,
-    borderRadius: 15,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
   },
 });
 

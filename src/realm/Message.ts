@@ -11,6 +11,7 @@ class Message extends Realm.Object {
       message: 'string',
       sent_time: 'int',
       type: 'string',
+      from_name: 'string',
       images: {type: 'list', objectType: 'Images'},
     },
   };
