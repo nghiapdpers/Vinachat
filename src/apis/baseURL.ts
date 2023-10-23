@@ -1,4 +1,4 @@
-const DOMAIN = 'https://shiny-gray-crow.cyclic.app';
+const DOMAIN = 'https://shiny-gray-crow.cyclic.app/';
 
 export const LOGIN_URL = `${DOMAIN}/api/user/login`;
 export const LOGIN_EXTERNAL_URL = `${DOMAIN}/api/user/loginWithExternal`;

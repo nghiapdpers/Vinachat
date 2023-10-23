@@ -32,6 +32,8 @@ import apiHelper from '../../apis/apiHelper';
 import apiSynchronous from '../../apis/apiSynchronous';
 import EmojiBoard from 'react-native-emoji-board';
 
+var groupJson = require('unicode-emoji-json/data-by-group.json')
+
 // Màn hình chat:
 /**
  * Chức năng chat nay được viết trực tiếp bằng firestore đảm bảo sự nhanh chóng (k phải thông qua api như cũ.). Điều này yêu cầu một số cài đặt ở server về phần login và cài đặt ở client.
@@ -454,6 +456,26 @@ export default function MessageScreen() {
     }
   };
 
+  const renderEmojiList = (category: any) => {
+    return (
+      <FlatList
+        style={{ flex: 1 }}
+        data={groupJson[category]}
+        numColumns={itemsPerRow}
+        renderItem={({ item }) => {
+          return (
+            <TouchableOpacity
+              onPress={() => setValue(v => (v += item.emoji))}
+              key={item?.emoji}
+              style={{ margin: 5, alignItems: 'center', width: `${100 / itemsPerRow}%` }}>
+              <Text style={styles.categoryEmoji}>{item.emoji}</Text>
+            </TouchableOpacity>
+          )
+        }}
+      />
+    );
+  };
+
   // Chọn emoji
   const onClick = (emoji: any) => {
     // console.log(emoji.code);
@@ -556,6 +578,38 @@ export default function MessageScreen() {
         </View>
 
         {emoPicker ? (
+          < View style={{ height: '40%' }}>
+
+            <View style={styles.containerCategoryEmoji}>
+              {Object.keys(groupJson).map((category) => {
+                return (
+                  <TouchableOpacity
+                    key={category}
+                    onPress={() => setSelectedCategoryEmoji(category)}>
+                    <Text style={[styles.categoryEmoji, selectedCategoryEmoji === category ? styles.selectedCategoryEmoji : null]}>{groupJson[category][0]?.emoji}</Text>
+                  </TouchableOpacity>
+                )
+              }
+              )}
+            </View>
+
+            {emoPicker && selectedCategoryEmoji && renderEmojiList(selectedCategoryEmoji)}
+
+          </View>
+        ) : null}
+
+        <MoreMessageOptions
+          visible={moreOptVisible}
+          onImagesUpdate={setImagesData}
+          extraClearImages={isSend}
+        />
+      </SafeAreaView>
+    </KeyboardAvoidingView>
+  );
+}
+
+
+{/* {emoPicker ? (
           <EmojiBoard
             showBoard={true}
             containerStyle={{ backgroundColor: mainTheme.background }}
@@ -574,14 +628,4 @@ export default function MessageScreen() {
             }}
             labelStyle={{ fontSize: 16, color: '#000000' }}
           />
-        ) : null}
-
-        <MoreMessageOptions
-          visible={moreOptVisible}
-          onImagesUpdate={setImagesData}
-          extraClearImages={isSend}
-        />
-      </SafeAreaView>
-    </KeyboardAvoidingView>
-  );
-}
+        ) : null} */}

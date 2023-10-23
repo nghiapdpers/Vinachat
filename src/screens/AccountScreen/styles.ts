@@ -1,6 +1,6 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import mainTheme from '../../assets/colors';
-const {height: HeightScreen, width: WidthScreen} = Dimensions.get('window');
+const { height: HeightScreen, width: WidthScreen } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -8,10 +8,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   topAccount: {
-    flex: 2,
+    padding: 8,
     backgroundColor: mainTheme.white,
     width: WidthScreen * 0.95,
-    height: '90%',
     borderRadius: 20,
   },
   bodyAccount: {
@@ -20,13 +19,14 @@ const styles = StyleSheet.create({
     top: 20,
   },
   headerTopAccount: {
-    flex: 5,
+    // flex: 5,
     flexDirection: 'row',
   },
   bodyTopAccount: {
-    flex: 5,
+    // flex: 5,
     justifyContent: 'center',
-    marginLeft: 20,
+    marginTop: 8,
+    marginLeft: 8
   },
   AvatarUser: {
     width: 70,
@@ -35,12 +35,13 @@ const styles = StyleSheet.create({
     backgroundColor: mainTheme.lowerFillLogo,
   },
   AvatarUserFlexbox: {
-    flex: 2.5,
+    // flex: 2.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
   NameUserFlexbox: {
-    flex: 7.5,
+    // flex: 7.5,
+    marginLeft: 8,
     justifyContent: 'center',
   },
   UserName: {
@@ -51,7 +52,6 @@ const styles = StyleSheet.create({
   },
   BioFlexbox: {
     flex: 4,
-
     width: '90%',
   },
   HotStories: {
