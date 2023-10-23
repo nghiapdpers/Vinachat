@@ -82,11 +82,11 @@ export default function MessageScreen() {
   const [selectedCategoryEmoji, setSelectedCategoryEmoji] =
     useState('Smileys & Emotion');
 
-  // useEffect(() => {
-  //   console.log('listChatData:>>', listChatData);
-  // }, [listChatData]);
-
-  const itemsPerRow = 11; // Số emoji trên mỗi hàng
+  useEffect(() => {
+    console.log('listChatData:>>', listChatData);
+  }, [listChatData])
+  const itemsPerRow = 10; // Số emoji trên mỗi hàng
+  const [data, setData] = useState([]);
 
   // side effect: subcribe to listen chat
   useEffect(() => {
@@ -202,18 +202,36 @@ export default function MessageScreen() {
         )}
 
         {item.message.length > 0 && (
-          <Text
-            style={[
-              styles.borderMessage,
-              {
-                alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
-                backgroundColor: messageFromMe
-                  ? mainTheme.lowerFillLogo
-                  : mainTheme.white,
-              },
-            ]}>
-            {item.message}
-          </Text>
+          <>
+            {Platform.OS === 'android' ? (
+              <Text
+                style={[
+                  styles.borderMessageAndroid,
+                  {
+                    alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
+                    backgroundColor: messageFromMe
+                      ? mainTheme.lowerFillLogo
+                      : mainTheme.white,
+                  },
+                ]}>
+                {item.message}
+              </Text>
+            ) : (
+              <View style={[
+                styles.borderMessageIos,
+                {
+                  alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
+                  backgroundColor: messageFromMe
+                    ? mainTheme.lowerFillLogo
+                    : mainTheme.white,
+                },
+              ]}>
+                <Text style={styles.textMessage}>
+                  {item.message}
+                </Text>
+              </View>
+            )}
+          </>
         )}
 
         {item.images && item.images.length > 0 && (

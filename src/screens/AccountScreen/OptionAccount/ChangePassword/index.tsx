@@ -3,9 +3,9 @@ import {
     Text,
     TouchableOpacity,
     View,
-    FlatList,
+    Keyboard,
     Image,
-    ScrollView,
+    Pressable,
     TextInput,
     Switch
 } from 'react-native';
@@ -98,61 +98,63 @@ export default function ChangePassword() {
 
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Header3
-                    text={'Đổi mật khẩu'}
-                />
-            </View>
-            <View style={styles.body}>
-                {data.map((item: any) => {
-                    return (
-                        <View key={item.id} style={styles.border}>
-                            <View style={styles.viewtitle}>
-                                <Text style={styles.texttitle}>{item.title}</Text>
-                            </View>
-                            <View style={[styles.borderinput, { borderColor: item.condition ? 'red' : 'black' }]}>
-                                <View style={styles.viewinput}>
-                                    <TextInput
-                                        style={styles.textinput}
-                                        value={item.value}
-                                        onChangeText={item.onchange}
-                                        secureTextEntry={item.securetext}
-                                    />
-                                </View>
-                                <TouchableOpacity style={styles.potisionimage} onPress={item.btnshowhide}>
-                                    <Image style={styles.imagebtn} source={item.imageshowhide} />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    )
-                })}
-                <View style={styles.warningview}>
-                    <Text style={styles.textwarning}>
-                        *Lưu ý:
-                        {"\n"}
-                        - Mật khẩu mới không được trùng với mật khẩu hiện tại.
-                        {"\n"}
-                        - Mật khẩu phải bao gồm chữ, số và kí tự đặc biệt.
-                    </Text>
+        <Pressable onPress={() => Keyboard.dismiss()} style={{ flex: 1 }}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
+                    <Header3
+                        text={'Đổi mật khẩu'}
+                    />
                 </View>
-                <View style={styles.errorview}>
+                <View style={styles.body}>
                     {data.map((item: any) => {
                         return (
-                            <View key={item.id} style={styles.erroritem}>
-                                {item.condition === true ? (
-                                    <Text style={styles.textwrongcondition}>{item.textwrongcondition}</Text>
-                                ) : null}
+                            <View key={item.id} style={styles.border}>
+                                <View style={styles.viewtitle}>
+                                    <Text style={styles.texttitle}>{item.title}</Text>
+                                </View>
+                                <View style={[styles.borderinput, { borderColor: item.condition ? 'red' : 'black' }]}>
+                                    <View style={styles.viewinput}>
+                                        <TextInput
+                                            style={styles.textinput}
+                                            value={item.value}
+                                            onChangeText={item.onchange}
+                                            secureTextEntry={item.securetext}
+                                        />
+                                    </View>
+                                    <TouchableOpacity style={styles.potisionimage} onPress={item.btnshowhide}>
+                                        <Image style={styles.imagebtn} source={item.imageshowhide} />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         )
                     })}
+                    <View style={styles.warningview}>
+                        <Text style={styles.textwarning}>
+                            *Lưu ý:
+                            {"\n"}
+                            - Mật khẩu mới không được trùng với mật khẩu hiện tại.
+                            {"\n"}
+                            - Mật khẩu phải bao gồm chữ, số và kí tự đặc biệt.
+                        </Text>
+                    </View>
+                    <View style={styles.errorview}>
+                        {data.map((item: any) => {
+                            return (
+                                <View key={item.id} style={styles.erroritem}>
+                                    {item.condition === true ? (
+                                        <Text style={styles.textwrongcondition}>{item.textwrongcondition}</Text>
+                                    ) : null}
+                                </View>
+                            )
+                        })}
+                    </View>
+                    <View style={styles.submitview}>
+                        <TouchableOpacity style={styles.submitborder} onPress={() => { handleUpdatePassword() }}>
+                            <Text style={styles.textsubmit}>Cập nhật</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View style={styles.submitview}>
-                    <TouchableOpacity style={styles.submitborder} onPress={() => { handleUpdatePassword() }}>
-                        <Text style={styles.textsubmit}>Cập nhật</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </SafeAreaView>
+            </SafeAreaView>
+        </Pressable>
     )
 }
