@@ -42,6 +42,9 @@ import DetailImageScreen from './src/screens/DetailImageScreen';
 import useNetworkErr from './src/config/hooks/useNetworkErr';
 import {actionFriendListEnd} from './src/redux/actions/friendAction';
 import {actionListGroupChatEnd} from './src/redux/actions/listGroupChat';
+import AccountSecurity from './src/screens/AccountScreen/OptionAccount/Account&Security';
+import ChangePassword from './src/screens/AccountScreen/OptionAccount/ChangePassword';
+import Privacy from './src/screens/AccountScreen/OptionAccount/Privacy';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -128,6 +131,9 @@ export default function App() {
             name="DetailImageScreen"
             component={DetailImageScreen}
           />
+          <Stack.Screen name="AccountSecurity" component={AccountSecurity} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} />
+          <Stack.Screen name="Privacy" component={Privacy} />
         </Stack.Navigator>
       </NavigationContainer>
     </RealmProvider>

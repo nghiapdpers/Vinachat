@@ -13,6 +13,12 @@ export const component = {
   list_image: {
     close: require('./Components/ListImage/close.png'),
   },
+  modal : {
+    warning : require('./Components/Modal/warning.png')
+  },
+  bottomsheet : {
+    block : require('./Components/BottomSheet/blockUser.png')
+  }
 };
 
 export const screen = {

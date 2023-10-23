@@ -38,14 +38,14 @@ const datauser = [
     icon: screen.account.encrypted,
     title: 'Tài khoản và bảo mật',
     description: '',
-    navigation: '',
+    navigation: 'AccountSecurity',
   },
   {
     id: 3,
     icon: screen.account.padlock,
     title: 'Quyền riêng tư',
     description: '',
-    navigation: '',
+    navigation: 'Privacy',
   },
   {
     id: 4,
@@ -70,7 +70,7 @@ export default function AccountScreen() {
   const user = useSelector((state: any) => state?.user);
   const userExternal = useSelector((state: any) => state?.userExternal);
   const loading = useSelector((state: any) => state?.user?.loading);
-  // console.log('userAccountScreen:>>', user);
+  console.log('userAccountScreen:>>', user);
   // console.log('userAccountScreen:>>', userExternal);
 
   const renderItem = ({item}: {item: any}) => {
@@ -141,12 +141,16 @@ export default function AccountScreen() {
               </View>
             </View>
             <View style={styles.bodyTopAccount}>
-              <Text style={styles.textBio}>Chun Thịnh nè</Text>
-              <TouchableOpacity>
-                <Text style={styles.linkAccount}>
-                  https://github.com/nghiapdpers/Vinachat.git
-                </Text>
-              </TouchableOpacity>
+              {user?.data?.nickname || userExternal?.data?.nickname ?
+                <Text style={styles.textBio}>{user?.data?.nickname || userExternal?.data?.nickname}</Text>
+                : null}
+              {user?.data?.email || userExternal?.data?.email ?
+                <TouchableOpacity>
+                  <Text style={styles.linkAccount}>
+                    {user?.data?.email || userExternal?.data?.email}
+                  </Text>
+                </TouchableOpacity>
+                : null}
             </View>
           </View>
           <View style={styles.bodyAccount}>

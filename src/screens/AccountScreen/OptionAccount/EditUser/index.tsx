@@ -19,6 +19,7 @@ import { storeData } from '../../../../storage';
 import { LOCALSTORAGE } from '../../../../storage/direct';
 import { useNavigation } from '@react-navigation/native';
 import mainTheme from '../../../../assets/colors';
+import DatePicker from 'react-native-date-picker'
 
 export default function EditUserScreen() {
     const user = useSelector((state: any) => state?.user);
@@ -27,10 +28,11 @@ export default function EditUserScreen() {
     const [fullname, setFullname] = useState(userExternal?.data?.fullname || user?.data?.fullname);
     const [email, setEmail] = useState(userExternal?.data?.email || user?.data?.email);
     const [sex, setSex] = useState(userExternal?.data?.gender || user?.data?.gender);
+    const [date, setDate] = useState(new Date())
     const [birthday, setBirthday] = useState(userExternal?.data?.birthday || user?.data?.birthday);
     const dispacth = useDispatch();
     const navigation = useNavigation();
-
+    const [DateModalVisible, setDateModalVisible] = useState(false);
 
     const data = [
         {
@@ -76,9 +78,11 @@ export default function EditUserScreen() {
 
     }
 
-    // useEffect(() => {
-    //     console.log("sex", sex);
-    // }, [sex])
+    useEffect(() => {
+        console.log("sex", sex);
+        console.log(birthday);
+    }, [sex, birthday, date])
+
 
     const FetchEditProfile = async () => {
         try {
@@ -98,6 +102,57 @@ export default function EditUserScreen() {
             console.log(error);
         }
     }
+
+    const renderEdit = (item: any) => {
+        if (item.id === 5) {
+            return (
+                <TouchableOpacity style={styles.viewbirthday} onPress={() => setDateModalVisible(true)}>
+                    <DatePicker
+                        modal
+                        mode='date'
+                        open={DateModalVisible}
+                        date={date}
+                        onDateChange={setDate}
+                        onConfirm={(date) => {
+                            setDateModalVisible(false)
+                            // Chuyển kiểu Date thành dd/mm/yyyy
+                            setBirthday(date.toLocaleDateString("en-GB"))
+                        }}
+                        onCancel={() => {
+                            setDateModalVisible(false)
+                        }}
+                    />
+                    <Text>{birthday}</Text>
+                </TouchableOpacity>
+            );
+        } else if (item.id === 4) {
+            return (
+                <View style={styles.viewbtn}>
+                    <TouchableOpacity
+                        style={[styles.borderbtngender, { backgroundColor: sex === '1' ? mainTheme.logo : 'transparent' }]}
+                        onPress={() => { handleGender('1') }}
+                    >
+                        <Text>Nam</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.borderbtngender, { backgroundColor: sex === '0' ? mainTheme.logo : 'transparent' }]}
+                        onPress={() => { handleGender('0') }}
+                    >
+                        <Text>Nữ</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        } else {
+            return (
+                <TextInput
+                    style={styles.textdetail}
+                    value={item.value}
+                    onChangeText={item.onchaged}
+                />
+            );
+        }
+    };
+
 
 
     return (
@@ -119,26 +174,10 @@ export default function EditUserScreen() {
                                     <Image style={styles.icondetail} source={item.icon} />
                                 </View>
                                 <View style={styles.infoflexborderdetail}>
-                                    {item.id === 4 ? (
-                                        <View style={styles.viewbtngender}>
-                                            <TouchableOpacity style={[styles.borderbtngender, { backgroundColor: sex === '1' ? mainTheme.logo : 'transparent' }]} onPress={() => { handleGender('1') }}>
-                                                <Text>Nam</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={[styles.borderbtngender, { backgroundColor: sex === '0' ? mainTheme.logo : 'transparent' }]} onPress={() => { handleGender('0') }}>
-                                                <Text>Nữ</Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                    ) : (
-                                        <TextInput
-                                            style={styles.textdetail}
-                                            value={item.value}
-                                            onChangeText={item.onchaged}
-                                        />
-                                    )}
-
+                                    {renderEdit(item)}
                                 </View>
                             </View>
-                        </View>
+                        </View >
                     )
                 })}
                 <View style={styles.submit}>
@@ -146,7 +185,7 @@ export default function EditUserScreen() {
                         <Text style={styles.btntext}>Chỉnh sửa</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-        </SafeAreaView>
+            </View >
+        </SafeAreaView >
     )
 }

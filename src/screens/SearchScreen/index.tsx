@@ -26,7 +26,6 @@ export default function SearchScreen({route}: {route: any}) {
     try {
       return await apiSearch({keyword: value}).then((resposne: any) => {
         setData(resposne.data);
-        // console.log(resposne.data);
       });
     } catch (error) {
       console.log(error);
@@ -47,7 +46,6 @@ export default function SearchScreen({route}: {route: any}) {
   const handleFriendRequest = async (friendRef: any) => {
     try {
       return await apiFriendRequest({ref: friendRef}).then((response: any) => {
-        // console.log(response);
         setStatus(response.status);
       });
     } catch (error) {

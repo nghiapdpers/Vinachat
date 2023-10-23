@@ -12,12 +12,17 @@ import {
   View,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import {screen} from '../../assets/images';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {actionFriendListStart} from '../../redux/actions/friendAction';
 import useNetworkErr from '../../config/hooks/useNetworkErr';
+import lottieHome from '../../assets/lottiefile/home/lottieHome.json';
+import lottieLoadingChat from '../../assets/lottiefile/home/lottieLoadingChat.json';
+import LottieView from 'lottie-react-native';
+import {SCREEN} from '../../global';
 
 const database = firestore();
 
@@ -30,6 +35,9 @@ export default function HomeScreen() {
   const datafriend = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
   );
+  const loadingFriend = useSelector((state: any) => state?.friendlist?.loading);
+
+  console.log('loadingFriend:>>', loadingFriend);
 
   const user = useSelector((state: any) => state.user);
   const userExternal = useSelector((state: any) => state?.userExternal);
@@ -39,6 +47,9 @@ export default function HomeScreen() {
   // useEffect(() => {
   //   console.log('list:>>', list);
   // }, [list]);
+  const loadingGroupChat = useSelector(
+    (state: any) => state.groupChat?.loading,
+  );
 
   // Khi thành công
   function onResultGroups(QuerySnapshot: any) {
@@ -149,11 +160,6 @@ export default function HomeScreen() {
   };
 
   const Flatlistrender = ({item}: {item: any}) => {
-    // console.log(
-    //   (user?.data?.fullname || userExternal?.data?.fullname) ===
-    //     item?.latest_message_from_name && item?.latest_message_type === 'image',
-    // );
-
     return item?.latest_message_type ? (
       <TouchableOpacity
         style={styles.BorderMessage}
@@ -237,13 +243,31 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
       <View style={styles.FriendActive}>
-        <FlatList
-          data={datafriend}
-          renderItem={renderFriendActive}
-          keyExtractor={(item, index) => index.toString()}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-        />
+        {loadingFriend === false ? (
+          datafriend?.length > 0 ? (
+            <FlatList
+              data={datafriend}
+              renderItem={renderFriendActive}
+              keyExtractor={(item, index) => index.toString()}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            />
+          ) : (
+            <LottieView
+              source={lottieLoadingChat}
+              loop
+              autoPlay
+              style={{
+                width: SCREEN.width * 0.3,
+                height: 100,
+                alignSelf: 'center',
+              }}
+              speed={1}
+            />
+          )
+        ) : (
+          <ActivityIndicator size="small" />
+        )}
       </View>
       <View style={styles.optionView}>
         <View style={styles.createGroup}>
@@ -260,12 +284,35 @@ export default function HomeScreen() {
         </View>
       </View>
       <View style={styles.listMessage}>
-        <FlatList
-          data={list}
-          renderItem={Flatlistrender}
-          keyExtractor={(item, index) => index.toString()}
-          showsVerticalScrollIndicator={false}
-        />
+        {loadingGroupChat === false ? (
+          datafriend?.length > 0 ? (
+            <FlatList
+              data={list}
+              renderItem={Flatlistrender}
+              keyExtractor={(item, index) => index.toString()}
+              showsVerticalScrollIndicator={false}
+            />
+          ) : (
+            <LottieView
+              source={lottieHome}
+              loop
+              autoPlay
+              style={{
+                flex: 1,
+                width: SCREEN.width * 0.9,
+                height: SCREEN.height * 0.6,
+                alignSelf: 'center',
+                margin: -50,
+              }}
+              speed={1}
+            />
+          )
+        ) : (
+          <ActivityIndicator
+            size="large"
+            style={{flex: 1, justifyContent: 'center'}}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
