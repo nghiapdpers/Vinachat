@@ -76,11 +76,11 @@ export default function MessageScreen() {
   const [isReady, setIsReady] = useState(false);
   const [selectedCategoryEmoji, setSelectedCategoryEmoji] =
     useState('Smileys & Emotion');
-  const itemsPerRow = 10; // Số emoji trên mỗi hàng
 
   useEffect(() => {
     console.log('listChatData:>>', listChatData);
   }, [listChatData])
+  const itemsPerRow = 11; // Số emoji trên mỗi hàng
 
   // side effect: subcribe to listen chat
   useEffect(() => {
@@ -530,7 +530,7 @@ export default function MessageScreen() {
             <FlatList
               data={listChatData}
               renderItem={renderItem}
-              keyExtractor={item => item.ref}
+              keyExtractor={(item) => item.ref}
               showsVerticalScrollIndicator={false}
               inverted
               ref={listRef}

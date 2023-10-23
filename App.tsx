@@ -39,13 +39,16 @@ import Images from './src/realm/Images';
 import ProfileScreen from './src/screens/AccountScreen/OptionAccount/Profile';
 import EditUserScreen from './src/screens/AccountScreen/OptionAccount/EditUser';
 import DetailImageScreen from './src/screens/DetailImageScreen';
+import AccountSecurity from './src/screens/AccountScreen/OptionAccount/Account&Security';
+import ChangePassword from './src/screens/AccountScreen/OptionAccount/ChangePassword';
+import Privacy from './src/screens/AccountScreen/OptionAccount/Privacy';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 // const HOST = '192.168.0.126';
 
-// use firestore emulator
+// // use fierstore emulator
 // firestore().useEmulator(HOST, 8080);
 // auth().useEmulator(`http://${HOST}:9099`);
 // storage().useEmulator(HOST, 9199);
@@ -113,10 +116,10 @@ export default function App() {
           <Stack.Screen name="CreateGroupChat" component={CreateGroupChat} />
           <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
           <Stack.Screen name="EditUserScreen" component={EditUserScreen} />
-          <Stack.Screen
-            name="DetailImageScreen"
-            component={DetailImageScreen}
-          />
+          <Stack.Screen name="DetailImageScreen" component={DetailImageScreen}/>
+          <Stack.Screen name="AccountSecurity" component={AccountSecurity} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} />
+          <Stack.Screen name="Privacy" component={Privacy} />
         </Stack.Navigator>
       </NavigationContainer>
     </RealmProvider>

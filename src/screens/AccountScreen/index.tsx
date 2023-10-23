@@ -38,14 +38,14 @@ const datauser = [
     icon: screen.account.encrypted,
     title: 'Tài khoản và bảo mật',
     description: '',
-    navigation: '',
+    navigation: 'AccountSecurity',
   },
   {
     id: 3,
     icon: screen.account.padlock,
     title: 'Quyền riêng tư',
     description: '',
-    navigation: '',
+    navigation: 'Privacy',
   },
   {
     id: 4,
