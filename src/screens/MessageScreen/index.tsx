@@ -32,6 +32,7 @@ import apiHelper from '../../apis/apiHelper';
 import apiSynchronous from '../../apis/apiSynchronous';
 import EmojiBoard from 'react-native-emoji-board';
 import useNetworkErr from '../../config/hooks/useNetworkErr';
+import apiUpdateLatestMessage from '../../apis/apiUpdateLatestMessage';
 
 var groupJson = require('unicode-emoji-json/data-by-group.json');
 
@@ -81,9 +82,10 @@ export default function MessageScreen() {
   const [selectedCategoryEmoji, setSelectedCategoryEmoji] =
     useState('Smileys & Emotion');
 
-  useEffect(() => {
-    console.log('listChatData:>>', listChatData);
-  }, [listChatData]);
+  // useEffect(() => {
+  //   console.log('listChatData:>>', listChatData);
+  // }, [listChatData]);
+
   const itemsPerRow = 11; // Số emoji trên mỗi hàng
 
   // side effect: subcribe to listen chat
@@ -471,9 +473,21 @@ export default function MessageScreen() {
             });
         }
 
+        // for production
+        await apiUpdateLatestMessage({
+          group_ref: groupRef,
+          message_ref: messageRef,
+        })
+          .then(res => {
+            console.log('update latest message', res);
+          })
+          .catch(err => {
+            console.log(':::: UPDATE-LATEST-MESSAGE ERROR :::: >>\n', err);
+          });
+
         setIsSend(!isSend);
       } catch (error) {
-        console.warn('SEND MESSAGE ERROR >> ', error);
+        console.log('SEND MESSAGE ERROR >> ', error);
       }
     }
   };
