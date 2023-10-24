@@ -15,6 +15,12 @@ const BottomSheetTypeSwitch = ({ data }: any) => {
         }
     };
 
+    useEffect(() => {
+        data.map((status: any) => {
+            status.status === 'enable' ? setIsSwitch(true) : setIsSwitch(false)
+        })
+    }, [data])
+
     const ConverWarning = (id: any) => {
         switch (id.id) {
             case 'TTDX1':
@@ -49,7 +55,7 @@ const BottomSheetTypeSwitch = ({ data }: any) => {
             ))}
             <View style={styles.viewWarning}>
                 {data.map((id: any) => (
-                    <Text style={styles.textWarning}>{ConverWarning(id)}</Text>
+                    <Text key={id.id} style={styles.textWarning}>{ConverWarning(id)}</Text>
                 ))}
             </View>
         </View>

@@ -15,6 +15,7 @@ import Button from '../../components/Button';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import OtpInputs, { OtpInputsRef } from 'react-native-otp-inputs';
 import { useNavigation } from '@react-navigation/native';
+import { SCREEN } from '../../global';
 
 const SignUp = () => {
   const navigation = useNavigation();
@@ -151,7 +152,7 @@ const SignUp = () => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '100%',
+                width: SCREEN.width,
                 marginTop: 16,
               }}
               inputContainerStyles={
@@ -160,6 +161,8 @@ const SignUp = () => {
                   marginHorizontal: 4,
                   width: 40,
                   height: 50,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 } : {
                   backgroundColor: '#FFFFFF',
                   marginHorizontal: 4,

@@ -13,11 +13,11 @@ export const component = {
   list_image: {
     close: require('./Components/ListImage/close.png'),
   },
-  modal : {
-    warning : require('./Components/Modal/warning.png')
+  modal: {
+    warning: require('./Components/Modal/warning.png')
   },
-  bottomsheet : {
-    block : require('./Components/BottomSheet/blockUser.png')
+  bottomsheet: {
+    block: require('./Components/BottomSheet/blockUser.png')
   }
 };
 
@@ -87,6 +87,17 @@ export const screen = {
     birthday: require('./Screen/ProfileScreen/birthday.png'),
     fullname: require('./Screen/ProfileScreen/fullname.png'),
   },
+  optionmessage: {
+    colorcircle: require('./Screen/OptionMessage/color-circle.png'),
+    logout: require('./Screen/OptionMessage/logout.png'),
+    add: require('./Screen/OptionMessage/add.png'),
+    block: require('./Screen/OptionMessage/block.png'),
+    nickname: require('./Screen/OptionMessage/nickname.png'),
+    notification: require('./Screen/OptionMessage/notification.png'),
+    picture: require('./Screen/OptionMessage/picture.png'),
+    smile: require('./Screen/OptionMessage/smile.png'),
+    warning: require('./Screen/OptionMessage/warning.png')
+  }
 };
 
 const images = {

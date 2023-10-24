@@ -1,27 +1,27 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 
 import SignUp from './src/screens/SignUp';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import CreateAccount from './src/screens/CreateAccount';
 import Friends from './src/screens/Friends';
-import {Image, StyleSheet, View, Platform, StatusBar, Text} from 'react-native';
+import { Image, StyleSheet, View, Platform, StatusBar, Text } from 'react-native';
 import LoginScreen from './src/screens/LoginScreen';
-import {useDispatch, useSelector} from 'react-redux';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { useDispatch, useSelector } from 'react-redux';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../Vinachat/src/screens/HomeScreen';
 import AccountScreen from './src/screens/AccountScreen';
 import MessageScreen from './src/screens/MessageScreen';
 import SearchScreen from './src/screens/SearchScreen';
-import {screen} from './src/assets/images';
+import { screen } from './src/assets/images';
 import mainTheme from './src/assets/colors';
 import SplashScreen from 'react-native-splash-screen';
-import {getData} from './src/storage';
-import {LOCALSTORAGE} from './src/storage/direct';
+import { getData } from './src/storage';
+import { LOCALSTORAGE } from './src/storage/direct';
 import {
   actionLoginEnd,
   actionLoginExternalEnd,
@@ -31,7 +31,7 @@ import ScanQrCode from './src/screens/ScanQrCode';
 import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
 import CreateGroupChat from './src/screens/CreateGroupChat';
 import 'react-native-reanimated';
-import {RealmProvider} from '@realm/react';
+import { RealmProvider } from '@realm/react';
 import GroupChat from './src/realm/GroupChat';
 import Message from './src/realm/Message';
 import User from './src/realm/User';
@@ -40,18 +40,20 @@ import ProfileScreen from './src/screens/AccountScreen/OptionAccount/Profile';
 import EditUserScreen from './src/screens/AccountScreen/OptionAccount/EditUser';
 import DetailImageScreen from './src/screens/DetailImageScreen';
 import useNetworkErr from './src/config/hooks/useNetworkErr';
-import {actionFriendListEnd} from './src/redux/actions/friendAction';
-import {actionListGroupChatEnd} from './src/redux/actions/listGroupChat';
+import { actionFriendListEnd } from './src/redux/actions/friendAction';
+import { actionListGroupChatEnd } from './src/redux/actions/listGroupChat';
 import AccountSecurity from './src/screens/AccountScreen/OptionAccount/Account&Security';
 import ChangePassword from './src/screens/AccountScreen/OptionAccount/ChangePassword';
 import Privacy from './src/screens/AccountScreen/OptionAccount/Privacy';
+import OptionMessage from './src/screens/MessageScreen/OptionMessage';
+import AddMemberToGroup from './src/screens/MessageScreen/OptionMessage/AddMemberToGroup';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 // const HOST = '192.168.0.123';
 
-// // use firestore emulator
+// use firestore emulator
 // firestore().useEmulator(HOST, 8080);
 // auth().useEmulator(`http://${HOST}:9099`);
 // storage().useEmulator(HOST, 9199);
@@ -134,6 +136,8 @@ export default function App() {
           <Stack.Screen name="AccountSecurity" component={AccountSecurity} />
           <Stack.Screen name="ChangePassword" component={ChangePassword} />
           <Stack.Screen name="Privacy" component={Privacy} />
+          <Stack.Screen name="OptionMessage" component={OptionMessage} />
+          <Stack.Screen name="AddMemberToGroup" component={AddMemberToGroup} />
         </Stack.Navigator>
       </NavigationContainer>
     </RealmProvider>
@@ -293,6 +297,6 @@ export type RootStackParamList = {
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
+    interface RootParamList extends RootStackParamList { }
   }
 }

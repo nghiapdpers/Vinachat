@@ -30,7 +30,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import apiHelper from '../../apis/apiHelper';
 import apiSynchronous from '../../apis/apiSynchronous';
-import EmojiBoard from 'react-native-emoji-board';
+// import EmojiBoard from 'react-native-emoji-board';
 import useNetworkErr from '../../config/hooks/useNetworkErr';
 import apiUpdateLatestMessage from '../../apis/apiUpdateLatestMessage';
 
@@ -58,7 +58,7 @@ export default function MessageScreen() {
   const route = useRoute();
   const navigation = useNavigation();
 
-  const { groupRef, total_member, groupName }: any = route.params;
+  const { groupRef, total_member, groupName, adminRef }: any = route.params;
 
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
@@ -68,7 +68,6 @@ export default function MessageScreen() {
   const loadmore = useSelector((s: any) => s.listChat.lmLoading);
   const totalMessage = useSelector((s: any) => s.listChat.lmTotal);
   const currentMessage = useSelector((s: any) => s.listChat.lmCurrent);
-
   const currentOfflineRef = useRef(0);
   const [isSend, setIsSend] = useState(false);
   const [imagesData, setImagesData] = useState<ImageAsset[]>([]);
@@ -87,6 +86,7 @@ export default function MessageScreen() {
   }, [listChatData])
 
   const itemsPerRow = Platform.OS === 'android' ? 11 : 10; // Số emoji trên mỗi hàng
+  const [data, setData] = useState([]);
 
   // side effect: subcribe to listen chat
   useEffect(() => {
@@ -202,18 +202,36 @@ export default function MessageScreen() {
         )}
 
         {item.message.length > 0 && (
-          <Text
-            style={[
-              styles.borderMessage,
-              {
-                alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
-                backgroundColor: messageFromMe
-                  ? mainTheme.lowerFillLogo
-                  : mainTheme.white,
-              },
-            ]}>
-            {item.message}
-          </Text>
+          <>
+            {Platform.OS === 'android' ? (
+              <Text
+                style={[
+                  styles.borderMessageAndroid,
+                  {
+                    alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
+                    backgroundColor: messageFromMe
+                      ? mainTheme.lowerFillLogo
+                      : mainTheme.white,
+                  },
+                ]}>
+                {item.message}
+              </Text>
+            ) : (
+              <View style={[
+                styles.borderMessageIos,
+                {
+                  alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
+                  backgroundColor: messageFromMe
+                    ? mainTheme.lowerFillLogo
+                    : mainTheme.white,
+                },
+              ]}>
+                <Text style={styles.textMessage}>
+                  {item.message}
+                </Text>
+              </View>
+            )}
+          </>
         )}
 
         {item.images && item.images.length > 0 && (
@@ -590,6 +608,9 @@ export default function MessageScreen() {
             IconOption1={screen.message.phonecall}
             IconOption2={screen.message.videocall}
             IconOption3={screen.message.list}
+            groupref={groupRef}
+            adminRef={adminRef}
+            total_member={total_member}
             title={''}
           />
         </View>
