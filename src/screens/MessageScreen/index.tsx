@@ -13,20 +13,20 @@ import {
   Keyboard,
   Pressable,
 } from 'react-native';
-import images, { component, screen } from '../../assets/images';
+import images, {component, screen} from '../../assets/images';
 import GroupChat from '../../realm/GroupChat';
-import { useRealm } from '@realm/react';
+import {useRealm} from '@realm/react';
 import Message from '../../realm/Message';
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, {useCallback, useEffect, useState, useRef} from 'react';
 import Header from '../../components/Header';
 import styles from './styles';
 import mainTheme from '../../assets/colors';
 import MoreMessageOptions from '../../components/MoreMessageOptions';
-import { Image as ImageAsset } from 'react-native-image-crop-picker';
-import { useCameraPermission } from 'react-native-vision-camera';
-import { useDispatch, useSelector } from 'react-redux';
-import { listChatActions } from '../../redux/actions/listChatActions';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {Image as ImageAsset} from 'react-native-image-crop-picker';
+import {useCameraPermission} from 'react-native-vision-camera';
+import {useDispatch, useSelector} from 'react-redux';
+import {listChatActions} from '../../redux/actions/listChatActions';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import apiHelper from '../../apis/apiHelper';
 import apiSynchronous from '../../apis/apiSynchronous';
@@ -51,14 +51,14 @@ var groupJson = require('unicode-emoji-json/data-by-group.json');
 const database = firestore();
 
 export default function MessageScreen() {
-  const { hasPermission, requestPermission } = useCameraPermission();
+  const {hasPermission, requestPermission} = useCameraPermission();
 
   const networkErr = useNetworkErr();
 
   const route = useRoute();
   const navigation = useNavigation();
 
-  const { groupRef, total_member, groupName, adminRef }: any = route.params;
+  const {groupRef, total_member, groupName, adminRef}: any = route.params;
 
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
@@ -81,9 +81,9 @@ export default function MessageScreen() {
   const [selectedCategoryEmoji, setSelectedCategoryEmoji] =
     useState('Smileys & Emotion');
 
-  useEffect(() => {
-    console.log('listChatData:>>', listChatData);
-  }, [listChatData])
+  // useEffect(() => {
+  //   console.log('listChatData:>>', listChatData.length);
+  // }, [listChatData]);
   const itemsPerRow = 10; // Số emoji trên mỗi hàng
   const [data, setData] = useState([]);
 
@@ -91,7 +91,7 @@ export default function MessageScreen() {
   useEffect(() => {
     // ignore initial listen
     let notFirstRender = false;
-    let listenMessage: () => void = () => { };
+    let listenMessage: () => void = () => {};
 
     if (!networkErr) {
       listenMessage = database
@@ -143,7 +143,7 @@ export default function MessageScreen() {
                       sent_time: item.doc.data().sent_time.seconds,
                       type: item.doc.data().type,
                       images: item.doc.data().images
-                        ? item.doc.data().images.map((url: any) => ({ url: url }))
+                        ? item.doc.data().images.map((url: any) => ({url: url}))
                         : [],
                     };
                     groupChat.messages.push(newMessage);
@@ -180,7 +180,7 @@ export default function MessageScreen() {
     };
   }, [networkErr]);
 
-  const renderItem = ({ item, index }: any) => {
+  const renderItem = ({item, index}: any) => {
     const messageFromMe = item.from === ref;
 
     const lastMessageSameFrom = listChatData[index + 1]?.from === item.from;
@@ -194,7 +194,7 @@ export default function MessageScreen() {
         }}
         style={[
           styles.messageContainer,
-          { marginTop: lastMessageSameFrom ? 0 : 18 },
+          {marginTop: lastMessageSameFrom ? 0 : 18},
         ]}>
         {!messageFromMe && total_member > 2 && !lastMessageSameFrom && (
           <Text style={[styles.messageFromName]}>{item.from_name}</Text>
@@ -216,18 +216,17 @@ export default function MessageScreen() {
                 {item.message}
               </Text>
             ) : (
-              <View style={[
-                styles.borderMessageIos,
-                {
-                  alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
-                  backgroundColor: messageFromMe
-                    ? mainTheme.lowerFillLogo
-                    : mainTheme.white,
-                },
-              ]}>
-                <Text style={styles.textMessage}>
-                  {item.message}
-                </Text>
+              <View
+                style={[
+                  styles.borderMessageIos,
+                  {
+                    alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
+                    backgroundColor: messageFromMe
+                      ? mainTheme.lowerFillLogo
+                      : mainTheme.white,
+                  },
+                ]}>
+                <Text style={styles.textMessage}>{item.message}</Text>
               </View>
             )}
           </>
@@ -241,8 +240,8 @@ export default function MessageScreen() {
                 style={[
                   styles.imageMessage,
                   messageFromMe
-                    ? { alignSelf: 'flex-end', marginRight: 10 }
-                    : { alignSelf: 'flex-start', marginLeft: 10 },
+                    ? {alignSelf: 'flex-end', marginRight: 10}
+                    : {alignSelf: 'flex-start', marginLeft: 10},
                 ]}>
                 <Pressable
                   onPress={() =>
@@ -254,12 +253,12 @@ export default function MessageScreen() {
                     source={
                       image == 'dang-tai-anh-len-server'
                         ? images.screen.message.loading
-                        : { uri: image }
+                        : {uri: image}
                     }
                     style={
                       image == 'dang-tai-anh-len-server'
-                        ? { width: 64, height: 64, alignSelf: 'center' }
-                        : { width: '100%', height: '100%', borderRadius: 10 }
+                        ? {width: 64, height: 64, alignSelf: 'center'}
+                        : {width: '100%', height: '100%', borderRadius: 10}
                     }
                   />
                 </Pressable>
@@ -297,7 +296,7 @@ export default function MessageScreen() {
 
       dispatch(
         listChatActions.merge(
-          sortMessages.slice(
+          sortMessages?.slice(
             currentOfflineRef.current,
             currentOfflineRef.current + 20,
           ),
@@ -336,7 +335,7 @@ export default function MessageScreen() {
               sent_time: item.sent_time._seconds,
               type: item.type,
               images: item.images
-                ? item.images.map((url: any) => ({ url: url }))
+                ? item.images.map((url: any) => ({url: url}))
                 : [],
             };
             getMessageLatest.messages.push(newMessage);
@@ -440,7 +439,7 @@ export default function MessageScreen() {
         }
 
         setValue('');
-        listRef.current.scrollToOffset({ animated: true, offset: 0 });
+        listRef.current.scrollToOffset({animated: true, offset: 0});
 
         if (imagesData.length == 0) {
           // write to firestore
@@ -496,7 +495,7 @@ export default function MessageScreen() {
           message_ref: messageRef,
         })
           .then(res => {
-            console.log('update latest message', res);
+            // console.log('update latest message', res);
           })
           .catch(err => {
             console.log(':::: UPDATE-LATEST-MESSAGE ERROR :::: >>\n', err);
@@ -535,7 +534,7 @@ export default function MessageScreen() {
       dispatch(
         listChatActions.loadmore_end({
           data: {
-            chats: sortMessages.slice(
+            chats: sortMessages?.slice(
               currentOfflineRef.current,
               currentOfflineRef.current + 20,
             ),
@@ -548,10 +547,10 @@ export default function MessageScreen() {
   const renderEmojiList = (category: any) => {
     return (
       <FlatList
-        style={{ flex: 1 }}
+        style={{flex: 1}}
         data={groupJson[category]}
         numColumns={itemsPerRow}
-        renderItem={({ item }) => {
+        renderItem={({item}) => {
           return (
             <TouchableOpacity
               onPress={() => setValue(v => (v += item.emoji))}
@@ -672,7 +671,7 @@ export default function MessageScreen() {
         </View>
 
         {emoPicker ? (
-          <View style={{ height: '40%' }}>
+          <View style={{height: '40%'}}>
             <View style={styles.containerCategoryEmoji}>
               {Object.keys(groupJson).map(category => {
                 return (

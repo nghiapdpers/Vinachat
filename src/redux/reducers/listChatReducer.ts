@@ -1,5 +1,5 @@
-import { LIST_CHAT } from '../actions/types';
-import { AnyAction } from '@reduxjs/toolkit';
+import {LIST_CHAT} from '../actions/types';
+import {AnyAction} from '@reduxjs/toolkit';
 
 const initialState = {
   data: [],
@@ -43,6 +43,14 @@ export default function ListChatReducer(
       }
 
       updatedData = updatedData.slice(0, 20);
+
+      updatedData.sort((a, b) => {
+        if (a.sent_time.seconds < b.sent_time.seconds) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
 
       return {
         ...state,

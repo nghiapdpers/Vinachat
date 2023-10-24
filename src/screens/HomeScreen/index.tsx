@@ -40,12 +40,13 @@ export default function HomeScreen() {
   // console.log('loadingFriend:>>', loadingFriend);
 
   const user = useSelector((state: any) => state.user);
+  const ref = useSelector((state: any) => state?.user?.data?.ref);
   const userExternal = useSelector((state: any) => state?.userExternal);
   const list = useSelector((state: any) => state.groupChat?.data);
   const status = useSelector((state: any) => state.groupChat?.status);
-  useEffect(() => {
-    console.log('list:>>', list);
-  }, [list]);
+  // useEffect(() => {
+  //   console.log('list:>>', list);
+  // }, [list]);
   const loadingGroupChat = useSelector(
     (state: any) => state.groupChat?.loading,
   );
@@ -72,22 +73,40 @@ export default function HomeScreen() {
   }
 
   useEffect(() => {
-    if (status === 'done') {
-      const listRef = list.map((e: any) => e.ref);
+    const listListener: (() => void)[] = [];
 
-      // console.log('listRef:>>', listRef);
+    if (!networkErr) {
+      if (status === 'done') {
+        const listRef = list.map((e: any) => e.ref);
 
-      if (listRef.length > 0) {
-        // Bắt đầu lắng nghe dữ liệu từ collection "groups"
-        database
-          .collection('groups')
-          .where(firestore.FieldPath.documentId(), 'in', listRef)
-          .onSnapshot(onResultGroups, onErrorGroups);
-      } else {
-        console.log('ListRef Is Empty');
+        // console.log('listRef:>>', listRef);
+
+        if (listRef.length > 0) {
+          // Fix error limit snapshot of firebase
+          for (let i = 0; i < listRef.length; i += 10) {
+            const newListRef = listRef.slice(i, i + 10);
+
+            const listener = database
+              .collection('groups')
+              .where(firestore.FieldPath.documentId(), 'in', newListRef)
+              .onSnapshot(onResultGroups, onErrorGroups);
+
+            listListener.push(listener);
+          }
+
+          // Bắt đầu lắng nghe dữ liệu từ collection "groups"
+        } else {
+          console.log('ListRef Is Empty');
+        }
       }
     }
-  }, [status]);
+
+    return () => {
+      listListener.forEach(item => {
+        item();
+      });
+    };
+  }, [status, networkErr]);
 
   useEffect(() => {
     if (!networkErr) {
@@ -98,25 +117,29 @@ export default function HomeScreen() {
 
   // Gọi api Group Chat
   useEffect(() => {
-    const listenGroups = firestore()
-      .collection('users')
-      .doc(user?.data?.ref)
-      .onSnapshot(
-        res => {
-          if (res.data()?.groups.length != list.length) {
-            dispatch(actionListGroupChatStart());
-          }
-        },
-        err => {
-          console.log('LISTEN GROUP ERROR >> ', err);
-        },
-      );
+    let listenGroups: () => void;
+    if (!networkErr) {
+      listenGroups = firestore()
+        .collection('users')
+        .doc(ref)
+        .onSnapshot(
+          res => {
+            if (res.data()?.groups.length != list.length) {
+              dispatch(actionListGroupChatStart());
+              dispatch(actionFriendListStart);
+            }
+          },
+          err => {
+            console.log('LISTEN GROUP ERROR >> ', err);
+          },
+        );
+    }
 
     // unsubcribe group
     return () => {
       listenGroups();
     };
-  }, [user.data]);
+  }, [networkErr, ref]);
 
   const getFirstLetters = (inputString: any) => {
     const words = inputString.trim().split(' ');
@@ -208,6 +231,7 @@ export default function HomeScreen() {
             groupRef: item.ref,
             total_member: item.total_member,
             groupName: item.name,
+            adminRef: item.adminRef,
           });
         }}>
         <View style={styles.MessageAvatar}>
@@ -247,30 +271,31 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
       <View style={styles.FriendActive}>
-        {loadingFriend === false ? (
-          datafriend?.length > 0 ? (
-            <FlatList
-              data={datafriend}
-              renderItem={renderFriendActive}
-              keyExtractor={(item, index) => index.toString()}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            />
-          ) : (
-            <LottieView
-              source={lottieLoadingChat}
-              loop
-              autoPlay
-              style={{
-                width: SCREEN.width * 0.3,
-                height: 100,
-                alignSelf: 'center',
-              }}
-              speed={1}
-            />
-          )
+        {datafriend?.length > 0 ? (
+          <FlatList
+            data={datafriend}
+            renderItem={renderFriendActive}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            ListEmptyComponent={() => {
+              return (
+                loadingFriend === false && <ActivityIndicator size="small" />
+              );
+            }}
+          />
         ) : (
-          <ActivityIndicator size="small" />
+          <LottieView
+            source={lottieLoadingChat}
+            loop
+            autoPlay
+            style={{
+              width: SCREEN.width * 0.3,
+              height: 100,
+              alignSelf: 'center',
+            }}
+            speed={1}
+          />
         )}
       </View>
       <View style={styles.optionView}>
@@ -288,33 +313,36 @@ export default function HomeScreen() {
         </View>
       </View>
       <View style={styles.listMessage}>
-        {loadingGroupChat === false ? (
-          datafriend?.length > 0 ? (
-            <FlatList
-              data={list}
-              renderItem={Flatlistrender}
-              keyExtractor={(item, index) => index.toString()}
-              showsVerticalScrollIndicator={false}
-            />
-          ) : (
-            <LottieView
-              source={lottieHome}
-              loop
-              autoPlay
-              style={{
-                flex: 1,
-                width: SCREEN.width * 0.9,
-                height: SCREEN.height * 0.6,
-                alignSelf: 'center',
-                margin: -50,
-              }}
-              speed={1}
-            />
-          )
+        {list?.length > 0 ? (
+          <FlatList
+            data={list}
+            renderItem={Flatlistrender}
+            keyExtractor={(item, index) => index.toString()}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={() => {
+              return (
+                loadingGroupChat === false && (
+                  <ActivityIndicator
+                    size="large"
+                    style={{flex: 1, justifyContent: 'center'}}
+                  />
+                )
+              );
+            }}
+          />
         ) : (
-          <ActivityIndicator
-            size="large"
-            style={{flex: 1, justifyContent: 'center'}}
+          <LottieView
+            source={lottieHome}
+            loop
+            autoPlay
+            style={{
+              flex: 1,
+              width: SCREEN.width * 0.9,
+              height: SCREEN.height * 0.6,
+              alignSelf: 'center',
+              margin: -50,
+            }}
+            speed={1}
           />
         )}
       </View>
