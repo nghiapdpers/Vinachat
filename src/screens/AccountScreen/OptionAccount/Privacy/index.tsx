@@ -317,8 +317,8 @@ export default function Privacy() {
 
 
     return (
-        <SafeAreaView style={styles.container}>
-            <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
                     <Header3 text={'Quyền riêng tư'} />
                 </View>
@@ -351,8 +351,8 @@ export default function Privacy() {
                         {ConverRenderBottomSheet(selectedType)}
                     </View>
                 </BottomSheet>
-            </GestureHandlerRootView>
-        </SafeAreaView >
+            </SafeAreaView >
+        </GestureHandlerRootView>
     );
 
 }
