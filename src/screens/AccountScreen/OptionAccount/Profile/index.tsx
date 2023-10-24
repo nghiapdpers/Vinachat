@@ -7,21 +7,21 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles';
-import {screen, component} from '../../../../assets/images';
+import { screen, component } from '../../../../assets/images';
 import Header3 from '../../../../components/Header3';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import mainTheme from '../../../../assets/colors';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import apiFriendRequest from '../../../../apis/apiFriendRequest';
 import apiSearch from '../../../../apis/apiSearch';
 import UpdateAvatarPicker from '../../../../components/UpdateAvatarPicker';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import {getDetailUserActions} from '../../../../redux/actions/getDetailUserActions';
+import { getDetailUserActions } from '../../../../redux/actions/getDetailUserActions';
 
-export default function ProfileScreen({route}: {route: any}) {
+export default function ProfileScreen({ route }: { route: any }) {
   const dispatch = useDispatch();
 
   const item = route?.params?.item;
@@ -104,7 +104,7 @@ export default function ProfileScreen({route}: {route: any}) {
       value:
         item?.ref === undefined
           ? convertGenderStatus(userExternal?.data?.gender) ||
-            convertGenderStatus(user?.data?.gender)
+          convertGenderStatus(user?.data?.gender)
           : convertGenderStatus(item?.gender),
       icon: screen.profile.sex,
     },
@@ -121,7 +121,7 @@ export default function ProfileScreen({route}: {route: any}) {
 
   const handleFriendRequest = async () => {
     try {
-      return await apiFriendRequest({ref: item?.ref}).then((response: any) => {
+      return await apiFriendRequest({ ref: item?.ref }).then((response: any) => {
         console.log(response);
         setStatus(response?.status);
       });
@@ -187,18 +187,20 @@ export default function ProfileScreen({route}: {route: any}) {
                     style={styles.converAvatar}
                     source={
                       user.data.avatar
-                        ? {uri: user.data.avatar}
+                        ? { uri: user.data.avatar }
                         : screen.profile.usermale
                     }
                   />
-                  <TouchableOpacity
-                    style={styles.changeAvatarBorder}
-                    onPress={handleOpenAvatarPicker}>
-                    <Image
-                      style={styles.changeAvatar}
-                      source={screen.account.optionalAccount.changeAvatar}
-                    />
-                  </TouchableOpacity>
+                  {item?.ref === undefined ? (
+                    <TouchableOpacity
+                      style={styles.changeAvatarBorder}
+                      onPress={handleOpenAvatarPicker}>
+                      <Image
+                        style={styles.changeAvatar}
+                        source={screen.account.optionalAccount.changeAvatar}
+                      />
+                    </TouchableOpacity>
+                  ) : null}
                 </View>
               </View>
               <View style={styles.flexboxinfo}>
@@ -233,8 +235,8 @@ export default function ProfileScreen({route}: {route: any}) {
                             item?.ref === undefined
                               ? screen.profile.edituser
                               : convertIconStatus(
-                                  status === '' ? item?.status : status,
-                                )
+                                status === '' ? item?.status : status,
+                              )
                           }
                         />
                       </View>
@@ -243,8 +245,8 @@ export default function ProfileScreen({route}: {route: any}) {
                           {item?.ref === undefined
                             ? `Chỉnh sửa hồ sơ`
                             : convertStatus(
-                                status === '' ? item?.status : status,
-                              )}
+                              status === '' ? item?.status : status,
+                            )}
                         </Text>
                       </View>
                     </TouchableOpacity>
