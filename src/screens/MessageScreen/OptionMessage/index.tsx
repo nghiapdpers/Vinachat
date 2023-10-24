@@ -27,10 +27,8 @@ export default function OptionMessage({ route }: { route: any }) {
     const userExternal = useSelector((state: any) => state?.userExternal);
     const groupName = route?.params?.groupName;
 
-    console.log(user?.data?.ref);
-    console.log(adminRef);
-
     const CheckAdminRef = user?.data?.ref === adminRef;
+
     const [isVisibleModal, setisVisibleModal] = useState(false);
     const [isNotification, setisNotification] = useState(false);
 
@@ -109,11 +107,8 @@ export default function OptionMessage({ route }: { route: any }) {
         }));
 
     const handlebtn = async (data: any) => {
-        console.log('data:>', data);
-        console.log('CheckAdminRef:>', CheckAdminRef);
-
         if (CheckAdminRef) {
-            if (data.id === '2.1') {
+            if (data.id === 2.1) {
                 navigation.navigate('AddMemberToGroup')
             }
             else {
