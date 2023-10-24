@@ -60,6 +60,9 @@ export default function MessageScreen() {
 
   const { groupRef, total_member, groupName, adminRef }: any = route.params;
 
+  console.log('adminREF:>>', adminRef);
+
+
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
   const myName = useSelector((s: any) => s.user.data.fullname);

@@ -204,6 +204,7 @@ export default function HomeScreen() {
             groupRef: item.ref,
             total_member: item.total_member,
             groupName: item.name,
+            adminRef: item.adminRef
           });
         }}>
         <View style={styles.MessageAvatar}>
