@@ -22,7 +22,12 @@ export default async function apiLogin(data: any) {
           // sign in firebase auth
           auth()
             .signInWithCustomToken(res?.data.firebaseToken)
-            .then(res => {})
+            .then(_ => {
+              console.log(
+                'API LOGIN - CUSTOM TOKEN IS: ',
+                res?.data.firebaseToken,
+              );
+            })
             .catch(err => {
               console.warn(
                 'API LOGIN - SIGN IN WITH CUSTOM TOKEN ERROR >> : ',

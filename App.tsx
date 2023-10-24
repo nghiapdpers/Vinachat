@@ -45,11 +45,12 @@ import {actionListGroupChatEnd} from './src/redux/actions/listGroupChat';
 import AccountSecurity from './src/screens/AccountScreen/OptionAccount/Account&Security';
 import ChangePassword from './src/screens/AccountScreen/OptionAccount/ChangePassword';
 import Privacy from './src/screens/AccountScreen/OptionAccount/Privacy';
+import useLogin from './src/config/hooks/useLogin';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// const HOST = '192.168.0.123';
+// const HOST = '192.168.0.117';
 
 // // use firestore emulator
 // firestore().useEmulator(HOST, 8080);
@@ -59,11 +60,10 @@ const Stack = createStackNavigator();
 export default function App() {
   const dispatch = useDispatch();
   const networkErr = useNetworkErr();
-
-  const [isC, setC] = useState(false);
+  const isLogin = useLogin();
 
   // Lấy dữ liệu dưới local và nạp lên Redux
-  const getApiKey = async () => {
+  const getLocalData = async () => {
     const [user, friendList, groupChat] = await Promise.all([
       getData(LOCALSTORAGE.user),
       getData(LOCALSTORAGE.friendList),
@@ -71,7 +71,6 @@ export default function App() {
     ]);
 
     if (user) {
-      setC(true);
       dispatch(actionLoginEnd(user));
     }
 
@@ -82,10 +81,6 @@ export default function App() {
     if (groupChat) {
       dispatch(actionListGroupChatEnd(groupChat));
     }
-
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 200);
   };
 
   // side effect: hide splash screen
@@ -95,7 +90,15 @@ export default function App() {
       StatusBar.setBarStyle('dark-content');
     }
 
-    getApiKey();
+    getLocalData()
+      .then(() => {
+        setTimeout(() => {
+          SplashScreen.hide();
+        }, 100);
+      })
+      .catch(err => {
+        console.log(':::: GET LOCAL DATA ERROR :::: >> N', err);
+      });
   }, []);
 
   return (
@@ -110,30 +113,39 @@ export default function App() {
             // gestureDirection: 'horizontal',
             headerShown: false,
           }}>
-          <Stack.Screen
-            name="Home"
-            component={isC ? BottomScreen : LoginScreen}
-          />
-          <Stack.Screen name="BottomScreen" component={BottomScreen} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="MessageScreen" component={MessageScreen} />
-          <Stack.Screen name="SearchScreen" component={SearchScreen} />
-          <Stack.Screen name="CreateAccount" component={CreateAccount} />
-          <Stack.Screen name="Friends" component={Friends} />
-          <Stack.Screen name="QrCode" component={QrCode} />
-          <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
-          <Stack.Screen name="Biometrics" component={Biometrics} />
-          <Stack.Screen name="CreateGroupChat" component={CreateGroupChat} />
-          <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-          <Stack.Screen name="EditUserScreen" component={EditUserScreen} />
-          <Stack.Screen
-            name="DetailImageScreen"
-            component={DetailImageScreen}
-          />
-          <Stack.Screen name="AccountSecurity" component={AccountSecurity} />
-          <Stack.Screen name="ChangePassword" component={ChangePassword} />
-          <Stack.Screen name="Privacy" component={Privacy} />
+          {!isLogin ? (
+            <>
+              <Stack.Screen name="LoginScreen" component={LoginScreen} />
+              <Stack.Screen name="CreateAccount" component={CreateAccount} />
+              <Stack.Screen name="SignUp" component={SignUp} />
+            </>
+          ) : (
+            <>
+              <Stack.Screen name="BottomScreen" component={BottomScreen} />
+              <Stack.Screen name="MessageScreen" component={MessageScreen} />
+              <Stack.Screen name="SearchScreen" component={SearchScreen} />
+              <Stack.Screen name="Friends" component={Friends} />
+              <Stack.Screen name="QrCode" component={QrCode} />
+              <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
+              <Stack.Screen name="Biometrics" component={Biometrics} />
+              <Stack.Screen
+                name="CreateGroupChat"
+                component={CreateGroupChat}
+              />
+              <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+              <Stack.Screen name="EditUserScreen" component={EditUserScreen} />
+              <Stack.Screen
+                name="DetailImageScreen"
+                component={DetailImageScreen}
+              />
+              <Stack.Screen
+                name="AccountSecurity"
+                component={AccountSecurity}
+              />
+              <Stack.Screen name="ChangePassword" component={ChangePassword} />
+              <Stack.Screen name="Privacy" component={Privacy} />
+            </>
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </RealmProvider>

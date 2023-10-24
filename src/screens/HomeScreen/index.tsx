@@ -37,7 +37,7 @@ export default function HomeScreen() {
   );
   const loadingFriend = useSelector((state: any) => state?.friendlist?.loading);
 
-  console.log('loadingFriend:>>', loadingFriend);
+  // console.log('loadingFriend:>>', loadingFriend);
 
   const user = useSelector((state: any) => state.user);
   const userExternal = useSelector((state: any) => state?.userExternal);
@@ -140,7 +140,11 @@ export default function HomeScreen() {
       <TouchableOpacity
         style={styles.viewfriendActive}
         onPress={() => {
-          navigation.navigate('MessageScreen', {ref: String(item.ref)});
+          navigation.navigate('MessageScreen', {
+            groupRef: item.groupRef,
+            total_member: 2,
+            groupName: item.fullname,
+          });
         }}>
         {item.avatar ? (
           <Image

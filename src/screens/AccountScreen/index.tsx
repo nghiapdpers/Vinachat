@@ -105,7 +105,7 @@ export default function AccountScreen() {
     await removeData(LOCALSTORAGE.userExternal);
     await removeData(LOCALSTORAGE.apikey);
     await removeData(LOCALSTORAGE.groupChat);
-    navigation.dispatch(StackActions.replace('LoginScreen'));
+    // navigation.dispatch(StackActions.replace('LoginScreen'));
 
     // sign out firebase auth.
     auth().signOut();
@@ -141,16 +141,18 @@ export default function AccountScreen() {
               </View>
             </View>
             <View style={styles.bodyTopAccount}>
-              {user?.data?.nickname || userExternal?.data?.nickname ?
-                <Text style={styles.textBio}>{user?.data?.nickname || userExternal?.data?.nickname}</Text>
-                : null}
-              {user?.data?.email || userExternal?.data?.email ?
+              {user?.data?.nickname || userExternal?.data?.nickname ? (
+                <Text style={styles.textBio}>
+                  {user?.data?.nickname || userExternal?.data?.nickname}
+                </Text>
+              ) : null}
+              {user?.data?.email || userExternal?.data?.email ? (
                 <TouchableOpacity>
                   <Text style={styles.linkAccount}>
                     {user?.data?.email || userExternal?.data?.email}
                   </Text>
                 </TouchableOpacity>
-                : null}
+              ) : null}
             </View>
           </View>
           <View style={styles.bodyAccount}>
