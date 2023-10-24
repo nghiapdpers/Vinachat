@@ -77,6 +77,7 @@ export default function CreateGroupChat() {
         name: groupname,
       }).then(async (resposne: any) => {
         setLoading(false);
+        dispatch(actionListGroupChatStart())
         navigation.goBack();
       });
     } catch (error) {

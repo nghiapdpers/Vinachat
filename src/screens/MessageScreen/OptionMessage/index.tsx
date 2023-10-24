@@ -35,7 +35,6 @@ export default function OptionMessage({ route }: { route: any }) {
     const [isNotification, setisNotification] = useState(false);
 
 
-
     const data = [
         {
             id: 1,

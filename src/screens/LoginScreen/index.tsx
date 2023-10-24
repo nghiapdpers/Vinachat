@@ -163,7 +163,7 @@ export default function LoginScreen() {
     if (message == 'success') {
       setIsPhone('');
       setIsPassword('');
-      navigation.dispatch(StackActions.replace('BottomScreen'));
+      // navigation.dispatch(StackActions.replace('BottomScreen'));
     }
 
     if (message == 'unlinked account') {

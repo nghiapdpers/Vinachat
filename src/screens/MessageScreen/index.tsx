@@ -86,6 +86,8 @@ export default function MessageScreen() {
 
   useEffect(() => {
     console.log('listChatData:>>', listChatData);
+    console.log(adminRef);
+
   }, [listChatData])
 
   const itemsPerRow = Platform.OS === 'android' ? 11 : 10; // Số emoji trên mỗi hàng

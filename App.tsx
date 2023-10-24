@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 
 import SignUp from './src/screens/SignUp';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 import CreateAccount from './src/screens/CreateAccount';
 import Friends from './src/screens/Friends';
-import { Image, StyleSheet, View, Platform, StatusBar, Text } from 'react-native';
+import {Image, StyleSheet, View, Platform, StatusBar, Text} from 'react-native';
 import LoginScreen from './src/screens/LoginScreen';
-import { useDispatch, useSelector } from 'react-redux';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {useDispatch, useSelector} from 'react-redux';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../Vinachat/src/screens/HomeScreen';
 import AccountScreen from './src/screens/AccountScreen';
 import MessageScreen from './src/screens/MessageScreen';
 import SearchScreen from './src/screens/SearchScreen';
-import { screen } from './src/assets/images';
+import {screen} from './src/assets/images';
 import mainTheme from './src/assets/colors';
 import SplashScreen from 'react-native-splash-screen';
-import { getData } from './src/storage';
-import { LOCALSTORAGE } from './src/storage/direct';
+import {getData} from './src/storage';
+import {LOCALSTORAGE} from './src/storage/direct';
 import {
   actionLoginEnd,
   actionLoginExternalEnd,
@@ -31,7 +31,7 @@ import ScanQrCode from './src/screens/ScanQrCode';
 import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
 import CreateGroupChat from './src/screens/CreateGroupChat';
 import 'react-native-reanimated';
-import { RealmProvider } from '@realm/react';
+import {RealmProvider} from '@realm/react';
 import GroupChat from './src/realm/GroupChat';
 import Message from './src/realm/Message';
 import User from './src/realm/User';
@@ -40,18 +40,19 @@ import ProfileScreen from './src/screens/AccountScreen/OptionAccount/Profile';
 import EditUserScreen from './src/screens/AccountScreen/OptionAccount/EditUser';
 import DetailImageScreen from './src/screens/DetailImageScreen';
 import useNetworkErr from './src/config/hooks/useNetworkErr';
-import { actionFriendListEnd } from './src/redux/actions/friendAction';
-import { actionListGroupChatEnd } from './src/redux/actions/listGroupChat';
+import {actionFriendListEnd} from './src/redux/actions/friendAction';
+import {actionListGroupChatEnd} from './src/redux/actions/listGroupChat';
 import AccountSecurity from './src/screens/AccountScreen/OptionAccount/Account&Security';
 import ChangePassword from './src/screens/AccountScreen/OptionAccount/ChangePassword';
 import Privacy from './src/screens/AccountScreen/OptionAccount/Privacy';
+import useLogin from './src/config/hooks/useLogin';
 import OptionMessage from './src/screens/MessageScreen/OptionMessage';
 import AddMemberToGroup from './src/screens/MessageScreen/OptionMessage/AddMemberToGroup';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// const HOST = '192.168.0.123';
+// const HOST = '192.168.0.117';
 
 // use firestore emulator
 // firestore().useEmulator(HOST, 8080);
@@ -61,11 +62,10 @@ const Stack = createStackNavigator();
 export default function App() {
   const dispatch = useDispatch();
   const networkErr = useNetworkErr();
-
-  const [isC, setC] = useState(false);
+  const isLogin = useLogin();
 
   // Lấy dữ liệu dưới local và nạp lên Redux
-  const getApiKey = async () => {
+  const getLocalData = async () => {
     const [user, friendList, groupChat] = await Promise.all([
       getData(LOCALSTORAGE.user),
       getData(LOCALSTORAGE.friendList),
@@ -73,7 +73,6 @@ export default function App() {
     ]);
 
     if (user) {
-      setC(true);
       dispatch(actionLoginEnd(user));
     }
 
@@ -84,10 +83,6 @@ export default function App() {
     if (groupChat) {
       dispatch(actionListGroupChatEnd(groupChat));
     }
-
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 200);
   };
 
   // side effect: hide splash screen
@@ -97,7 +92,15 @@ export default function App() {
       StatusBar.setBarStyle('dark-content');
     }
 
-    getApiKey();
+    getLocalData()
+      .then(() => {
+        setTimeout(() => {
+          SplashScreen.hide();
+        }, 100);
+      })
+      .catch(err => {
+        console.log(':::: GET LOCAL DATA ERROR :::: >> N', err);
+      });
   }, []);
 
   return (
@@ -112,32 +115,39 @@ export default function App() {
             // gestureDirection: 'horizontal',
             headerShown: false,
           }}>
-          <Stack.Screen
-            name="Home"
-            component={isC ? BottomScreen : LoginScreen}
-          />
-          <Stack.Screen name="BottomScreen" component={BottomScreen} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="MessageScreen" component={MessageScreen} />
-          <Stack.Screen name="SearchScreen" component={SearchScreen} />
-          <Stack.Screen name="CreateAccount" component={CreateAccount} />
-          <Stack.Screen name="Friends" component={Friends} />
-          <Stack.Screen name="QrCode" component={QrCode} />
-          <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
-          <Stack.Screen name="Biometrics" component={Biometrics} />
-          <Stack.Screen name="CreateGroupChat" component={CreateGroupChat} />
-          <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-          <Stack.Screen name="EditUserScreen" component={EditUserScreen} />
-          <Stack.Screen
-            name="DetailImageScreen"
-            component={DetailImageScreen}
-          />
-          <Stack.Screen name="AccountSecurity" component={AccountSecurity} />
-          <Stack.Screen name="ChangePassword" component={ChangePassword} />
-          <Stack.Screen name="Privacy" component={Privacy} />
-          <Stack.Screen name="OptionMessage" component={OptionMessage} />
-          <Stack.Screen name="AddMemberToGroup" component={AddMemberToGroup} />
+          {!isLogin ? (
+            <>
+              <Stack.Screen name="LoginScreen" component={LoginScreen} />
+              <Stack.Screen name="CreateAccount" component={CreateAccount} />
+              <Stack.Screen name="SignUp" component={SignUp} />
+            </>
+          ) : (
+            <>
+              <Stack.Screen name="BottomScreen" component={BottomScreen} />
+              <Stack.Screen name="MessageScreen" component={MessageScreen} />
+              <Stack.Screen name="SearchScreen" component={SearchScreen} />
+              <Stack.Screen name="Friends" component={Friends} />
+              <Stack.Screen name="QrCode" component={QrCode} />
+              <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
+              <Stack.Screen name="Biometrics" component={Biometrics} />
+              <Stack.Screen
+                name="CreateGroupChat"
+                component={CreateGroupChat}
+              />
+              <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+              <Stack.Screen name="EditUserScreen" component={EditUserScreen} />
+              <Stack.Screen
+                name="DetailImageScreen"
+                component={DetailImageScreen}
+              />
+              <Stack.Screen
+                name="AccountSecurity"
+                component={AccountSecurity}
+              />
+              <Stack.Screen name="ChangePassword" component={ChangePassword} />
+              <Stack.Screen name="Privacy" component={Privacy} />
+            </>
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </RealmProvider>
@@ -298,6 +308,6 @@ export type RootStackParamList = {
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList { }
+    interface RootParamList extends RootStackParamList {}
   }
 }

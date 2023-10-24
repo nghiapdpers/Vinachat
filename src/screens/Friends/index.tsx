@@ -17,6 +17,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {actionFriendListStart} from '../../redux/actions/friendAction';
 import {RequestListActions} from '../../redux/actions/requestListAction';
 import {actionListGroupChatStart} from '../../redux/actions/listGroupChat';
+import {useNavigation} from '@react-navigation/native';
 
 const database = firestore();
 
@@ -26,6 +27,8 @@ const Friends = () => {
   const data = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
   );
+
+  const navigation = useNavigation();
 
   const FetchGetFriendList = async () => {
     try {
@@ -164,6 +167,13 @@ const Friends = () => {
               name={item?.fullname}
               image={item?.avatar}
               status={item?.status}
+              onPress={() =>
+                navigation.navigate('MessageScreen', {
+                  groupRef: item.groupRef,
+                  total_member: 2,
+                  groupName: item.fullname,
+                })
+              }
             />
           );
         }}

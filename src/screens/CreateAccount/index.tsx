@@ -5,7 +5,7 @@ import mainTheme from '../../assets/colors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import CheckBox from '../../components/CheckBox';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {StackActions, useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   actionClearUser,
@@ -65,7 +65,7 @@ const CreateAccount = () => {
 
   useEffect(() => {
     if (isRegisted) {
-      navigation.navigate('BottomScreen');
+      // navigation.dispatch(StackActions.replace('BottomScreen'));
       return;
     }
 

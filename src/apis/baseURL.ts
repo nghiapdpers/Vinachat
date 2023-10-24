@@ -1,6 +1,7 @@
 // develop domain
+// const DOMAIN = 'http://192.168.0.117:5000';
+// production domain
 const DOMAIN = 'https://red-difficult-cobra.cyclic.app';
-
 
 export const LOGIN_URL = `${DOMAIN}/api/user/login`;
 export const LOGIN_EXTERNAL_URL = `${DOMAIN}/api/user/loginWithExternal`;
@@ -20,8 +21,7 @@ export const UPDATE_PROFILE_URL = `${DOMAIN}/api/user/update`;
 export const GET_DETAIL_USER = `${DOMAIN}/api/user/getDetail`;
 export const ADDMEMBER_GROUP_URL = `${DOMAIN}/api/group/addMember`;
 export const CHANGEPASSWORD_USER_URL = `${DOMAIN}/api/user/changePassword`;
-
-
+export const UPDATE_LATEST_MESSAGE = `${DOMAIN}/api/group/updateLatestMessage`;
 
 export default {
   LOGIN_URL,
@@ -41,5 +41,6 @@ export default {
   UPDATE_PROFILE_URL,
   GET_DETAIL_USER,
   CHANGEPASSWORD_USER_URL,
-  ADDMEMBER_GROUP_URL
-}
+  ADDMEMBER_GROUP_URL,
+  UPDATE_LATEST_MESSAGE
+};
