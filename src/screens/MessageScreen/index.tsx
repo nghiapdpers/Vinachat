@@ -83,6 +83,8 @@ export default function MessageScreen() {
 
   useEffect(() => {
     console.log('listChatData:>>', listChatData);
+    console.log(adminRef);
+
   }, [listChatData])
   const itemsPerRow = 10; // Số emoji trên mỗi hàng
   const [data, setData] = useState([]);

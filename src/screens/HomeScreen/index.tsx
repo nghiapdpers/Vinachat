@@ -162,7 +162,7 @@ export default function HomeScreen() {
     );
   };
 
-  const Flatlistrender = ({item}: {item: any}) => {
+  const Flatlistrender = ({ item }: { item: any }) => {
     return item?.latest_message_type ? (
       <TouchableOpacity
         style={styles.BorderMessage}
@@ -208,6 +208,7 @@ export default function HomeScreen() {
             groupRef: item.ref,
             total_member: item.total_member,
             groupName: item.name,
+            adminRef: item.adminRef
           });
         }}>
         <View style={styles.MessageAvatar}>
