@@ -19,7 +19,8 @@ export const FRIENDS_REQUEST_URL = `${DOMAIN}/api/user/requestFriend`;
 export const MESSAGE_SYNCHRONOUS_URL = `${DOMAIN}/api/group/synchronous`;
 export const UPDATE_PROFILE_URL = `${DOMAIN}/api/user/update`;
 export const GET_DETAIL_USER = `${DOMAIN}/api/user/getDetail`;
-export const UPDATE_LATEST_MESSAGE = `${DOMAIN}/api/group/updateLatestMessage`;
+export const ADDMEMBER_GROUP_URL = `${DOMAIN}/api/group/addMember`;
+export const CHANGEPASSWORD_USER_URL = `${DOMAIN}/api/user/changePassword`;
 
 export default {
   LOGIN_URL,
@@ -38,5 +39,6 @@ export default {
   MESSAGE_SYNCHRONOUS_URL,
   UPDATE_PROFILE_URL,
   GET_DETAIL_USER,
-  UPDATE_LATEST_MESSAGE,
+  CHANGEPASSWORD_USER_URL,
+  ADDMEMBER_GROUP_URL,
 };

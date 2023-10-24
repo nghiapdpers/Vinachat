@@ -1,7 +1,7 @@
-import {Image, SafeAreaView, Text, View, TouchableOpacity} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { Image, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import styles from './styles';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 const Header = ({
   Iconback,
@@ -11,6 +11,9 @@ const Header = ({
   IconOption2,
   IconOption3,
   title,
+  groupref,
+  adminRef,
+  total_member
 }: any) => {
   const navigation = useNavigation();
   return (
@@ -22,7 +25,7 @@ const Header = ({
           }}>
           <Image style={styles.iconHeader} source={Iconback} />
         </TouchableOpacity>
-        <View style={{marginLeft: 5, maxWidth: '80%'}}>
+        <View style={{ marginLeft: 5, maxWidth: '80%' }}>
           <Text style={styles.Username}>{text}</Text>
           {status && <Text style={styles.textActive}>{status}</Text>}
         </View>
@@ -46,7 +49,7 @@ const Header = ({
           </TouchableOpacity>
         )}
         {IconOption3 && (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => { navigation.navigate('OptionMessage', { groupref: groupref, adminRef: adminRef, groupName: text, total_member: total_member }) }}>
             <Image style={styles.iconHeader} source={IconOption3} />
           </TouchableOpacity>
         )}

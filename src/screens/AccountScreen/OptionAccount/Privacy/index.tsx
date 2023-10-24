@@ -64,14 +64,17 @@ export default function Privacy() {
                         {
                             id: 'SN1',
                             title: 'Mọi người',
+                            status: 'selected'
                         },
                         {
                             id: 'SN2',
                             title: 'Bạn bè',
+                            status: 'none'
                         },
                         {
                             id: 'SN3',
                             title: 'Chỉ mình tôi',
+                            status: 'none'
                         }
                     ]
                 },
@@ -84,14 +87,17 @@ export default function Privacy() {
                         {
                             id: 'SDT1',
                             title: 'Mọi người',
+                            status: 'none'
                         },
                         {
                             id: 'SDT2',
                             title: 'Bạn bè',
+                            status: 'selected'
                         },
                         {
                             id: 'SDT3',
                             title: 'Chỉ mình tôi',
+                            status: 'none'
                         }
                     ]
                 },
@@ -104,14 +110,17 @@ export default function Privacy() {
                         {
                             id: 'EM1',
                             title: 'Mọi người',
+                            status: 'none'
                         },
                         {
                             id: 'EM2',
                             title: 'Bạn bè',
+                            status: 'none'
                         },
                         {
                             id: 'EM3',
                             title: 'Chỉ mình tôi',
+                            status: 'selected'
                         }
                     ]
                 }
@@ -129,7 +138,8 @@ export default function Privacy() {
                     data: [
                         {
                             id: 'TTDX1',
-                            title: 'Hiện trạng thái đã xem tin nhắn'
+                            title: 'Hiện trạng thái đã xem tin nhắn',
+                            status: 'enable'
                         }
                     ]
                 },
@@ -142,15 +152,13 @@ export default function Privacy() {
                         {
                             id: 'CPNT1',
                             title: 'Mọi người',
+                            status: 'none'
                         },
                         {
                             id: 'CPNT2',
                             title: 'Bạn bè',
+                            status: 'selected'
                         },
-                        {
-                            id: 'CPNT3',
-                            title: 'Chỉ mình tôi',
-                        }
                     ]
                 },
                 {
@@ -163,15 +171,13 @@ export default function Privacy() {
                         {
                             id: 'CPGD1',
                             title: 'Mọi người',
+                            status: 'none'
                         },
                         {
                             id: 'CPGD2',
                             title: 'Bạn bè',
+                            status: 'selected'
                         },
-                        {
-                            id: 'CPGD3',
-                            title: 'Chỉ mình tôi',
-                        }
                     ]
                 }
             ]
@@ -220,6 +226,7 @@ export default function Privacy() {
                         {
                             id: 'CPKP1',
                             title: 'Cho phép người lạ kết bạn',
+                            status: 'enable'
                         },
                     ]
                 },
@@ -232,6 +239,7 @@ export default function Privacy() {
                         {
                             id: 'CPTK1',
                             title: 'Cho phép người lạ tìm kiếm',
+                            status: 'disable'
                         },
                     ]
                 },
@@ -244,10 +252,12 @@ export default function Privacy() {
                         {
                             id: 'CPTT1',
                             title: 'Mọi người',
+                            status: 'none'
                         },
                         {
                             id: 'CPTT2',
                             title: 'Bạn bè',
+                            status: 'selected'
                         }
                     ]
                 }

@@ -46,13 +46,15 @@ import AccountSecurity from './src/screens/AccountScreen/OptionAccount/Account&S
 import ChangePassword from './src/screens/AccountScreen/OptionAccount/ChangePassword';
 import Privacy from './src/screens/AccountScreen/OptionAccount/Privacy';
 import useLogin from './src/config/hooks/useLogin';
+import OptionMessage from './src/screens/MessageScreen/OptionMessage';
+import AddMemberToGroup from './src/screens/MessageScreen/OptionMessage/AddMemberToGroup';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 // const HOST = '192.168.0.117';
 
-// // use firestore emulator
+// use firestore emulator
 // firestore().useEmulator(HOST, 8080);
 // auth().useEmulator(`http://${HOST}:9099`);
 // storage().useEmulator(HOST, 9199);

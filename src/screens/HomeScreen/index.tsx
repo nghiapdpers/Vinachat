@@ -43,10 +43,9 @@ export default function HomeScreen() {
   const userExternal = useSelector((state: any) => state?.userExternal);
   const list = useSelector((state: any) => state.groupChat?.data);
   const status = useSelector((state: any) => state.groupChat?.status);
-
-  // useEffect(() => {
-  //   console.log('list:>>', list);
-  // }, [list]);
+  useEffect(() => {
+    console.log('list:>>', list);
+  }, [list]);
   const loadingGroupChat = useSelector(
     (state: any) => state.groupChat?.loading,
   );
@@ -172,6 +171,7 @@ export default function HomeScreen() {
             groupRef: item.ref,
             total_member: item.total_member,
             groupName: item.name,
+            adminRef: item.adminRef,
           });
         }}>
         <View style={styles.MessageAvatar}>
