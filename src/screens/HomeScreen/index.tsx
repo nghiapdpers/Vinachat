@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   actionListGroupChatStart,
   actionUpdateLatestMessage,
@@ -14,15 +14,15 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import {screen} from '../../assets/images';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {actionFriendListStart} from '../../redux/actions/friendAction';
+import { screen } from '../../assets/images';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionFriendListStart } from '../../redux/actions/friendAction';
 import useNetworkErr from '../../config/hooks/useNetworkErr';
 import lottieHome from '../../assets/lottiefile/home/lottieHome.json';
 import lottieLoadingChat from '../../assets/lottiefile/home/lottieLoadingChat.json';
 import LottieView from 'lottie-react-native';
-import {SCREEN} from '../../global';
+import { SCREEN } from '../../global';
 
 const database = firestore();
 
@@ -155,7 +155,7 @@ export default function HomeScreen() {
     }
   };
 
-  const renderFriendActive = ({item}: {item: any}) => {
+  const renderFriendActive = ({ item }: { item: any }) => {
     // console.log('friend active item', item);
 
     return (
@@ -170,7 +170,7 @@ export default function HomeScreen() {
         }}>
         {item.avatar ? (
           <Image
-            source={{uri: item.avatar}}
+            source={{ uri: item.avatar }}
             style={styles.borderfriendActive}
           />
         ) : (
@@ -200,7 +200,7 @@ export default function HomeScreen() {
         <View style={styles.MessageAvatar}>
           {item.groupAvatar ? (
             <Image
-              source={{uri: item.groupAvatar}}
+              source={{ uri: item.groupAvatar }}
               style={styles.borderfriendActive}
             />
           ) : (
@@ -213,13 +213,13 @@ export default function HomeScreen() {
           <Text style={styles.textnameMessage}>{item.name}</Text>
           <Text numberOfLines={1} ellipsizeMode="tail">
             {(user?.data?.fullname || userExternal?.data?.fullname) ===
-            item?.latest_message_from_name
+              item?.latest_message_from_name
               ? item?.latest_message_type === 'image'
                 ? `You: Hình ảnh`
                 : `You: ${item.latest_message_text}`
               : item?.latest_message_type === 'image'
-              ? `${item.latest_message_from_name}: Hình ảnh`
-              : `${item.latest_message_from_name}: ${item.latest_message_text}`}
+                ? `${item.latest_message_from_name}: Hình ảnh`
+                : `${item.latest_message_from_name}: ${item.latest_message_text}`}
           </Text>
         </View>
       </TouchableOpacity>
@@ -237,7 +237,7 @@ export default function HomeScreen() {
         <View style={styles.MessageAvatar}>
           {item.groupAvatar ? (
             <Image
-              source={{uri: item.groupAvatar}}
+              source={{ uri: item.groupAvatar }}
               style={styles.borderfriendActive}
             />
           ) : (

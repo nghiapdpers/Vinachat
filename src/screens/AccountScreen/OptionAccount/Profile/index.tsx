@@ -32,8 +32,9 @@ export default function ProfileScreen({ route }: { route: any }) {
   );
   const navigation = useNavigation();
   const [status, setStatus] = useState('');
-
   const [avatarPicker, setAvatarPicker] = useState(false);
+
+
 
   const convertStatus = (status: any) => {
     switch (status) {
@@ -132,6 +133,7 @@ export default function ProfileScreen({ route }: { route: any }) {
 
   useEffect(() => {
     console.log(status);
+
   }, [status]);
 
   // event handler: handle open avatar picker
@@ -169,6 +171,7 @@ export default function ProfileScreen({ route }: { route: any }) {
     }
   };
 
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -183,14 +186,33 @@ export default function ProfileScreen({ route }: { route: any }) {
             <View style={styles.borderheaderprofile}>
               <View style={styles.flexboxheader}>
                 <View style={styles.boderavatar}>
-                  <Image
-                    style={styles.converAvatar}
-                    source={
-                      user.data.avatar
-                        ? { uri: user.data.avatar }
-                        : screen.profile.usermale
-                    }
-                  />
+                  {item?.ref === undefined ? (
+                    <Image
+                      style={styles.converAvatar}
+                      source={
+                        user.data.avatar
+                          ? { uri: user.data.avatar }
+                          : userExternal?.data?.gender === '0' ||
+                            user?.data?.gender === '0' ||
+                            item?.gender === '0' ?
+                            screen.profile.userfemale :
+                            screen.profile.usermale
+                      }
+                    />
+                  ) : (
+                    <Image
+                      style={styles.converAvatar}
+                      source={
+                        item?.avatar
+                          ? { uri: item?.avatar }
+                          : userExternal?.data?.gender === '0' ||
+                            user?.data?.gender === '0' ||
+                            item?.gender === '0' ?
+                            screen.profile.userfemale :
+                            screen.profile.usermale
+                      }
+                    />
+                  )}
                   {item?.ref === undefined ? (
                     <TouchableOpacity
                       style={styles.changeAvatarBorder}
