@@ -44,14 +44,6 @@ export default function ListChatReducer(
 
       updatedData = updatedData.slice(0, 20);
 
-      updatedData.sort((a, b) => {
-        if (a.sent_time.seconds < b.sent_time.seconds) {
-          return 1;
-        } else {
-          return -1;
-        }
-      });
-
       return {
         ...state,
         data: updatedData,

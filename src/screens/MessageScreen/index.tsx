@@ -104,50 +104,72 @@ export default function MessageScreen() {
           snapshot => {
             if (notFirstRender) {
               snapshot.docChanges().forEach(item => {
-                if (item.type === 'added') {
-                  dispatch(
-                    listChatActions.add({
-                      ...item.doc.data(),
-                      ref: item.doc.id,
-                      status: 'sended',
-                      from_name: item.doc.data().from_name,
-                    }),
-                  );
+                if (item.doc.get('from') === ref) {
+                  if (item.type === 'modified') {
+                    dispatch(
+                      listChatActions.add({
+                        ...item.doc.data(),
+                        ref: item.doc.id,
+                        status: 'sended',
+                        from_name: item.doc.data().from_name,
+                      }),
+                    );
 
-                  realm.write(() => {
-                    let groupChat: GroupChat = realm
-                      .objects<GroupChat>('GroupChat')
-                      .filtered(`ref = '${groupRef}'`)[0];
-                    if (!groupChat) {
-                      groupChat = realm.create<GroupChat>('GroupChat', {
-                        ref: groupRef,
-                        name: '',
-                        total_member: 0,
-                        adminRef: '',
-                        latest_message_from: '',
-                        latest_message_from_name: '',
-                        latest_message_text: '',
-                        latest_message_type: '',
-                        latest_message_sent_time: 0,
-                        member: [],
-                        messages: [],
-                      });
-                    }
+                    realm.write(() => {
+                      let groupChat: GroupChat = realm
+                        .objects<GroupChat>('GroupChat')
+                        .filtered(`ref = '${groupRef}'`)[0];
 
-                    const newMessage = {
-                      ref: item.doc.id,
-                      status: 'sended',
-                      from: item.doc.data().from,
-                      from_name: item.doc.data().from_name,
-                      message: item.doc.data().message,
-                      sent_time: item.doc.data().sent_time.seconds,
-                      type: item.doc.data().type,
-                      images: item.doc.data().images
-                        ? item.doc.data().images.map((url: any) => ({url: url}))
-                        : [],
-                    };
-                    groupChat.messages.push(newMessage);
-                  });
+                      const newMessage = {
+                        ref: item.doc.id,
+                        status: 'sended',
+                        from: item.doc.data().from,
+                        from_name: item.doc.data().from_name,
+                        message: item.doc.data().message,
+                        sent_time: item.doc.data().sent_time.seconds,
+                        type: item.doc.data().type,
+                        images: item.doc.data().images
+                          ? item.doc
+                              .data()
+                              .images.map((url: any) => ({url: url}))
+                          : [],
+                      };
+                      groupChat.messages.push(newMessage);
+                    });
+                  }
+                } else {
+                  if (item.type === 'added') {
+                    dispatch(
+                      listChatActions.add({
+                        ...item.doc.data(),
+                        ref: item.doc.id,
+                        status: 'sended',
+                        from_name: item.doc.data().from_name,
+                      }),
+                    );
+
+                    realm.write(() => {
+                      let groupChat: GroupChat = realm
+                        .objects<GroupChat>('GroupChat')
+                        .filtered(`ref = '${groupRef}'`)[0];
+
+                      const newMessage = {
+                        ref: item.doc.id,
+                        status: 'sended',
+                        from: item.doc.data().from,
+                        from_name: item.doc.data().from_name,
+                        message: item.doc.data().message,
+                        sent_time: item.doc.data().sent_time.seconds,
+                        type: item.doc.data().type,
+                        images: item.doc.data().images
+                          ? item.doc
+                              .data()
+                              .images.map((url: any) => ({url: url}))
+                          : [],
+                      };
+                      groupChat.messages.push(newMessage);
+                    });
+                  }
                 }
               });
             } else {
@@ -405,7 +427,7 @@ export default function MessageScreen() {
           .doc().id;
 
         // timestamp
-        const now = firestore.Timestamp.now();
+        const serverTime = firestore.FieldValue.serverTimestamp();
 
         if (imagesData.length == 0) {
           // save to redux
@@ -414,7 +436,7 @@ export default function MessageScreen() {
               ref: messageRef,
               from: ref,
               message: value,
-              sent_time: now,
+              sent_time: '',
               status: 'sending',
               type: 'text',
               from_name: myName,
@@ -427,7 +449,7 @@ export default function MessageScreen() {
               ref: messageRef,
               from: ref,
               message: value,
-              sent_time: now,
+              sent_time: '',
               status: 'sending',
               type: 'image',
               from_name: myName,
@@ -451,7 +473,7 @@ export default function MessageScreen() {
             .set({
               from: ref,
               message: value,
-              sent_time: now,
+              sent_time: serverTime,
               type: 'text',
               from_name: myName,
             });
@@ -482,7 +504,7 @@ export default function MessageScreen() {
             .set({
               from: ref,
               message: value,
-              sent_time: now,
+              sent_time: serverTime,
               type: 'image',
               from_name: myName,
               images,
@@ -506,6 +528,10 @@ export default function MessageScreen() {
         console.log('SEND MESSAGE ERROR >> ', error);
       }
     }
+    // const now = firestore.Timestamp.fromDate(new Date());
+    // const now = new Date();
+
+    // console.log(value, '::::', now.toUTCString());
   };
 
   // event handler: loadmore

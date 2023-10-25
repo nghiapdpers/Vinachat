@@ -59,6 +59,10 @@ const Stack = createStackNavigator();
 // auth().useEmulator(`http://${HOST}:9099`);
 // storage().useEmulator(HOST, 9199);
 
+firestore().settings({
+  persistence: false,
+});
+
 export default function App() {
   const dispatch = useDispatch();
   const networkErr = useNetworkErr();

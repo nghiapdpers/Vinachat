@@ -5,7 +5,7 @@ type chatProps = {
   ref: string;
   from?: string;
   message?: string;
-  sent_time?: FirebaseFirestoreTypes.Timestamp;
+  sent_time?: FirebaseFirestoreTypes.Timestamp | '';
   type?: 'text' | 'image';
   status: 'sending' | 'sended';
   from_name: string;

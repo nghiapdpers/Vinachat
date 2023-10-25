@@ -271,32 +271,32 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
       <View style={styles.FriendActive}>
-        {datafriend?.length > 0 ? (
-          <FlatList
-            data={datafriend}
-            renderItem={renderFriendActive}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            ListEmptyComponent={() => {
-              return (
-                loadingFriend === false && <ActivityIndicator size="small" />
-              );
-            }}
-          />
-        ) : (
-          <LottieView
-            source={lottieLoadingChat}
-            loop
-            autoPlay
-            style={{
-              width: SCREEN.width * 0.3,
-              height: 100,
-              alignSelf: 'center',
-            }}
-            speed={1}
-          />
-        )}
+        <FlatList
+          data={datafriend}
+          renderItem={renderFriendActive}
+          keyExtractor={(item, index) => index.toString()}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          ListEmptyComponent={() => {
+            return loadingFriend == true ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              datafriend?.length == 0 && (
+                <LottieView
+                  source={lottieLoadingChat}
+                  loop
+                  autoPlay
+                  style={{
+                    width: SCREEN.width * 0.3,
+                    height: 100,
+                    alignSelf: 'center',
+                  }}
+                  speed={1}
+                />
+              )
+            );
+          }}
+        />
       </View>
       <View style={styles.optionView}>
         <View style={styles.createGroup}>
@@ -313,38 +313,36 @@ export default function HomeScreen() {
         </View>
       </View>
       <View style={styles.listMessage}>
-        {list?.length > 0 ? (
-          <FlatList
-            data={list}
-            renderItem={Flatlistrender}
-            keyExtractor={(item, index) => index.toString()}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={() => {
-              return (
-                loadingGroupChat === false && (
-                  <ActivityIndicator
-                    size="large"
-                    style={{flex: 1, justifyContent: 'center'}}
-                  />
-                )
-              );
-            }}
-          />
-        ) : (
-          <LottieView
-            source={lottieHome}
-            loop
-            autoPlay
-            style={{
-              flex: 1,
-              width: SCREEN.width * 0.9,
-              height: SCREEN.height * 0.6,
-              alignSelf: 'center',
-              margin: -50,
-            }}
-            speed={1}
-          />
-        )}
+        <FlatList
+          data={list}
+          renderItem={Flatlistrender}
+          keyExtractor={(item, index) => index.toString()}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={() => {
+            return loadingGroupChat == true ? (
+              <ActivityIndicator
+                size="large"
+                style={{flex: 1, justifyContent: 'center'}}
+              />
+            ) : (
+              list?.length == 0 && (
+                <LottieView
+                  source={lottieHome}
+                  loop
+                  autoPlay
+                  style={{
+                    flex: 1,
+                    width: SCREEN.width * 0.9,
+                    height: SCREEN.height * 0.6,
+                    alignSelf: 'center',
+                    margin: -50,
+                  }}
+                  speed={1}
+                />
+              )
+            );
+          }}
+        />
       </View>
     </SafeAreaView>
   );
