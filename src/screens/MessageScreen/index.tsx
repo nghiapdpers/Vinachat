@@ -676,13 +676,13 @@ export default function MessageScreen() {
                     onPress={() => setSelectedCategoryEmoji(category)}>
                     <Text
                       style={[
-                        styles.categoryEmoji,
-                        selectedCategoryEmoji === category
-                          ? styles.selectedCategoryEmoji
-                          : null,
+                        styles.categoryEmoji, selectedCategoryEmoji === category ? { fontSize: 26 } : null
                       ]}>
                       {groupJson[category][0]?.emoji}
                     </Text>
+                    {selectedCategoryEmoji === category ?
+                      <View style={styles.selectedCategoryEmoji} />
+                      : null}
                   </TouchableOpacity>
                 );
               })}

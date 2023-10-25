@@ -130,7 +130,6 @@ export default function App() {
               <Stack.Screen name="QrCode" component={QrCode} />
               <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
               <Stack.Screen name="Biometrics" component={Biometrics} />
-              <Stack.Screen name="OptionMessage" component={OptionMessage} />
               <Stack.Screen
                 name="CreateGroupChat"
                 component={CreateGroupChat}

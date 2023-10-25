@@ -1,4 +1,4 @@
-import {FRIENDLIST} from './types';
+import { FRIENDLIST } from './types';
 
 export const actionFriendListStart = {
   type: FRIENDLIST.START,
@@ -13,3 +13,7 @@ export const actionFriendListFail = (data: any) => ({
   type: FRIENDLIST.FAIL,
   payload: data,
 });
+
+export const actionClearFriend = ({
+  type: FRIENDLIST.ClEAR
+})

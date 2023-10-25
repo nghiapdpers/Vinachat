@@ -1,5 +1,5 @@
-import {FRIENDLIST} from '../actions/types';
-import {AnyAction} from 'redux';
+import { FRIENDLIST } from '../actions/types';
+import { AnyAction } from 'redux';
 
 const initialState = {
   loading: false,
@@ -36,6 +36,8 @@ export default function FriendListReducer(
         ...action.payload,
         loading: false,
       };
+    case FRIENDLIST.ClEAR:
+      return initialState;
     default:
       return state;
   }

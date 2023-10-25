@@ -69,6 +69,7 @@ export enum FRIENDLIST {
   START = 'FRIENDLIST_START',
   END = 'FRIENDLIST_END',
   FAIL = 'FRIENDLIST_FAIL',
+  ClEAR = 'CLEAR_FRIEND'
 }
 
 export enum INPUT {
