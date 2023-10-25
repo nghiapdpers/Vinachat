@@ -17,6 +17,7 @@ export const actionFriendListFail = (data: any) => ({
 export const actionClearFriend = ({
   type: FRIENDLIST.ClEAR
 })
+
 export const actionFriendListRefresh = ({
   type: FRIENDLIST.REFRESH,
 });
