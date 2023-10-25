@@ -22,6 +22,7 @@ import * as Keychain from 'react-native-keychain';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import LottieView from 'lottie-react-native';
 import {useSelector} from 'react-redux';
+import Header3 from '../../../../components/Header3';
 
 export default function Biometrics() {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -155,15 +156,7 @@ export default function Biometrics() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Header
-          Iconback={component.header.back}
-          text={''}
-          status={''}
-          IconOption1={null}
-          IconOption2={null}
-          IconOption3={null}
-          title={'Xác thực'}
-        />
+        <Header3 text={'Xác thực'} />
       </View>
       <View style={styles.EnableBorder}>
         <View style={styles.FlexBorder}>

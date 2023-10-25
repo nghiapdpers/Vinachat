@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   flexboxBackText: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'row',
     alignItems: 'center',
     left: 10,

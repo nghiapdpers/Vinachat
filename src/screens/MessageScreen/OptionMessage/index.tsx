@@ -21,6 +21,8 @@ import UpdateAvatarPicker from '../../../components/UpdateAvatarPicker';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {actionListGroupChatStart} from '../../../redux/actions/listGroupChat';
+import TextInputModal from '../../../components/TextInputModal';
+import Header from '../../../components/Header';
 
 export default function OptionMessage({route}: {route: any}) {
   const dispatch = useDispatch();
@@ -36,6 +38,7 @@ export default function OptionMessage({route}: {route: any}) {
   const [isVisibleModal, setisVisibleModal] = useState(false);
   const [isNotification, setisNotification] = useState(false);
   const [avatarPicker, setAvatarPicker] = useState(false);
+  const [changeGroupName, setChangeGroupName] = useState(false);
 
   const data = [
     {
@@ -72,6 +75,11 @@ export default function OptionMessage({route}: {route: any}) {
           id: 2.4,
           icon: screen.optionmessage.avatar,
           title: 'Thay đổi ảnh đại diện nhóm',
+        },
+        {
+          id: 2.5,
+          icon: screen.optionmessage.text,
+          title: 'Thay đổi tên nhóm',
         },
         {
           id: 2.2,
@@ -113,7 +121,13 @@ export default function OptionMessage({route}: {route: any}) {
       ? data
       : data.map(section => ({
           ...section,
-          data: section.data.filter(item => item.id !== 2.1 && item.id !== 3.3),
+          data: section.data.filter(
+            item =>
+              item.id !== 2.1 &&
+              item.id !== 3.3 &&
+              item.id !== 2.4 &&
+              item.id !== 2.5,
+          ),
         }));
 
   const handlebtn = async (data: any) => {
@@ -133,6 +147,18 @@ export default function OptionMessage({route}: {route: any}) {
       case 2.4: {
         if (CheckAdminRef) {
           setAvatarPicker(true);
+        } else {
+          setisNotification(true);
+          setTimeout(() => {
+            setisNotification(false);
+          }, 5000);
+        }
+        break;
+      }
+
+      case 2.5: {
+        if (CheckAdminRef) {
+          setChangeGroupName(true);
         } else {
           setisNotification(true);
           setTimeout(() => {
@@ -162,9 +188,9 @@ export default function OptionMessage({route}: {route: any}) {
 
         const avatarUrl = await avatar.getDownloadURL();
 
-        const userDoc = firestore().collection('groups').doc(groupRef);
+        const groupDoc = firestore().collection('groups').doc(groupRef);
 
-        await userDoc.update({
+        await groupDoc.update({
           groupAvatar: avatarUrl,
         });
 
@@ -175,6 +201,26 @@ export default function OptionMessage({route}: {route: any}) {
     } catch (error) {
       console.log(
         ':::: OPTION MESSAGE / HANDLE-UPDATE-GROUP-AVATAR >> ERROR ::::\n',
+        error,
+      );
+    }
+  };
+
+  // event handler: change group name
+  const handleChangeGroupName = async (newName: string) => {
+    try {
+      const groupDoc = firestore().collection('groups').doc(groupRef);
+
+      await groupDoc.update({
+        name: newName,
+      });
+
+      dispatch(actionListGroupChatStart());
+
+      setChangeGroupName(false);
+    } catch (error) {
+      console.log(
+        ':::: OPTION MESSAGE / HANDLE-CHANGE-GROUP-NAME >> ERROR ::::\n',
         error,
       );
     }
@@ -218,8 +264,9 @@ export default function OptionMessage({route}: {route: any}) {
         },
       ]}>
       <View style={styles.header}>
-        <Header3 text={groupName} />
+        <Header Iconback={component.header.back} text={groupName} />
       </View>
+      <Text style={styles.groupName}>{groupName}</Text>
       <View style={styles.body}>
         {isNotification === true ? (
           <View style={styles.StylesAlert}>
@@ -245,6 +292,13 @@ export default function OptionMessage({route}: {route: any}) {
         onOutsidePress={() => setAvatarPicker(false)}
         onUpdatePress={handleUpdateGroupAvatar}
       />
+      {changeGroupName && (
+        <TextInputModal
+          title={'Tên nhóm mới là:'}
+          onOutsidePress={() => setChangeGroupName(false)}
+          onConfirmPress={handleChangeGroupName}
+        />
+      )}
     </SafeAreaView>
   );
 }

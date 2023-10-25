@@ -24,7 +24,9 @@ const Header = ({
           <Image style={styles.iconHeader} source={Iconback} />
         </TouchableOpacity>
         <View style={{marginLeft: 5, maxWidth: '80%'}}>
-          <Text style={styles.Username}>{text}</Text>
+          <Text style={styles.Username} numberOfLines={1}>
+            {text}
+          </Text>
           {status && <Text style={styles.textActive}>{status}</Text>}
         </View>
       </View>

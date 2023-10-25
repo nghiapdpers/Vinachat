@@ -98,6 +98,7 @@ export const screen = {
     smile: require('./Screen/OptionMessage/smile.png'),
     warning: require('./Screen/OptionMessage/warning.png'),
     avatar: require('./Screen/OptionMessage/avatar.png'),
+    text: require('./Screen/OptionMessage/text.png'),
   },
 };
 
