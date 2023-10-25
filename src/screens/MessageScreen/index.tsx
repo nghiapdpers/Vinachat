@@ -84,12 +84,6 @@ export default function MessageScreen() {
   const [selectedCategoryEmoji, setSelectedCategoryEmoji] =
     useState('Smileys & Emotion');
 
-  useEffect(() => {
-    console.log('listChatData:>>', listChatData);
-    console.log(adminRef);
-
-  }, [listChatData])
-
   const itemsPerRow = Platform.OS === 'android' ? 11 : 10; // Số emoji trên mỗi hàng
   const [data, setData] = useState([]);
 
@@ -222,18 +216,17 @@ export default function MessageScreen() {
                 {item.message}
               </Text>
             ) : (
-              <View style={[
-                styles.borderMessageIos,
-                {
-                  alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
-                  backgroundColor: messageFromMe
-                    ? mainTheme.lowerFillLogo
-                    : mainTheme.white,
-                },
-              ]}>
-                <Text style={styles.textMessage}>
-                  {item.message}
-                </Text>
+              <View
+                style={[
+                  styles.borderMessageIos,
+                  {
+                    alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
+                    backgroundColor: messageFromMe
+                      ? mainTheme.lowerFillLogo
+                      : mainTheme.white,
+                  },
+                ]}>
+                <Text style={styles.textMessage}>{item.message}</Text>
               </View>
             )}
           </>
@@ -303,7 +296,7 @@ export default function MessageScreen() {
 
       dispatch(
         listChatActions.merge(
-          sortMessages.slice(
+          sortMessages?.slice(
             currentOfflineRef.current,
             currentOfflineRef.current + 20,
           ),
@@ -502,7 +495,7 @@ export default function MessageScreen() {
           message_ref: messageRef,
         })
           .then(res => {
-            console.log('update latest message', res);
+            // console.log('update latest message', res);
           })
           .catch(err => {
             console.log(':::: UPDATE-LATEST-MESSAGE ERROR :::: >>\n', err);
@@ -541,7 +534,7 @@ export default function MessageScreen() {
       dispatch(
         listChatActions.loadmore_end({
           data: {
-            chats: sortMessages.slice(
+            chats: sortMessages?.slice(
               currentOfflineRef.current,
               currentOfflineRef.current + 20,
             ),

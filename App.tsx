@@ -147,7 +147,11 @@ export default function App() {
               />
               <Stack.Screen name="ChangePassword" component={ChangePassword} />
               <Stack.Screen name="Privacy" component={Privacy} />
-              <Stack.Screen name="AddMemberToGroup" component={AddMemberToGroup} />
+              <Stack.Screen name="OptionMessage" component={OptionMessage} />
+              <Stack.Screen
+                name="AddMemberToGroup"
+                component={AddMemberToGroup}
+              />
             </>
           )}
         </Stack.Navigator>
