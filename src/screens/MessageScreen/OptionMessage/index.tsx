@@ -31,6 +31,7 @@ export default function OptionMessage({ route }: { route: any }) {
 
     const [isVisibleModal, setisVisibleModal] = useState(false);
     const [isNotification, setisNotification] = useState(false);
+    console.log(CheckAdminRef);
 
 
     const data = [
@@ -107,18 +108,18 @@ export default function OptionMessage({ route }: { route: any }) {
         }));
 
     const handlebtn = async (data: any) => {
-        if (CheckAdminRef) {
-            if (data.id === 2.1) {
+        if (data.id === 2.1) {
+            if (CheckAdminRef) {
                 navigation.navigate('AddMemberToGroup')
             }
             else {
-                setisVisibleModal(true)
+                setisNotification(true)
+                setTimeout(() => {
+                    setisNotification(false);
+                }, 5000);
             }
         } else {
-            setisNotification(true)
-            setTimeout(() => {
-                setisNotification(false);
-            }, 5000);
+            setisVisibleModal(true)
         }
     }
 

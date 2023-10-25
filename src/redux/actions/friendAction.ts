@@ -17,3 +17,10 @@ export const actionFriendListFail = (data: any) => ({
 export const actionClearFriend = ({
   type: FRIENDLIST.ClEAR
 })
+export const actionFriendListRefresh = ({
+  type: FRIENDLIST.REFRESH,
+});
+
+export const actionFriendListRefreshEnd = ({
+  type: FRIENDLIST.REFRESH_END,
+})

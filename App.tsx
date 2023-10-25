@@ -59,6 +59,10 @@ const Stack = createStackNavigator();
 // auth().useEmulator(`http://${HOST}:9099`);
 // storage().useEmulator(HOST, 9199);
 
+firestore().settings({
+  persistence: false,
+});
+
 export default function App() {
   const dispatch = useDispatch();
   const networkErr = useNetworkErr();
@@ -147,10 +151,7 @@ export default function App() {
               <Stack.Screen name="ChangePassword" component={ChangePassword} />
               <Stack.Screen name="Privacy" component={Privacy} />
               <Stack.Screen name="OptionMessage" component={OptionMessage} />
-              <Stack.Screen
-                name="AddMemberToGroup"
-                component={AddMemberToGroup}
-              />
+              <Stack.Screen name="AddMemberToGroup" component={AddMemberToGroup} />
             </>
           )}
         </Stack.Navigator>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles';
 import {
   Image,
@@ -9,13 +9,13 @@ import {
   FlatList,
   TextInput,
 } from 'react-native';
-import {screen, component} from '../../assets/images';
-import {useNavigation} from '@react-navigation/native';
+import { screen, component } from '../../assets/images';
+import { useNavigation } from '@react-navigation/native';
 import mainTheme from '../../assets/colors';
 import apiSearch from '../../apis/apiSearch';
 import apiFriendRequest from '../../apis/apiFriendRequest';
 
-export default function SearchScreen({route}: {route: any}) {
+export default function SearchScreen({ route }: { route: any }) {
   const scanvalue = route?.params?.value;
   const navigation = useNavigation();
   const [value, setvalue] = useState('');
@@ -24,7 +24,7 @@ export default function SearchScreen({route}: {route: any}) {
 
   const FetchSearch = async () => {
     try {
-      return await apiSearch({keyword: value}).then((resposne: any) => {
+      return await apiSearch({ keyword: value }).then((resposne: any) => {
         setData(resposne.data);
       });
     } catch (error) {
@@ -45,7 +45,7 @@ export default function SearchScreen({route}: {route: any}) {
 
   const handleFriendRequest = async (friendRef: any) => {
     try {
-      return await apiFriendRequest({ref: friendRef}).then((response: any) => {
+      return await apiFriendRequest({ ref: friendRef }).then((response: any) => {
         setStatus(response.status);
       });
     } catch (error) {
@@ -71,16 +71,18 @@ export default function SearchScreen({route}: {route: any}) {
   //   FetchSearch();
   // }, [status, data]);
 
-  const renderItem = ({item}: {item: any}) => {
+  const renderItem = ({ item }: { item: any }) => {
+    console.log(item);
+
     return (
       <TouchableOpacity
         style={styles.borderFind}
         onPress={() => {
-          navigation.navigate('ProfileScreen', {item: item});
+          navigation.navigate('ProfileScreen', { item: item });
         }}>
         <View style={styles.topItem}>
           {item.avatar ? (
-            <Image style={styles.imageItem} source={{uri: item.avatar}} />
+            <Image style={styles.imageItem} source={{ uri: item.avatar }} />
           ) : (
             <View style={styles.imageItem}></View>
           )}
@@ -96,9 +98,9 @@ export default function SearchScreen({route}: {route: any}) {
               {
                 backgroundColor:
                   item?.status === 'N' ||
-                  item?.status === 'R' ||
-                  item?.status === 'ID' ||
-                  item?.status === 'D'
+                    item?.status === 'R' ||
+                    item?.status === 'ID' ||
+                    item?.status === 'D'
                     ? mainTheme.logo
                     : '#e3e3e3',
               },
