@@ -1,5 +1,5 @@
-import {FRIENDLIST} from '../actions/types';
-import {AnyAction} from 'redux';
+import { FRIENDLIST } from '../actions/types';
+import { AnyAction } from 'redux';
 
 const initialState = {
   loading: false,
@@ -8,6 +8,7 @@ const initialState = {
     message: null,
     data: [],
   },
+  refreshing: false
 };
 
 export default function FriendListReducer(
@@ -36,6 +37,24 @@ export default function FriendListReducer(
         ...action.payload,
         loading: false,
       };
+    case FRIENDLIST.ClEAR:
+      return initialState;
+    case FRIENDLIST.REFRESH:
+      return {
+        ...state,
+        friendlist: {
+          status: false,
+          message: null,
+          data: [],
+        },
+        refreshing: true,
+      };
+    case FRIENDLIST.REFRESH_END: {
+      return {
+        ...state,
+        refreshing: false,
+      };
+    }
     default:
       return state;
   }

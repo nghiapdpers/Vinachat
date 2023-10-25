@@ -88,10 +88,6 @@ const styles = StyleSheet.create({
     // textAlign: 'center',
     maxWidth: '70%',
   },
-  textMessage: {
-    fontSize: 14,
-    color: 'black',
-  },
   messageStatus: {
     alignSelf: 'flex-end',
     marginRight: 5,
@@ -169,7 +165,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'black',
   },
-
   imageMessage: {
     width: SCREEN.width * 0.6,
     height: SCREEN.width * 0.8,
@@ -206,8 +201,10 @@ const styles = StyleSheet.create({
     color: mainTheme.white,
   },
   selectedCategoryEmoji: {
-    borderBottomColor: mainTheme.logo,
-    borderBottomWidth: 2,
+    borderColor: mainTheme.logo,
+    borderWidth: 2,
+    marginTop: 2,
+    borderRadius: 180
   },
 });
 

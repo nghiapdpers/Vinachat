@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback, MutableRefObject } from 'react';
 import {
   SafeAreaView,
   Text,
@@ -6,13 +6,14 @@ import {
   View,
   Alert,
   TouchableOpacity,
+  Platform
 } from 'react-native';
 import styles from './styes';
 import mainTheme from '../../assets/colors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import OtpInputs from 'react-native-otp-inputs';
+import OtpInputs, { OtpInputsRef } from 'react-native-otp-inputs';
 import { useNavigation } from '@react-navigation/native';
 import { SCREEN } from '../../global';
 
@@ -120,6 +121,13 @@ const SignUp = () => {
     return isSecond.toString();
   };
 
+  const otpRef: MutableRefObject<OtpInputsRef | undefined> = useRef<OtpInputsRef>();
+
+  // Reset Input OTP
+  const resetOTP = useCallback(() => {
+    otpRef.current?.reset();
+  }, [])
+
   return (
     <SafeAreaView style={styles.container}>
       <Modal
@@ -137,6 +145,7 @@ const SignUp = () => {
             </Text>
 
             <OtpInputs
+              ref={otpRef as React.RefObject<OtpInputsRef>}
               autofillFromClipboard={false}
               numberOfInputs={6}
               style={{
@@ -146,14 +155,19 @@ const SignUp = () => {
                 width: SCREEN.width,
                 marginTop: 16,
               }}
-              inputContainerStyles={{
-                backgroundColor: '#FFFFFF',
-                width: 40,
-                height: 50,
-                marginHorizontal: 4,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              inputContainerStyles={
+                Platform.OS === 'ios' ? {
+                  backgroundColor: '#FFFFFF',
+                  marginHorizontal: 4,
+                  width: 40,
+                  height: 50,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                } : {
+                  backgroundColor: '#FFFFFF',
+                  marginHorizontal: 4,
+                }
+              }
               inputStyles={{ fontSize: 22, textAlign: 'center' }}
               keyboardType="phone-pad"
               handleChange={code => {
@@ -198,6 +212,7 @@ const SignUp = () => {
               style={{ position: 'absolute', bottom: 16 }}
               title="Verify"
             />
+
           </View>
         </View>
       </Modal>

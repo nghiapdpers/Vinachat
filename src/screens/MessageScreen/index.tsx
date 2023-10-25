@@ -82,10 +82,7 @@ export default function MessageScreen() {
   const [selectedCategoryEmoji, setSelectedCategoryEmoji] =
     useState('Smileys & Emotion');
 
-  // useEffect(() => {
-  //   console.log('listChatData:>>', listChatData.length);
-  // }, [listChatData]);
-  const itemsPerRow = 10; // Số emoji trên mỗi hàng
+  const itemsPerRow = Platform.OS === 'android' ? 11 : 10; // Số emoji trên mỗi hàng
   const [data, setData] = useState([]);
 
   // side effect: subcribe to listen chat
@@ -581,6 +578,7 @@ export default function MessageScreen() {
                 margin: 5,
                 alignItems: 'center',
                 width: `${100 / itemsPerRow}%`,
+                flexWrap: 'wrap',
               }}>
               <Text style={styles.categoryEmoji}>{item.emoji}</Text>
             </TouchableOpacity>
@@ -710,11 +708,14 @@ export default function MessageScreen() {
                       style={[
                         styles.categoryEmoji,
                         selectedCategoryEmoji === category
-                          ? styles.selectedCategoryEmoji
+                          ? {fontSize: 26}
                           : null,
                       ]}>
                       {groupJson[category][0]?.emoji}
                     </Text>
+                    {selectedCategoryEmoji === category ? (
+                      <View style={styles.selectedCategoryEmoji} />
+                    ) : null}
                   </TouchableOpacity>
                 );
               })}

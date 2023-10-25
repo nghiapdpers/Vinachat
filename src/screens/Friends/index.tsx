@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -13,11 +13,11 @@ import CardRequest from '../../components/CardRequest';
 import CardFriends from '../../components/CardFriends';
 import apiReplyRequest from '../../apis/apiReplyRequest';
 import firestore from '@react-native-firebase/firestore';
-import {useDispatch, useSelector} from 'react-redux';
-import {actionFriendListStart} from '../../redux/actions/friendAction';
-import {RequestListActions} from '../../redux/actions/requestListAction';
-import {actionListGroupChatStart} from '../../redux/actions/listGroupChat';
-import {useNavigation} from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionFriendListStart, actionFriendListRefresh, actionFriendListRefreshEnd } from '../../redux/actions/friendAction';
+import { RequestListActions } from '../../redux/actions/requestListAction';
+import { actionListGroupChatStart } from '../../redux/actions/listGroupChat';
+import { useNavigation } from '@react-navigation/native';
 
 const database = firestore();
 
@@ -27,6 +27,8 @@ const Friends = () => {
   const data = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
   );
+  const refreshing = useSelector((state: any) => state?.friendlist?.refreshing)
+  console.log(refreshing);
 
   const navigation = useNavigation();
 
@@ -40,11 +42,11 @@ const Friends = () => {
 
   useEffect(() => {
     FetchGetFriendList();
-  }, []);
+  }, [refreshing]);
 
   const ListEmptyComponent = () => {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={styles.textEmpty}>Chưa có bạn bè</Text>
       </View>
     );
@@ -52,7 +54,6 @@ const Friends = () => {
 
   // get ref from user redux
   const ref = useSelector((s: any) => s.user.data?.ref);
-
   const requestList = useSelector((s: any) => s.requestList.data);
   const requestListLoading = useSelector((s: any) => s.requestList.loading);
   const requestListMessage = useSelector((s: any) => s.requestList.message);
@@ -111,6 +112,18 @@ const Friends = () => {
     });
   };
 
+  // Refresh Friend List
+  const RefreshingFriendList = () => {
+    dispatch(actionFriendListRefresh);
+    setTimeout(() => {
+      dispatch(actionFriendListRefreshEnd);
+    }, 1000);
+    if (refreshing === false) {
+      dispatch(actionListGroupChatStart());
+    }
+  }
+
+
   return (
     <SafeAreaView style={styles.container}>
       <Header textLeft="Friends" />
@@ -125,7 +138,7 @@ const Friends = () => {
         }}
         contentContainerStyle={styles.requestContentList}
         showsVerticalScrollIndicator={false}
-        renderItem={({item}) => {
+        renderItem={({ item }) => {
           return (
             <CardRequest
               name={item.fullname}
@@ -158,9 +171,11 @@ const Friends = () => {
       <Text style={styles.title}>Friends</Text>
       <FlatList
         data={data}
-        style={{marginTop: 10, flex: 1}}
+        style={{ marginTop: 10, flex: 1 }}
         ListEmptyComponent={ListEmptyComponent}
-        renderItem={({item}: {item: any}) => {
+        refreshing={refreshing}
+        onRefresh={RefreshingFriendList}
+        renderItem={({ item }: { item: any }) => {
           return (
             <CardFriends
               key={item?.id}
