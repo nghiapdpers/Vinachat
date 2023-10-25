@@ -205,6 +205,7 @@ export default function HomeScreen() {
             total_member: item.total_member,
             groupName: item.name,
             adminRef: item.adminRef,
+            groupAvatar: item.groupAvatar,
           });
         }}>
         <View style={styles.MessageAvatar}>
@@ -242,6 +243,7 @@ export default function HomeScreen() {
             total_member: item.total_member,
             groupName: item.name,
             adminRef: item.adminRef,
+            groupAvatar: item.groupAvatar,
           });
         }}>
         <View style={styles.MessageAvatar}>

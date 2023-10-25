@@ -13,20 +13,20 @@ import {
   Keyboard,
   Pressable,
 } from 'react-native';
-import images, { component, screen } from '../../assets/images';
+import images, {component, screen} from '../../assets/images';
 import GroupChat from '../../realm/GroupChat';
-import { useRealm } from '@realm/react';
+import {useRealm} from '@realm/react';
 import Message from '../../realm/Message';
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, {useCallback, useEffect, useState, useRef} from 'react';
 import Header from '../../components/Header';
 import styles from './styles';
 import mainTheme from '../../assets/colors';
 import MoreMessageOptions from '../../components/MoreMessageOptions';
-import { Image as ImageAsset } from 'react-native-image-crop-picker';
-import { useCameraPermission } from 'react-native-vision-camera';
-import { useDispatch, useSelector } from 'react-redux';
-import { listChatActions } from '../../redux/actions/listChatActions';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {Image as ImageAsset} from 'react-native-image-crop-picker';
+import {useCameraPermission} from 'react-native-vision-camera';
+import {useDispatch, useSelector} from 'react-redux';
+import {listChatActions} from '../../redux/actions/listChatActions';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import apiHelper from '../../apis/apiHelper';
 import apiSynchronous from '../../apis/apiSynchronous';
@@ -51,17 +51,15 @@ var groupJson = require('unicode-emoji-json/data-by-group.json');
 const database = firestore();
 
 export default function MessageScreen() {
-  const { hasPermission, requestPermission } = useCameraPermission();
+  const {hasPermission, requestPermission} = useCameraPermission();
 
   const networkErr = useNetworkErr();
 
   const route = useRoute();
   const navigation = useNavigation();
 
-  const { groupRef, total_member, groupName, adminRef }: any = route.params;
-
-  console.log('adminREF:>>', adminRef);
-
+  const {groupRef, total_member, groupName, adminRef, groupAvatar}: any =
+    route.params;
 
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
@@ -91,7 +89,7 @@ export default function MessageScreen() {
   useEffect(() => {
     // ignore initial listen
     let notFirstRender = false;
-    let listenMessage: () => void = () => { };
+    let listenMessage: () => void = () => {};
 
     if (!networkErr) {
       listenMessage = database
@@ -130,8 +128,8 @@ export default function MessageScreen() {
                         type: item.doc.data().type,
                         images: item.doc.data().images
                           ? item.doc
-                            .data()
-                            .images.map((url: any) => ({ url: url }))
+                              .data()
+                              .images.map((url: any) => ({url: url}))
                           : [],
                       };
                       groupChat.messages.push(newMessage);
@@ -163,8 +161,8 @@ export default function MessageScreen() {
                         type: item.doc.data().type,
                         images: item.doc.data().images
                           ? item.doc
-                            .data()
-                            .images.map((url: any) => ({ url: url }))
+                              .data()
+                              .images.map((url: any) => ({url: url}))
                           : [],
                       };
                       groupChat.messages.push(newMessage);
@@ -202,7 +200,7 @@ export default function MessageScreen() {
     };
   }, [networkErr]);
 
-  const renderItem = ({ item, index }: any) => {
+  const renderItem = ({item, index}: any) => {
     const messageFromMe = item.from === ref;
 
     const lastMessageSameFrom = listChatData[index + 1]?.from === item.from;
@@ -216,7 +214,7 @@ export default function MessageScreen() {
         }}
         style={[
           styles.messageContainer,
-          { marginTop: lastMessageSameFrom ? 0 : 18 },
+          {marginTop: lastMessageSameFrom ? 0 : 18},
         ]}>
         {!messageFromMe && total_member > 2 && !lastMessageSameFrom && (
           <Text style={[styles.messageFromName]}>{item.from_name}</Text>
@@ -262,8 +260,8 @@ export default function MessageScreen() {
                 style={[
                   styles.imageMessage,
                   messageFromMe
-                    ? { alignSelf: 'flex-end', marginRight: 10 }
-                    : { alignSelf: 'flex-start', marginLeft: 10 },
+                    ? {alignSelf: 'flex-end', marginRight: 10}
+                    : {alignSelf: 'flex-start', marginLeft: 10},
                 ]}>
                 <Pressable
                   onPress={() =>
@@ -275,12 +273,12 @@ export default function MessageScreen() {
                     source={
                       image == 'dang-tai-anh-len-server'
                         ? images.screen.message.loading
-                        : { uri: image }
+                        : {uri: image}
                     }
                     style={
                       image == 'dang-tai-anh-len-server'
-                        ? { width: 64, height: 64, alignSelf: 'center' }
-                        : { width: '100%', height: '100%', borderRadius: 10 }
+                        ? {width: 64, height: 64, alignSelf: 'center'}
+                        : {width: '100%', height: '100%', borderRadius: 10}
                     }
                   />
                 </Pressable>
@@ -357,7 +355,7 @@ export default function MessageScreen() {
               sent_time: item.sent_time._seconds,
               type: item.type,
               images: item.images
-                ? item.images.map((url: any) => ({ url: url }))
+                ? item.images.map((url: any) => ({url: url}))
                 : [],
             };
             getMessageLatest.messages.push(newMessage);
@@ -461,7 +459,7 @@ export default function MessageScreen() {
         }
 
         setValue('');
-        listRef.current.scrollToOffset({ animated: true, offset: 0 });
+        listRef.current.scrollToOffset({animated: true, offset: 0});
 
         if (imagesData.length == 0) {
           // write to firestore
@@ -479,14 +477,9 @@ export default function MessageScreen() {
             });
         } else {
           const imagesPromise = imagesData.map(async (item: ImageAsset) => {
-            // cut filename from path (android)
-            let fileName;
-            if (Platform.OS === 'ios') {
-              fileName = item.filename;
-            } else {
-              const splitPath = item.path.split('/');
-              fileName = splitPath[splitPath.length - 1];
-            }
+            // cut filename from path
+            const splitPath = item.path.split('/');
+            const fileName = splitPath[splitPath.length - 1];
 
             const ref = storage().ref(`/groups/${groupRef}/${fileName}`);
             await ref.putFile(item.path);
@@ -573,15 +566,20 @@ export default function MessageScreen() {
   const renderEmojiList = (category: any) => {
     return (
       <FlatList
-        style={{ flex: 1 }}
+        style={{flex: 1}}
         data={groupJson[category]}
         numColumns={itemsPerRow}
-        renderItem={({ item }) => {
+        renderItem={({item}) => {
           return (
             <TouchableOpacity
               onPress={() => setValue(v => (v += item.emoji))}
               key={item?.emoji}
-              style={{ margin: 5, alignItems: 'center', width: `${100 / itemsPerRow}%`, flexWrap: 'wrap' }}>
+              style={{
+                margin: 5,
+                alignItems: 'center',
+                width: `${100 / itemsPerRow}%`,
+                flexWrap: 'wrap',
+              }}>
               <Text style={styles.categoryEmoji}>{item.emoji}</Text>
             </TouchableOpacity>
           );
@@ -632,9 +630,15 @@ export default function MessageScreen() {
             IconOption1={screen.message.phonecall}
             IconOption2={screen.message.videocall}
             IconOption3={screen.message.list}
-            groupref={groupRef}
-            adminRef={adminRef}
-            total_member={total_member}
+            onPressIconOption3={() => {
+              navigation.navigate('OptionMessage', {
+                groupref: groupRef,
+                adminRef: adminRef,
+                groupName: groupName,
+                total_member: total_member,
+                groupAvatar,
+              });
+            }}
             title={''}
           />
         </View>
@@ -693,7 +697,7 @@ export default function MessageScreen() {
         </View>
 
         {emoPicker ? (
-          <View style={{ height: '40%' }}>
+          <View style={{height: '40%'}}>
             <View style={styles.containerCategoryEmoji}>
               {Object.keys(groupJson).map(category => {
                 return (
@@ -702,13 +706,16 @@ export default function MessageScreen() {
                     onPress={() => setSelectedCategoryEmoji(category)}>
                     <Text
                       style={[
-                        styles.categoryEmoji, selectedCategoryEmoji === category ? { fontSize: 26 } : null
+                        styles.categoryEmoji,
+                        selectedCategoryEmoji === category
+                          ? {fontSize: 26}
+                          : null,
                       ]}>
                       {groupJson[category][0]?.emoji}
                     </Text>
-                    {selectedCategoryEmoji === category ?
+                    {selectedCategoryEmoji === category ? (
                       <View style={styles.selectedCategoryEmoji} />
-                      : null}
+                    ) : null}
                   </TouchableOpacity>
                 );
               })}

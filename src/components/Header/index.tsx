@@ -1,7 +1,7 @@
-import { Image, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import {Image, SafeAreaView, Text, View, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import styles from './styles';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const Header = ({
   Iconback,
@@ -11,9 +11,7 @@ const Header = ({
   IconOption2,
   IconOption3,
   title,
-  groupref,
-  adminRef,
-  total_member
+  onPressIconOption3,
 }: any) => {
   const navigation = useNavigation();
   return (
@@ -25,8 +23,10 @@ const Header = ({
           }}>
           <Image style={styles.iconHeader} source={Iconback} />
         </TouchableOpacity>
-        <View style={{ marginLeft: 5, maxWidth: '80%' }}>
-          <Text style={styles.Username}>{text}</Text>
+        <View style={{marginLeft: 5, maxWidth: '80%'}}>
+          <Text style={styles.Username} numberOfLines={1}>
+            {text}
+          </Text>
           {status && <Text style={styles.textActive}>{status}</Text>}
         </View>
       </View>
@@ -49,7 +49,7 @@ const Header = ({
           </TouchableOpacity>
         )}
         {IconOption3 && (
-          <TouchableOpacity onPress={() => { navigation.navigate('OptionMessage', { groupref: groupref, adminRef: adminRef, groupName: text, total_member: total_member }) }}>
+          <TouchableOpacity onPress={onPressIconOption3}>
             <Image style={styles.iconHeader} source={IconOption3} />
           </TouchableOpacity>
         )}

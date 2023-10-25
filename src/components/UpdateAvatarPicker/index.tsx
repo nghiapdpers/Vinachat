@@ -26,6 +26,7 @@ function UpdateAvatarPicker({
         mediaType: 'photo',
         cropping: true,
         cropperCircleOverlay: true,
+        compressImageQuality: 0.5,
       });
 
       if (image.path) {
@@ -43,6 +44,7 @@ function UpdateAvatarPicker({
         mediaType: 'photo',
         cropping: true,
         cropperCircleOverlay: true,
+        compressImageQuality: 0.5,
       });
 
       if (picture.path) {

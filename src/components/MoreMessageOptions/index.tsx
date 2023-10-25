@@ -41,6 +41,7 @@ const MoreMessageOptions = memo(function ({
         maxFiles: 10,
         minFiles: 0,
         mediaType: 'photo',
+        compressImageQuality: 0.5,
       });
 
       if (image.length > 0) {
@@ -57,6 +58,7 @@ const MoreMessageOptions = memo(function ({
     try {
       const picture = await openCamera({
         mediaType: 'photo',
+        compressImageQuality: 0.5,
       });
 
       if (picture) {
