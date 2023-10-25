@@ -1,7 +1,7 @@
 // develop domain
-const DOMAIN = 'http://192.168.0.120:3000';
+// const DOMAIN = 'http://192.168.0.120:3000';
 // production domain
-// const DOMAIN = 'https://red-difficult-cobra.cyclic.app';
+const DOMAIN = 'https://red-difficult-cobra.cyclic.app';
 
 export const LOGIN_URL = `${DOMAIN}/api/user/login`;
 export const LOGIN_EXTERNAL_URL = `${DOMAIN}/api/user/loginWithExternal`;

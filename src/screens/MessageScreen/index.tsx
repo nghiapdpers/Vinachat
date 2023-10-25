@@ -379,7 +379,7 @@ export default function MessageScreen() {
 
   // event handler: open emoji picker
   const handleOpenEmoji = useCallback(() => {
-    setEmoPicker(true);
+    setEmoPicker((prev) => !prev);
     setMoreOptVisible(false);
     Keyboard.dismiss();
   }, []);
