@@ -58,7 +58,8 @@ export default function MessageScreen() {
   const route = useRoute();
   const navigation = useNavigation();
 
-  const {groupRef, total_member, groupName, adminRef}: any = route.params;
+  const {groupRef, total_member, groupName, adminRef, groupAvatar}: any =
+    route.params;
 
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
@@ -479,14 +480,9 @@ export default function MessageScreen() {
             });
         } else {
           const imagesPromise = imagesData.map(async (item: ImageAsset) => {
-            // cut filename from path (android)
-            let fileName;
-            if (Platform.OS === 'ios') {
-              fileName = item.filename;
-            } else {
-              const splitPath = item.path.split('/');
-              fileName = splitPath[splitPath.length - 1];
-            }
+            // cut filename from path
+            const splitPath = item.path.split('/');
+            const fileName = splitPath[splitPath.length - 1];
 
             const ref = storage().ref(`/groups/${groupRef}/${fileName}`);
             await ref.putFile(item.path);
@@ -636,9 +632,15 @@ export default function MessageScreen() {
             IconOption1={screen.message.phonecall}
             IconOption2={screen.message.videocall}
             IconOption3={screen.message.list}
-            groupref={groupRef}
-            adminRef={adminRef}
-            total_member={total_member}
+            onPressIconOption3={() => {
+              navigation.navigate('OptionMessage', {
+                groupref: groupRef,
+                adminRef: adminRef,
+                groupName: groupName,
+                total_member: total_member,
+                groupAvatar,
+              });
+            }}
             title={''}
           />
         </View>

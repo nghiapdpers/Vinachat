@@ -14,11 +14,11 @@ export const component = {
     close: require('./Components/ListImage/close.png'),
   },
   modal: {
-    warning: require('./Components/Modal/warning.png')
+    warning: require('./Components/Modal/warning.png'),
   },
   bottomsheet: {
-    block: require('./Components/BottomSheet/blockUser.png')
-  }
+    block: require('./Components/BottomSheet/blockUser.png'),
+  },
 };
 
 export const screen = {
@@ -96,8 +96,9 @@ export const screen = {
     notification: require('./Screen/OptionMessage/notification.png'),
     picture: require('./Screen/OptionMessage/picture.png'),
     smile: require('./Screen/OptionMessage/smile.png'),
-    warning: require('./Screen/OptionMessage/warning.png')
-  }
+    warning: require('./Screen/OptionMessage/warning.png'),
+    avatar: require('./Screen/OptionMessage/avatar.png'),
+  },
 };
 
 const images = {
