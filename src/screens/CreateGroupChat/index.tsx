@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './styles';
 import {
   Image,
@@ -11,12 +11,12 @@ import {
   Alert,
   ImageBackground,
 } from 'react-native';
-import {screen, component} from '../../assets/images';
-import {useNavigation} from '@react-navigation/native';
+import { screen, component } from '../../assets/images';
+import { useNavigation } from '@react-navigation/native';
 import Header3 from '../../components/Header3';
 import apiCreateGroup from '../../apis/apiCreateGroup';
-import {useDispatch, useSelector} from 'react-redux';
-import {actionListGroupChatStart} from '../../redux/actions/listGroupChat';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionListGroupChatStart } from '../../redux/actions/listGroupChat';
 import LoadingOverlay from '../../components/LoadingOverlay';
 
 export default function CreateGroupChat() {
@@ -98,25 +98,24 @@ export default function CreateGroupChat() {
     FetchCreateGroup();
   };
 
-  const renderItem = ({item}: {item: any}) => {
+  const renderItem = ({ item }: { item: any }) => {
     const isSelected = memberSelected.some(
       (selectedMember: any) => selectedMember.ref === item.ref,
     );
 
     return (
-      <View style={styles.borderItem}>
+      <TouchableOpacity style={styles.borderItem} onPress={() => {
+        handleMemberSelection(item);
+      }}>
         <View style={styles.SelectFlex}>
-          <TouchableOpacity
-            style={styles.SelectCheckbox}
-            onPress={() => {
-              handleMemberSelection(item);
-            }}>
+          <View
+            style={styles.SelectCheckbox}>
             {isSelected ? <View style={styles.memberSelected}></View> : null}
-          </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.ImageFlex}>
           {item.avatar ? (
-            <Image source={{uri: item.avatar}} style={styles.imageItem} />
+            <Image source={{ uri: item.avatar }} style={styles.imageItem} />
           ) : (
             <View style={styles.imageItem}></View>
           )}
@@ -125,16 +124,16 @@ export default function CreateGroupChat() {
           <Text style={styles.textnameItem}>{item.fullname}</Text>
           <Text style={styles.textactive}>{item.mobile}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
-  const rendermemeberSelected = ({item}: {item: any}) => {
+  const rendermemeberSelected = ({ item }: { item: any }) => {
     return (
       <View style={styles.SelectBottomItem}>
         {item.avatar ? (
           <ImageBackground
-            source={{uri: item.avatar}}
+            source={{ uri: item.avatar }}
             style={styles.imageBottomSelect}
             borderRadius={180}>
             <TouchableOpacity

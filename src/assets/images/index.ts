@@ -100,6 +100,10 @@ export const screen = {
     avatar: require('./Screen/OptionMessage/avatar.png'),
     text: require('./Screen/OptionMessage/text.png'),
   },
+  verifyaccount : {
+    banner : require('./Screen/VerifyAccount/bannerverify.png'),
+    iconverify : require('./Screen/VerifyAccount/verifyicon.png')
+  }
 };
 
 const images = {

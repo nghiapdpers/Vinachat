@@ -5,8 +5,8 @@ import { Svg, Defs, Mask, Rect } from "react-native-svg";
 import mainTheme from "../../assets/colors";
 import { useNavigation } from "@react-navigation/native";
 import styles from "./styles";
-import Header from "../../components/Header";
 import { component } from "../../assets/images";
+import Header3 from "../../components/Header3";
 
 export default function ScanQrCode() {
     const [hasPermission, setHasPermission] = useState(false);
@@ -40,14 +40,8 @@ export default function ScanQrCode() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.headerbar}>
-                <Header
-                    Iconback={component.header.back}
-                    text={null}
-                    status={null}
-                    IconOption1={null}
-                    IconOption2={null}
-                    IconOption3={null}
-                    title={"Quét mã QR"}
+                <Header3
+                    text={"Quét mã QR"}
                 />
             </View>
             <View style={styles.ViewCamera}>
