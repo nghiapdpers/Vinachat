@@ -58,7 +58,8 @@ export default function AccountSecurity() {
         },
         {
             id: 4,
-            title: 'Xác thực tài khoản'
+            title: 'Xác thực tài khoản',
+            navigation: 'VerifyAccount'
         },
         {
             id: 5,
@@ -101,7 +102,7 @@ export default function AccountSecurity() {
         } else {
             return (
                 <TouchableOpacity key={item.id} style={styles.viewborder} onPress={() => {
-                    if (item.id === 2) {
+                    if (item.id === 2 || item.id === 4) {
                         navigation.navigate(item.navigation)
                     } else {
                         setisVisibleModal(true);
@@ -131,7 +132,7 @@ export default function AccountSecurity() {
             )
         } else {
             return (
-                <TouchableOpacity key={item.id} style={styles.viewborder} onPress={() => {setisVisibleModal(true)}}>
+                <TouchableOpacity key={item.id} style={styles.viewborder} onPress={() => { setisVisibleModal(true) }}>
                     <Text style={styles.textoption}>{item.title}</Text>
                     <Image style={styles.imageborder} source={component.header.back} />
                 </TouchableOpacity>

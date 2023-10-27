@@ -22,6 +22,3 @@ export const actionFriendListRefresh = ({
   type: FRIENDLIST.REFRESH,
 });
 
-export const actionFriendListRefreshEnd = ({
-  type: FRIENDLIST.REFRESH_END,
-})
