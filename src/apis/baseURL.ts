@@ -22,6 +22,7 @@ export const GET_DETAIL_USER = `${DOMAIN}/api/user/getDetail`;
 export const ADDMEMBER_GROUP_URL = `${DOMAIN}/api/group/addMember`;
 export const CHANGEPASSWORD_USER_URL = `${DOMAIN}/api/user/changePassword`;
 export const UPDATE_LATEST_MESSAGE = `${DOMAIN}/api/group/updateLatestMessage`;
+export const GET_DETAIL_GROUP_CHAT = `${DOMAIN}/api/group/getDetail`;
 
 export default {
   LOGIN_URL,
@@ -43,4 +44,5 @@ export default {
   CHANGEPASSWORD_USER_URL,
   ADDMEMBER_GROUP_URL,
   UPDATE_LATEST_MESSAGE,
+  GET_DETAIL_GROUP_CHAT,
 };

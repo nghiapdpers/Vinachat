@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import {SCREEN} from '../../global';
 import mainTheme from '../../assets/colors';
 
@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingHorizontal: 10,
     color: mainTheme.text,
+    paddingVertical: 10,
   },
 
   title: {

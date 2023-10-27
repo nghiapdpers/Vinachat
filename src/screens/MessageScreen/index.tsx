@@ -33,6 +33,7 @@ import apiSynchronous from '../../apis/apiSynchronous';
 // import EmojiBoard from 'react-native-emoji-board';
 import useNetworkErr from '../../config/hooks/useNetworkErr';
 import apiUpdateLatestMessage from '../../apis/apiUpdateLatestMessage';
+import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
 
 var groupJson = require('unicode-emoji-json/data-by-group.json');
 
@@ -64,6 +65,9 @@ export default function MessageScreen() {
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
   const myName = useSelector((s: any) => s.user.data.fullname);
+
+  const detailGroupName = useSelector((s: any) => s.detailGroup.name);
+  const detailGroupLoading = useSelector((s: any) => s.detailGroup.loading);
 
   const listChatData = useSelector((s: any) => s.listChat.data);
   const loadmore = useSelector((s: any) => s.listChat.lmLoading);
@@ -373,6 +377,10 @@ export default function MessageScreen() {
 
   useEffect(() => {
     getMessageLastest();
+
+    return () => {
+      dispatch(DetailGroupChatActions.clear());
+    };
   }, []);
 
   // event handler: open emoji picker
@@ -621,23 +629,17 @@ export default function MessageScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : keyboard ? 25 : 0}>
       <SafeAreaView style={styles.container}>
-        {!isReady && <LoadingOverlay />}
+        {!isReady || detailGroupLoading ? <LoadingOverlay /> : null}
         <View style={styles.header}>
           <Header
             Iconback={component.header.back}
-            text={groupName}
+            text={detailGroupName ? detailGroupName : groupName}
             status={undefined}
             IconOption1={screen.message.phonecall}
             IconOption2={screen.message.videocall}
             IconOption3={screen.message.list}
             onPressIconOption3={() => {
-              navigation.navigate('OptionMessage', {
-                groupref: groupRef,
-                adminRef: adminRef,
-                groupName: groupName,
-                total_member: total_member,
-                groupAvatar,
-              });
+              navigation.navigate('OptionMessage');
             }}
             title={''}
           />
