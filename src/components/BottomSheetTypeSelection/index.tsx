@@ -11,17 +11,17 @@ const BottomSheetTypeSelection = ({ data }: any) => {
     const renderItem = ({ item }: { item: any }) => {
         const isSelected = item.id === selected;
         return (
-            <View style={styles.viewrender}>
+            <TouchableOpacity style={styles.viewrender} onPress={() => { handleSelected(item.id) }}>
                 <Text style={styles.textSelection}>{item.title}</Text>
-                <TouchableOpacity style={styles.viewSelection} onPress={() => { handleSelected(item.id) }}>
+                <View style={styles.viewSelection} >
                     {/* {item.status === 'selected' ? (
                         <View style={styles.Selected} />
                     ) : null} */}
                     {isSelected ? (
                         <View style={styles.Selected} />
                     ) : null}
-                </TouchableOpacity>
-            </View>
+                </View>
+            </TouchableOpacity>
         )
     }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -14,7 +14,7 @@ import CardFriends from '../../components/CardFriends';
 import apiReplyRequest from '../../apis/apiReplyRequest';
 import firestore from '@react-native-firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
-import { actionFriendListStart, actionFriendListRefresh, actionFriendListRefreshEnd } from '../../redux/actions/friendAction';
+import { actionFriendListStart, actionFriendListRefresh } from '../../redux/actions/friendAction';
 import { RequestListActions } from '../../redux/actions/requestListAction';
 import { actionListGroupChatStart } from '../../redux/actions/listGroupChat';
 import { useNavigation } from '@react-navigation/native';
@@ -27,9 +27,7 @@ const Friends = () => {
   const data = useSelector(
     (state: any) => state?.friendlist?.friendlist?.data?.data,
   );
-  const refreshing = useSelector((state: any) => state?.friendlist?.refreshing)
-  console.log(refreshing);
-
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
   const FetchGetFriendList = async () => {
@@ -114,13 +112,10 @@ const Friends = () => {
 
   // Refresh Friend List
   const RefreshingFriendList = () => {
+    setRefreshing(true);
     dispatch(actionFriendListRefresh);
-    setTimeout(() => {
-      dispatch(actionFriendListRefreshEnd);
-    }, 1000);
-    if (refreshing === false) {
-      dispatch(actionListGroupChatStart());
-    }
+    dispatch(actionFriendListStart);
+    setRefreshing(false);
   }
 
 

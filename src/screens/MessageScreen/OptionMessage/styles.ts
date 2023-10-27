@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     bottom: 10,
     position: 'absolute',
     backgroundColor: '#333333',
+    zIndex: 1,
   },
   textAlert: {
     fontSize: 15,
@@ -81,6 +82,15 @@ const styles = StyleSheet.create({
     color: mainTheme.green,
     textAlign: 'center',
     paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+
+  groupAvatar: {
+    width: 136,
+    height: 136,
+    borderRadius: 100,
+    borderWidth: 5,
+    borderColor: mainTheme.logo,
   },
 });
 

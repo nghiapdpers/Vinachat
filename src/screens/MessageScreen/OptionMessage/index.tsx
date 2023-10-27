@@ -23,17 +23,21 @@ import storage from '@react-native-firebase/storage';
 import {actionListGroupChatStart} from '../../../redux/actions/listGroupChat';
 import TextInputModal from '../../../components/TextInputModal';
 import Header from '../../../components/Header';
+import detailGroupChatReducer from '../../../redux/reducers/detailGroupChatReducer';
+import {DetailGroupChatActions} from '../../../redux/actions/getDetailGroupChatActions';
 
 export default function OptionMessage({route}: {route: any}) {
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
-  const groupRef = route?.params?.groupref;
-  const adminRef = route?.params?.adminRef;
-  const total_member = route?.params?.total_member;
+
+  const groupRef = useSelector((s: any) => s.detailGroup.ref);
+  const adminRef = useSelector((s: any) => s.detailGroup.adminRef);
+  const total_member = useSelector((s: any) => s.detailGroup.total_member);
+  const groupName = useSelector((s: any) => s.detailGroup.name);
+  const groupAvatar = useSelector((s: any) => s.detailGroup.groupAvatar);
+
   const user = useSelector((state: any) => state?.user);
-  const groupName = route?.params?.groupName;
-  const groupAvatar = route?.params?.groupAvatar;
   const CheckAdminRef = user?.data?.ref === adminRef;
   const [isVisibleModal, setisVisibleModal] = useState(false);
   const [isNotification, setisNotification] = useState(false);
@@ -195,6 +199,7 @@ export default function OptionMessage({route}: {route: any}) {
         });
 
         dispatch(actionListGroupChatStart());
+        dispatch(DetailGroupChatActions.start(groupRef));
 
         setAvatarPicker(false);
       }
@@ -216,6 +221,7 @@ export default function OptionMessage({route}: {route: any}) {
       });
 
       dispatch(actionListGroupChatStart());
+      dispatch(DetailGroupChatActions.start(groupRef));
 
       setChangeGroupName(false);
     } catch (error) {
@@ -266,7 +272,14 @@ export default function OptionMessage({route}: {route: any}) {
       <View style={styles.header}>
         <Header Iconback={component.header.back} text={groupName} />
       </View>
+
+      <Image
+        source={groupAvatar ? {uri: groupAvatar} : screen.profile.usermale}
+        style={styles.groupAvatar}
+      />
+
       <Text style={styles.groupName}>{groupName}</Text>
+
       <View style={styles.body}>
         {isNotification === true ? (
           <View style={styles.StylesAlert}>
