@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,14 +11,15 @@ import {
 import styles from './styles';
 import RNQRGenerator from 'rn-qr-generator';
 import Header from '../../../../components/Header';
-import ViewShot from 'react-native-view-shot';
 import {
   CameraRoll,
   iosRequestAddOnlyGalleryPermission,
 } from '@react-native-camera-roll/camera-roll';
-import {screen, component} from '../../../../assets/images';
-import {useSelector} from 'react-redux';
+import { screen, component } from '../../../../assets/images';
+import { useSelector } from 'react-redux';
 import Header3 from '../../../../components/Header3';
+import ViewShot, { captureRef } from 'react-native-view-shot';
+import Share from 'react-native-share'
 
 const dataOptionInfo = [
   {
@@ -31,21 +32,20 @@ const dataOptionInfo = [
     title: 'Lưu',
     image: screen.qrcode.download,
   },
-  {
-    id: 3,
-    title: 'Đổi mã',
-    image: screen.qrcode.changeQR,
-  },
 ];
 
-export default function QrCode({route}: {route: any}) {
-  const [QrCode, setQrCode] = useState({imageUri: ''});
+export default function QrCode({ route }: { route: any }) {
+  const [QrCode, setQrCode] = useState({ imageUri: '' });
   const screenshotRef = useRef<ViewShot>(null);
   const [hasCameraRollPermission, setHasCameraRollPermission] = useState(false);
   const [responseStatus, setresponseStatus] = useState('');
   const [showArlert, setshowArlert] = useState(false);
   const user = useSelector((state: any) => state?.user);
-  const userExternal = useSelector((state: any) => state?.userExternal);
+
+  console.log(user.data);
+
+
+  const ref = useRef<any>();
 
   useEffect(() => {
     const requestCameraRollPermission = async () => {
@@ -67,14 +67,14 @@ export default function QrCode({route}: {route: any}) {
 
     requestCameraRollPermission();
     RNQRGenerator.generate({
-      value: userExternal?.data?.mobile || user?.data?.mobile,
+      value: user?.data?.mobile,
       width: 250,
       height: 250,
       correctionLevel: 'L',
     })
       .then(response => {
-        const {uri} = response;
-        setQrCode({imageUri: uri});
+        const { uri } = response;
+        setQrCode({ imageUri: uri });
       })
       .catch(error => console.log('Cannot create QR code', error));
   }, []);
@@ -92,7 +92,7 @@ export default function QrCode({route}: {route: any}) {
     try {
       const screenshotUri = await screenshotRef?.current?.capture();
       const response = `file://${screenshotUri}`;
-      await CameraRoll.save(response, {type: 'photo'})
+      await CameraRoll.save(response, { type: 'photo' })
         .then((response: any) => {
           setresponseStatus('success');
         })
@@ -108,6 +108,24 @@ export default function QrCode({route}: {route: any}) {
     }
   };
 
+  const handleShareQR = async () => {
+    try {
+
+      const uri = await captureRef(ref, {
+        format: 'png',
+        quality: 0.7
+      })
+      // console.log('uri:>>', uri);
+      await Share.open({
+        url: uri
+      })
+
+
+    } catch (error) {
+      console.log('Lỗi chia sẻ:', error);
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -115,15 +133,15 @@ export default function QrCode({route}: {route: any}) {
       </View>
       <ViewShot ref={screenshotRef} style={styles.Screenshotborder}>
         <View style={styles.flexscreenshotqr}>
-          <View style={styles.BorderQRCodeScreenshot}>
+          <ViewShot ref={ref} style={styles.BorderQRCodeScreenshot}>
             {QrCode.imageUri && (
               <Image
                 resizeMode="stretch"
-                source={{uri: QrCode.imageUri}}
+                source={{ uri: QrCode.imageUri }}
                 style={styles.QR}
               />
             )}
-          </View>
+          </ViewShot>
         </View>
         <View style={styles.flexscreenshotinfo}>
           <View style={styles.borderImage}></View>
@@ -137,7 +155,7 @@ export default function QrCode({route}: {route: any}) {
               {QrCode.imageUri && (
                 <Image
                   resizeMode="stretch"
-                  source={{uri: QrCode.imageUri}}
+                  source={{ uri: QrCode.imageUri }}
                   style={styles.QR}
                 />
               )}
@@ -157,15 +175,17 @@ export default function QrCode({route}: {route: any}) {
               </View>
               <View style={styles.flexbox}>
                 <View style={styles.ImageInfo}>
-                  <View style={styles.borderImage}>
-                    {/* Thêm nội dung hình ảnh tại đây */}
-                  </View>
+                  {user.data.avatar ?
+                    <Image style={styles.borderImage} source={{ uri: user.data.avatar }} />
+                    : <Image style={styles.borderImage} source={require('../../../../assets/images/Screen/QRCode/avatar.png')} />}
                 </View>
                 <View style={styles.TextInfo}>
-                  <Text style={styles.textusername}>ngtrthinhh</Text>
-                  <Text style={styles.textfullname}>
-                    {userExternal?.data?.fullname || user?.data?.fullname}
-                  </Text>
+                  <Text style={styles.textusername}>{user?.data?.fullname}</Text>
+                  {user?.data?.email ?
+                    <Text style={styles.textEmail}>
+                      {user?.data?.email}
+                    </Text>
+                    : null}
                 </View>
               </View>
             </View>
@@ -175,6 +195,9 @@ export default function QrCode({route}: {route: any}) {
                   <TouchableOpacity
                     style={styles.borderItemOption}
                     onPress={() => {
+                      if (item.id === 1) {
+                        handleShareQR();
+                      }
                       if (item.id === 2) {
                         handleScreenshot();
                       }

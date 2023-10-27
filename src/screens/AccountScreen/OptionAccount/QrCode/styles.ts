@@ -111,10 +111,12 @@ const styles = StyleSheet.create({
         backgroundColor: mainTheme.background
     },
     textusername: {
-        fontSize: 22
+        fontSize: 22,
+        color: mainTheme.text
     },
-    textfullname: {
-        fontSize: 16
+    textEmail: {
+        fontSize: 16,
+        color: mainTheme.text
     },
     Screenshotborder: {
         backgroundColor: mainTheme.logo,
@@ -148,8 +150,8 @@ const styles = StyleSheet.create({
     },
     textAlert: {
         fontSize: 15,
-        color : "white",
-        padding : 5
+        color: "white",
+        padding: 5
     }
 })
 

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   actionClearGroupChat,
   actionListGroupChatStart,
@@ -15,18 +15,18 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import {screen} from '../../assets/images';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {actionFriendListStart} from '../../redux/actions/friendAction';
+import { screen } from '../../assets/images';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionFriendListStart } from '../../redux/actions/friendAction';
 import useNetworkErr from '../../config/hooks/useNetworkErr';
 import lottieHome from '../../assets/lottiefile/home/lottieHome.json';
 import lottieLoadingChat from '../../assets/lottiefile/home/lottieLoadingChat.json';
 import LottieView from 'lottie-react-native';
-import {SCREEN} from '../../global';
-import {RefreshControl} from 'react-native';
+import { SCREEN, getFirstLetters } from '../../global';
+import { RefreshControl } from 'react-native';
 import mainTheme from '../../assets/colors';
-import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
+import { DetailGroupChatActions } from '../../redux/actions/getDetailGroupChatActions';
 
 const database = firestore();
 
@@ -152,21 +152,9 @@ export default function HomeScreen() {
     };
   }, [networkErr, ref]);
 
-  const getFirstLetters = (inputString: any) => {
-    const words = inputString.trim().split(' ');
-    if (words.length === 0) {
-      return ''; // Chuỗi rỗng
-    } else if (words.length === 1) {
-      const firstLetter = words[0].charAt(0).toUpperCase(); // Lấy chữ cái đầu tiên của từ đầu tiên và chuyển thành chữ hoa
-      return firstLetter + firstLetter; // Lặp lại chữ cái đầu tiên 2 lần
-    } else {
-      const firstLetter = words[0].charAt(0).toUpperCase(); // Lấy chữ cái đầu tiên của từ đầu tiên và chuyển thành chữ hoa
-      const lastLetter = words[words.length - 1].charAt(0).toUpperCase(); // Lấy chữ cái đầu tiên của từ cuối cùng và chuyển thành chữ hoa
-      return firstLetter + lastLetter; // Kết hợp chữ cái đầu tiên của từ đầu tiên và từ cuối cùng
-    }
-  };
 
-  const renderFriendActive = ({item}: {item: any}) => {
+
+  const renderFriendActive = ({ item }: { item: any }) => {
     // console.log('friend active item', item);
 
     return (
@@ -183,7 +171,7 @@ export default function HomeScreen() {
         }}>
         {item.avatar ? (
           <Image
-            source={{uri: item.avatar}}
+            source={{ uri: item.avatar }}
             style={styles.borderfriendActive}
           />
         ) : (
@@ -198,7 +186,7 @@ export default function HomeScreen() {
     );
   };
 
-  const Flatlistrender = ({item}: {item: any}) => {
+  const Flatlistrender = ({ item }: { item: any }) => {
     return item?.latest_message_type ? (
       <TouchableOpacity
         style={styles.BorderMessage}
@@ -216,7 +204,7 @@ export default function HomeScreen() {
         <View style={styles.MessageAvatar}>
           {item.groupAvatar ? (
             <Image
-              source={{uri: item.groupAvatar}}
+              source={{ uri: item.groupAvatar }}
               style={styles.borderfriendActive}
             />
           ) : (
@@ -234,13 +222,13 @@ export default function HomeScreen() {
           </Text>
           <Text numberOfLines={1} ellipsizeMode="tail">
             {(user?.data?.fullname || userExternal?.data?.fullname) ===
-            item?.latest_message_from_name
+              item?.latest_message_from_name
               ? item?.latest_message_type === 'image'
                 ? `You: Hình ảnh`
                 : `You: ${item.latest_message_text}`
               : item?.latest_message_type === 'image'
-              ? `${item.latest_message_from_name}: Hình ảnh`
-              : `${item.latest_message_from_name}: ${item.latest_message_text}`}
+                ? `${item.latest_message_from_name}: Hình ảnh`
+                : `${item.latest_message_from_name}: ${item.latest_message_text}`}
           </Text>
         </View>
       </TouchableOpacity>
@@ -261,7 +249,7 @@ export default function HomeScreen() {
         <View style={styles.MessageAvatar}>
           {item.groupAvatar ? (
             <Image
-              source={{uri: item.groupAvatar}}
+              source={{ uri: item.groupAvatar }}
               style={styles.borderfriendActive}
             />
           ) : (
@@ -360,7 +348,7 @@ export default function HomeScreen() {
                   loadingGroupChat === false && (
                     <ActivityIndicator
                       size="large"
-                      style={{flex: 1, justifyContent: 'center'}}
+                      style={{ flex: 1, justifyContent: 'center' }}
                     />
                   )
                 );
@@ -392,7 +380,7 @@ export default function HomeScreen() {
         ) : (
           <ActivityIndicator
             size="large"
-            style={{flex: 1, alignItems: 'center'}}
+            style={{ flex: 1, alignItems: 'center' }}
           />
         )}
       </View>

@@ -206,6 +206,30 @@ const styles = StyleSheet.create({
     marginTop: 2,
     borderRadius: 180
   },
+  containerNoMessage: {
+    backgroundColor: mainTheme.white,
+    borderRadius: 20,
+    marginHorizontal: 16,
+  },
+  backgroundNoMessage: {
+    width: '100%',
+    height: 160,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25
+  },
+  avatarNoMessage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: mainTheme.lowerFillLogo,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });
 
 export default styles;
