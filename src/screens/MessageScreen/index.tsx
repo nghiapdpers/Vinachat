@@ -68,7 +68,6 @@ export default function MessageScreen() {
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
   const myName = useSelector((s: any) => s.user.data.fullname);
-
   const detailGroupName = useSelector((s: any) => s.detailGroup.name);
   const detailGroupName1 = useSelector((s: any) => s.detailGroup);
 
@@ -77,7 +76,6 @@ export default function MessageScreen() {
   console.log('detailGroupName1', detailGroupName1);
 
   const detailGroupLoading = useSelector((s: any) => s.detailGroup.loading);
-
   const listChatData = useSelector((s: any) => s.listChat.data);
   const loadmore = useSelector((s: any) => s.listChat.lmLoading);
   const totalMessage = useSelector((s: any) => s.listChat.lmTotal);

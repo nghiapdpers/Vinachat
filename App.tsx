@@ -49,6 +49,7 @@ import useLogin from './src/config/hooks/useLogin';
 import OptionMessage from './src/screens/MessageScreen/OptionMessage';
 import AddMemberToGroup from './src/screens/MessageScreen/OptionMessage/AddMemberToGroup';
 import VerifyAccount from './src/screens/AccountScreen/OptionAccount/VerifyAccount';
+import MemberInGroups from './src/screens/MessageScreen/OptionMessage/MemberInGroups';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -154,6 +155,7 @@ export default function App() {
               <Stack.Screen name="OptionMessage" component={OptionMessage} />
               <Stack.Screen name="AddMemberToGroup" component={AddMemberToGroup} />
               <Stack.Screen name="VerifyAccount" component={VerifyAccount} />
+              <Stack.Screen name="MemberInGroups" component={MemberInGroups} />
             </>
           )}
         </Stack.Navigator>

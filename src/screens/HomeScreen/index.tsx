@@ -51,7 +51,7 @@ export default function HomeScreen() {
   const loadingGroupChat = useSelector(
     (state: any) => state.groupChat?.loading,
   );
-
+  
   const [refreshing, setRefreshing] = useState(false);
 
   // Refresh
