@@ -42,9 +42,6 @@ export default function QrCode({ route }: { route: any }) {
   const [showArlert, setshowArlert] = useState(false);
   const user = useSelector((state: any) => state?.user);
 
-  console.log(user.data);
-
-
   const ref = useRef<any>();
 
   useEffect(() => {

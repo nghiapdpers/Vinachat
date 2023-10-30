@@ -69,6 +69,8 @@ export default function ChangePassword() {
                     storeData(LOCALSTORAGE.apikey, response?.apiKey);
                     navigation.goBack()
                 }
+                console.log(response);
+
             })
         } catch (error) {
             console.log("error", error);
