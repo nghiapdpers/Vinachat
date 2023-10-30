@@ -61,6 +61,8 @@ export const screen = {
     picture: require('./Screen/MessageScreen/picture.png'),
     emoji: require('./Screen/MessageScreen/emoji.png'),
     loading: require('./Screen/MessageScreen/loading.png'),
+    incoming_call: require('./Screen/MessageScreen/incoming-call.png'),
+    outcoming_call: require('./Screen/MessageScreen/outcoming-call.png'),
   },
   qrcode: {
     download: require('./Screen/QRCode/download.png'),
@@ -100,10 +102,19 @@ export const screen = {
     avatar: require('./Screen/OptionMessage/avatar.png'),
     text: require('./Screen/OptionMessage/text.png'),
   },
-  verifyaccount : {
-    banner : require('./Screen/VerifyAccount/bannerverify.png'),
-    iconverify : require('./Screen/VerifyAccount/verifyicon.png')
-  }
+  verifyaccount: {
+    banner: require('./Screen/VerifyAccount/bannerverify.png'),
+    iconverify: require('./Screen/VerifyAccount/verifyicon.png'),
+  },
+  voicecall: {
+    answer: require('./Screen/VoiceCall/answer.png'),
+    decline: require('./Screen/VoiceCall/decline.png'),
+    mute: require('./Screen/VoiceCall/mute.png'),
+    louded: require('./Screen/VoiceCall/louded.png'),
+    no_speaker: require('./Screen/VoiceCall/no-speaker.png'),
+    no_camera: require('./Screen/VoiceCall/no-camera.png'),
+    switch_camera: require('./Screen/VoiceCall/switch-camera.png'),
+  },
 };
 
 const images = {

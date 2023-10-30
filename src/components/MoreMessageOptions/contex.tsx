@@ -1,5 +1,5 @@
-import { createContext, useReducer, Dispatch, useContext } from 'react';
-import { Asset } from 'react-native-image-picker';
+import {createContext, useReducer, Dispatch, useContext} from 'react';
+import {Image as Asset} from 'react-native-image-crop-picker';
 
 const initialState = {
   data: [],
@@ -9,7 +9,7 @@ const ChosenImageContext = createContext<any>(null);
 
 const ChosenImageDispatchContext = createContext<any | Dispatch<any>>(null);
 
-export function ChosenImageProvider({ children }: any) {
+export function ChosenImageProvider({children}: any) {
   const [images, dispatch] = useReducer(ChosenImageReducer, initialState);
 
   return (

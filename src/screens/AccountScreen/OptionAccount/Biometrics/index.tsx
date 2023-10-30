@@ -74,7 +74,7 @@ export default function Biometrics() {
 
   const getUsernameAndPassword = async () => {
     const username = await AsyncStorage.getItem('@UserRegisted_Biometrics');
-    console.log(username);
+    // console.log(username);
   };
 
   getUsernameAndPassword();
@@ -102,7 +102,7 @@ export default function Biometrics() {
             setModalVisible(false);
           }, 5500);
         } else {
-          console.log('user cancelled biometric prompt');
+          // console.log('user cancelled biometric prompt');
         }
       })
       .catch(() => {

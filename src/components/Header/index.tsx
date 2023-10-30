@@ -12,6 +12,8 @@ const Header = ({
   IconOption3,
   title,
   onPressIconOption3,
+  onPressIconOption2,
+  onPressIconOption1,
 }: any) => {
   const navigation = useNavigation();
   return (
@@ -39,15 +41,17 @@ const Header = ({
 
       <View style={styles.flexboxOption}>
         {IconOption1 && (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onPressIconOption1}>
             <Image style={styles.iconHeader} source={IconOption1} />
           </TouchableOpacity>
         )}
+
         {IconOption2 && (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onPressIconOption2}>
             <Image style={styles.iconHeader} source={IconOption2} />
           </TouchableOpacity>
         )}
+
         {IconOption3 && (
           <TouchableOpacity onPress={onPressIconOption3}>
             <Image style={styles.iconHeader} source={IconOption3} />

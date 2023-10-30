@@ -27,6 +27,7 @@ import {SCREEN} from '../../global';
 import {RefreshControl} from 'react-native';
 import mainTheme from '../../assets/colors';
 import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
+import {CallActions, useCall, useCallDispatch} from '../Call/context';
 
 const database = firestore();
 
@@ -61,6 +62,7 @@ export default function HomeScreen() {
     dispatch(actionListGroupChatStart());
     setRefreshing(false);
   };
+  // console.log('user:>>', user?.data?.fullname);
 
   // Khi thành công
   function onResultGroups(QuerySnapshot: any) {
@@ -135,10 +137,8 @@ export default function HomeScreen() {
         .doc(ref)
         .onSnapshot(
           res => {
-            if (res.data()?.groups.length != list.length) {
-              dispatch(actionListGroupChatStart());
-              dispatch(actionFriendListStart);
-            }
+            dispatch(actionListGroupChatStart());
+            dispatch(actionFriendListStart);
           },
           err => {
             console.log('LISTEN GROUP ERROR >> ', err);

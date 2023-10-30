@@ -1,5 +1,5 @@
 // develop domain
-// const DOMAIN = 'http://192.168.0.120:3000';
+// const DOMAIN = 'http://10.0.2.2:5000';
 // production domain
 const DOMAIN = 'https://red-difficult-cobra.cyclic.app';
 

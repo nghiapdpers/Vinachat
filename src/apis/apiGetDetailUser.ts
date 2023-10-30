@@ -11,7 +11,7 @@ export default async function apiGetDetailUser(data: any) {
 
     const res = await apiHelper(url, data, apiKey);
 
-    console.log('resLogin:>>', res);
+    // console.log('resLogin:>>', res);
 
     switch (res?.code) {
       case NETWORK.SUCCESS:

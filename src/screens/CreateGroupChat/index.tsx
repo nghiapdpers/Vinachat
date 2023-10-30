@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import styles from './styles';
 import {
   Image,
@@ -11,12 +11,12 @@ import {
   Alert,
   ImageBackground,
 } from 'react-native';
-import { screen, component } from '../../assets/images';
-import { useNavigation } from '@react-navigation/native';
+import {screen, component} from '../../assets/images';
+import {useNavigation} from '@react-navigation/native';
 import Header3 from '../../components/Header3';
 import apiCreateGroup from '../../apis/apiCreateGroup';
-import { useDispatch, useSelector } from 'react-redux';
-import { actionListGroupChatStart } from '../../redux/actions/listGroupChat';
+import {useDispatch, useSelector} from 'react-redux';
+import {actionListGroupChatStart} from '../../redux/actions/listGroupChat';
 import LoadingOverlay from '../../components/LoadingOverlay';
 
 export default function CreateGroupChat() {
@@ -77,7 +77,7 @@ export default function CreateGroupChat() {
         name: groupname,
       }).then(async (resposne: any) => {
         setLoading(false);
-        dispatch(actionListGroupChatStart())
+        dispatch(actionListGroupChatStart());
         navigation.goBack();
       });
     } catch (error) {
@@ -89,33 +89,34 @@ export default function CreateGroupChat() {
   const handleCreateGroupChat = async () => {
     if (!groupname) {
       Alert.alert('Thông báo', 'Vui lòng nhập tên nhóm chat.');
-      return;
-    }
-    if (memberSelected.length < 2) {
+    } else if (memberSelected.length < 2) {
       Alert.alert('Thông báo', 'Nhóm chat phải từ 3 người trở lên');
-      return;
+    } else if (memberSelected.length >= 2) {
+      FetchCreateGroup();
+    } else {
+      // console.log('ai cho tao');
     }
-    FetchCreateGroup();
   };
 
-  const renderItem = ({ item }: { item: any }) => {
+  const renderItem = ({item}: {item: any}) => {
     const isSelected = memberSelected.some(
       (selectedMember: any) => selectedMember.ref === item.ref,
     );
 
     return (
-      <TouchableOpacity style={styles.borderItem} onPress={() => {
-        handleMemberSelection(item);
-      }}>
+      <TouchableOpacity
+        style={styles.borderItem}
+        onPress={() => {
+          handleMemberSelection(item);
+        }}>
         <View style={styles.SelectFlex}>
-          <View
-            style={styles.SelectCheckbox}>
+          <View style={styles.SelectCheckbox}>
             {isSelected ? <View style={styles.memberSelected}></View> : null}
           </View>
         </View>
         <View style={styles.ImageFlex}>
           {item.avatar ? (
-            <Image source={{ uri: item.avatar }} style={styles.imageItem} />
+            <Image source={{uri: item.avatar}} style={styles.imageItem} />
           ) : (
             <View style={styles.imageItem}></View>
           )}
@@ -128,12 +129,12 @@ export default function CreateGroupChat() {
     );
   };
 
-  const rendermemeberSelected = ({ item }: { item: any }) => {
+  const rendermemeberSelected = ({item}: {item: any}) => {
     return (
       <View style={styles.SelectBottomItem}>
         {item.avatar ? (
           <ImageBackground
-            source={{ uri: item.avatar }}
+            source={{uri: item.avatar}}
             style={styles.imageBottomSelect}
             borderRadius={180}>
             <TouchableOpacity

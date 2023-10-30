@@ -97,7 +97,7 @@ const Friends = () => {
       .then(_ => {
         setTimeout(() => {
           dispatch(actionFriendListStart);
-          dispatch(actionListGroupChatStart());
+          // dispatch(actionListGroupChatStart());
         }, 200);
       })
       .catch(err => {

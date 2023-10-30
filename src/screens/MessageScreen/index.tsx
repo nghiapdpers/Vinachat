@@ -36,6 +36,7 @@ import apiUpdateLatestMessage from '../../apis/apiUpdateLatestMessage';
 import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
 
 var groupJson = require('unicode-emoji-json/data-by-group.json');
+import {CallActions, useCallDispatch} from '../Call/context';
 
 // Màn hình chat:
 /**
@@ -61,6 +62,8 @@ export default function MessageScreen() {
 
   const {groupRef, total_member, groupName, adminRef, groupAvatar}: any =
     route.params;
+
+  const callDispatch = useCallDispatch();
 
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
@@ -226,32 +229,81 @@ export default function MessageScreen() {
 
         {item.message.length > 0 && (
           <>
-            {Platform.OS === 'android' ? (
-              <Text
-                style={[
-                  styles.borderMessageAndroid,
-                  {
-                    alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
-                    backgroundColor: messageFromMe
-                      ? mainTheme.lowerFillLogo
-                      : mainTheme.white,
-                  },
-                ]}>
-                {item.message}
-              </Text>
+            {item.type.includes('call') ? (
+              <>
+                <View
+                  style={[
+                    {
+                      alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
+                      backgroundColor: messageFromMe
+                        ? mainTheme.lowerFillLogo
+                        : mainTheme.white,
+                    },
+                    styles.callMessage,
+                  ]}>
+                  <Image
+                    source={
+                      messageFromMe
+                        ? images.screen.message.outcoming_call
+                        : images.screen.message.incoming_call
+                    }
+                    style={styles.callMessageIcon}
+                  />
+                  <View style={styles.callMessageTextView}>
+                    <Text style={styles.callMessageTitle}>{item.message}</Text>
+                    <Text style={styles.callMessageReason}>
+                      {item.end_call_reason}
+                    </Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleCalling(
+                      item.type == 'voicecall' ? 'voicecall' : 'videocall',
+                    );
+                  }}
+                  style={[
+                    {
+                      alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
+                      backgroundColor: messageFromMe
+                        ? mainTheme.white
+                        : mainTheme.lowerFillLogo,
+                    },
+                    styles.recallButton,
+                  ]}>
+                  <Text style={styles.recallText}>Gọi lại</Text>
+                </TouchableOpacity>
+              </>
             ) : (
-              <View
-                style={[
-                  styles.borderMessageIos,
-                  {
-                    alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
-                    backgroundColor: messageFromMe
-                      ? mainTheme.lowerFillLogo
-                      : mainTheme.white,
-                  },
-                ]}>
-                <Text style={styles.textMessage}>{item.message}</Text>
-              </View>
+              <>
+                {Platform.OS === 'android' ? (
+                  <Text
+                    style={[
+                      styles.borderMessageAndroid,
+                      {
+                        alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
+                        backgroundColor: messageFromMe
+                          ? mainTheme.lowerFillLogo
+                          : mainTheme.white,
+                      },
+                    ]}>
+                    {item.message}
+                  </Text>
+                ) : (
+                  <View
+                    style={[
+                      styles.borderMessageIos,
+                      {
+                        alignSelf: messageFromMe ? 'flex-end' : 'flex-start',
+                        backgroundColor: messageFromMe
+                          ? mainTheme.lowerFillLogo
+                          : mainTheme.white,
+                      },
+                    ]}>
+                    <Text style={styles.textMessage}>{item.message}</Text>
+                  </View>
+                )}
+              </>
             )}
           </>
         )}
@@ -623,6 +675,19 @@ export default function MessageScreen() {
     setValue(removeLastEmoji(value));
   };
 
+  // event handler: handle calling (for friend)
+  const handleCalling = (type: 'voicecall' | 'videocall') => {
+    if (total_member == 2) {
+      callDispatch(
+        CallActions.callSomeOne({
+          type: type,
+          groupRef: groupRef,
+          name: groupName,
+        }),
+      );
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -642,6 +707,8 @@ export default function MessageScreen() {
               navigation.navigate('OptionMessage');
             }}
             title={''}
+            onPressIconOption1={() => handleCalling('voicecall')}
+            onPressIconOption2={() => handleCalling('videocall')}
           />
         </View>
 
@@ -737,27 +804,4 @@ export default function MessageScreen() {
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
-}
-
-{
-  /* {emoPicker ? (
-          <EmojiBoard
-            showBoard={true}
-            containerStyle={{ backgroundColor: mainTheme.background }}
-            onClick={onClick}
-            categoryIconSize={24}
-            tabBarPosition="bottom"
-            categoryDefautColor={mainTheme.lowerFillLogo}
-            categoryHighlightColor={mainTheme.logo}
-            hideBackSpace={false}
-            onRemove={onRemove}
-            tabBarStyle={{
-              backgroundColor: mainTheme.white,
-              borderTopWidth: 1,
-              borderBottomWidth: 0,
-              borderColor: mainTheme.logo,
-            }}
-            labelStyle={{ fontSize: 16, color: '#000000' }}
-          />
-        ) : null} */
 }

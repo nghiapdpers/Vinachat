@@ -1,7 +1,7 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 import mainTheme from '../../assets/colors';
-import { SCREEN } from '../../global';
-const { height: HeightScreen, width: WidthScreen } = Dimensions.get('window');
+import {SCREEN} from '../../global';
+const {height: HeightScreen, width: WidthScreen} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -204,7 +204,61 @@ const styles = StyleSheet.create({
     borderColor: mainTheme.logo,
     borderWidth: 2,
     marginTop: 2,
-    borderRadius: 180
+    borderRadius: 180,
+  },
+
+  callMessage: {
+    padding: 8,
+    marginTop: 5,
+    marginLeft: 5,
+    marginRight: 5,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 5,
+    width: '50%',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+
+  callMessageIcon: {
+    width: 45,
+    height: 45,
+    alignSelf: 'center',
+  },
+
+  callMessageTextView: {
+    flex: 1,
+  },
+
+  callMessageTitle: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '500',
+    color: mainTheme.text,
+  },
+
+  callMessageReason: {
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '500',
+    color: 'grey',
+  },
+
+  recallButton: {
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    width: '50%',
+    marginBottom: 5,
+    marginLeft: 5,
+    marginRight: 5,
+  },
+
+  recallText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: mainTheme.logo,
+    paddingVertical: 5,
+    textAlign: 'center',
   },
 });
 

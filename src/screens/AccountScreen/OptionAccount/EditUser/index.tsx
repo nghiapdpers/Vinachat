@@ -78,10 +78,10 @@ export default function EditUserScreen() {
 
     }
 
-    useEffect(() => {
-        console.log("sex", sex);
-        console.log(birthday);
-    }, [sex, birthday, date])
+    // useEffect(() => {
+    //     console.log("sex", sex);
+    //     console.log(birthday);
+    // }, [sex, birthday, date])
 
 
     const FetchEditProfile = async () => {

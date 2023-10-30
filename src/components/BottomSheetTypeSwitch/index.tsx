@@ -5,7 +5,7 @@ import mainTheme from "../../assets/colors";
 
 const BottomSheetTypeSwitch = ({ data }: any) => {
     const [isSwitch, setIsSwitch] = useState(false);
-    console.log(data);
+    // console.log(data);
 
     const toggleSwitch = () => {
         if (!isSwitch) {
