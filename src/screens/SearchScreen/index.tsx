@@ -25,6 +25,7 @@ export default function SearchScreen({ route }: { route: any }) {
   const FetchSearch = async () => {
     try {
       return await apiSearch({ keyword: value }).then((resposne: any) => {
+        setStatus(resposne.data.status);
         setData(resposne.data);
       });
     } catch (error) {
@@ -72,8 +73,6 @@ export default function SearchScreen({ route }: { route: any }) {
   // }, [status, data]);
 
   const renderItem = ({ item }: { item: any }) => {
-    console.log(item);
-
     return (
       <TouchableOpacity
         style={styles.borderFind}
@@ -109,7 +108,7 @@ export default function SearchScreen({ route }: { route: any }) {
               handleFriendRequest(item.ref);
             }}>
             <Text>
-              {ConvertStatusFriend(status === '' ? item.status : status)}
+              {ConvertStatusFriend(status)}
             </Text>
           </TouchableOpacity>
         </View>

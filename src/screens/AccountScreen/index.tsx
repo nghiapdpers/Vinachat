@@ -6,25 +6,25 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles';
 import Header from '../../components/Header';
-import {component, screen} from '../../assets/images';
-import {useDispatch, useSelector} from 'react-redux';
-import {getData, removeData} from '../../storage';
-import {LOCALSTORAGE} from '../../storage/direct';
+import { component, screen } from '../../assets/images';
+import { useDispatch, useSelector } from 'react-redux';
+import { getData, removeData } from '../../storage';
+import { LOCALSTORAGE } from '../../storage/direct';
 import {
   actionClearMessage,
   actionClearUser,
   actionLogoutStart,
 } from '../../redux/actions/userActions';
-import {StackActions, useNavigation} from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
-import {actionClearGroupChat} from '../../redux/actions/listGroupChat';
-import {listChatActions} from '../../redux/actions/listChatActions';
-import {actionClearFriend} from '../../redux/actions/friendAction';
+import { actionClearGroupChat } from '../../redux/actions/listGroupChat';
+import { listChatActions } from '../../redux/actions/listChatActions';
+import { actionClearFriend } from '../../redux/actions/friendAction';
 
 const datauser = [
   {
@@ -69,12 +69,11 @@ export default function AccountScreen() {
   const navigation = useNavigation();
 
   const user = useSelector((state: any) => state?.user);
-  const userExternal = useSelector((state: any) => state?.userExternal);
   const loading = useSelector((state: any) => state?.user?.loading);
   // console.log('userAccountScreen:>>', user);
   // console.log('userAccountScreen:>>', userExternal);
 
-  const renderItem = ({item}: {item: any}) => {
+  const renderItem = ({ item }: { item: any }) => {
     return (
       <TouchableOpacity
         style={styles.BorderOption}
@@ -82,7 +81,7 @@ export default function AccountScreen() {
           navigation.navigate(item.navigation);
         }}>
         <View style={styles.FlexboxIcon}>
-          <Image style={{width: 30, height: 30}} source={item.icon} />
+          <Image style={{ width: 30, height: 30 }} source={item.icon} />
         </View>
         <View style={styles.FlexboxTitle}>
           <Text style={styles.textTitle}>{item.title}</Text>
@@ -128,7 +127,7 @@ export default function AccountScreen() {
                 {user?.data?.avatar ? (
                   <Image
                     style={styles.AvatarUser}
-                    source={{uri: user.data.avatar}}
+                    source={{ uri: user.data.avatar }}
                   />
                 ) : (
                   <View style={styles.AvatarUser}></View>
@@ -136,23 +135,23 @@ export default function AccountScreen() {
               </View>
               <View style={styles.NameUserFlexbox}>
                 <Text style={styles.UserName}>
-                  {userExternal?.data?.fullname || user?.data?.fullname}
+                  {user?.data?.fullname}
                 </Text>
                 <Text style={styles.fullnameUser}>
-                  {userExternal?.data?.mobile || user?.data?.mobile}
+                  {user?.data?.mobile}
                 </Text>
               </View>
             </View>
             <View style={styles.bodyTopAccount}>
-              {user?.data?.nickname || userExternal?.data?.nickname ? (
+              {user?.data?.nickname ? (
                 <Text style={styles.textBio}>
-                  {user?.data?.nickname || userExternal?.data?.nickname}
+                  {user?.data?.nickname}
                 </Text>
               ) : null}
-              {user?.data?.email || userExternal?.data?.email ? (
+              {user?.data?.email ? (
                 <TouchableOpacity>
                   <Text style={styles.linkAccount}>
-                    {user?.data?.email || userExternal?.data?.email}
+                    {user?.data?.email}
                   </Text>
                 </TouchableOpacity>
               ) : null}

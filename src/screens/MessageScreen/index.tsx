@@ -34,6 +34,7 @@ import apiSynchronous from '../../apis/apiSynchronous';
 import useNetworkErr from '../../config/hooks/useNetworkErr';
 import apiUpdateLatestMessage from '../../apis/apiUpdateLatestMessage';
 import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
+import {SCREEN, getFirstLetters} from '../../global';
 
 var groupJson = require('unicode-emoji-json/data-by-group.json');
 import {CallActions, useCallDispatch} from '../Call/context';
@@ -68,10 +69,10 @@ export default function MessageScreen() {
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
   const myName = useSelector((s: any) => s.user.data.fullname);
-
   const detailGroupName = useSelector((s: any) => s.detailGroup.name);
-  const detailGroupLoading = useSelector((s: any) => s.detailGroup.loading);
+  const detailGroupAvatar = useSelector((s: any) => s.detailGroup.groupAvatar);
 
+  const detailGroupLoading = useSelector((s: any) => s.detailGroup.loading);
   const listChatData = useSelector((s: any) => s.listChat.data);
   const loadmore = useSelector((s: any) => s.listChat.lmLoading);
   const totalMessage = useSelector((s: any) => s.listChat.lmTotal);
@@ -437,7 +438,7 @@ export default function MessageScreen() {
 
   // event handler: open emoji picker
   const handleOpenEmoji = useCallback(() => {
-    setEmoPicker(true);
+    setEmoPicker(prev => !prev);
     setMoreOptVisible(false);
     Keyboard.dismiss();
   }, []);
@@ -713,6 +714,24 @@ export default function MessageScreen() {
         </View>
 
         <View style={styles.bodyMessage}>
+          {/* {listChatData.length === 0 && !detailGroupLoading ?
+            <View style={styles.containerNoMessage} >
+              <Image style={styles.backgroundNoMessage} source={require('../../assets/images/Screen/MessageScreen/background_sea.jpg')} />
+              <View style={{ flexDirection: 'row', alignItems: 'center', padding: 8 }}>
+                {groupAvatar ?
+                  <Image style={styles.avatar} source={{ uri: groupAvatar }} />
+                  : <View style={styles.avatarNoMessage} >
+                    <Text>{getFirstLetters(detailGroupName)}</Text>
+                  </View>
+                }
+                <View style={{ marginLeft: 8, flex: 1 }}>
+                  <Text style={{ color: mainTheme.text, fontSize: 16 }}>{detailGroupName}</Text>
+                  <Text style={{ flexWrap: 'wrap' }}>Bắt đầu chia sẻ những câu chuyện thú vị cùng nhau</Text>
+                </View>
+              </View>
+            </View>
+            : null} */}
+
           <View style={styles.MessageView}>
             {loadmore && <Text style={styles.loadmoreText}>Tải thêm</Text>}
             <FlatList
@@ -720,10 +739,52 @@ export default function MessageScreen() {
               renderItem={renderItem}
               keyExtractor={item => item.ref}
               showsVerticalScrollIndicator={false}
-              inverted
+              inverted={listChatData.length === 0 ? false : true}
               ref={listRef}
               onEndReached={handleLoadmore}
               windowSize={21}
+              ListEmptyComponent={() => {
+                return !detailGroupLoading ? (
+                  <View
+                    style={
+                      keyboard || emoPicker || moreOptVisible
+                        ? {marginTop: SCREEN.height * 0.1}
+                        : {marginTop: SCREEN.height * 0.25}
+                    }>
+                    <View style={styles.containerNoMessage}>
+                      <Image
+                        style={styles.backgroundNoMessage}
+                        source={require('../../assets/images/Screen/MessageScreen/background_sea.jpg')}
+                      />
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          padding: 8,
+                        }}>
+                        {detailGroupAvatar ? (
+                          <Image
+                            style={styles.avatar}
+                            source={{uri: detailGroupAvatar}}
+                          />
+                        ) : (
+                          <View style={styles.avatarNoMessage}>
+                            <Text>{getFirstLetters(detailGroupName)}</Text>
+                          </View>
+                        )}
+                        <View style={{marginLeft: 8, flex: 1}}>
+                          <Text style={{color: mainTheme.text, fontSize: 16}}>
+                            {detailGroupName}
+                          </Text>
+                          <Text style={{flexWrap: 'wrap'}}>
+                            Bắt đầu chia sẻ những câu chuyện thú vị cùng nhau
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                ) : null;
+              }}
             />
           </View>
 

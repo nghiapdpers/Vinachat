@@ -9,24 +9,24 @@ import {
   TextInput,
   Switch,
 } from 'react-native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './styles';
-import {screen, component} from '../../../assets/images';
+import { screen, component } from '../../../assets/images';
 import mainTheme from '../../../assets/colors';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Header3 from '../../../components/Header3';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ModalNotification from '../../../components/ModalNotification';
 import UpdateAvatarPicker from '../../../components/UpdateAvatarPicker';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import {actionListGroupChatStart} from '../../../redux/actions/listGroupChat';
+import { actionListGroupChatStart } from '../../../redux/actions/listGroupChat';
 import TextInputModal from '../../../components/TextInputModal';
 import Header from '../../../components/Header';
 import detailGroupChatReducer from '../../../redux/reducers/detailGroupChatReducer';
-import {DetailGroupChatActions} from '../../../redux/actions/getDetailGroupChatActions';
+import { DetailGroupChatActions } from '../../../redux/actions/getDetailGroupChatActions';
 
-export default function OptionMessage({route}: {route: any}) {
+export default function OptionMessage({ route }: { route: any }) {
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
@@ -36,6 +36,8 @@ export default function OptionMessage({route}: {route: any}) {
   const total_member = useSelector((s: any) => s.detailGroup.total_member);
   const groupName = useSelector((s: any) => s.detailGroup.name);
   const groupAvatar = useSelector((s: any) => s.detailGroup.groupAvatar);
+  const listmember = useSelector((s: any) => s.detailGroup.members);
+  console.log(listmember);
 
   const user = useSelector((state: any) => state?.user);
   const CheckAdminRef = user?.data?.ref === adminRef;
@@ -74,6 +76,11 @@ export default function OptionMessage({route}: {route: any}) {
           id: 2.1,
           icon: screen.optionmessage.add,
           title: 'Thêm thành viên mới vào nhóm',
+        },
+        {
+          id: 2.6,
+          icon: screen.optionmessage.team,
+          title: 'Xem thành viên trong nhóm'
         },
         {
           id: 2.4,
@@ -124,21 +131,34 @@ export default function OptionMessage({route}: {route: any}) {
     total_member > 2
       ? data
       : data.map(section => ({
-          ...section,
-          data: section.data.filter(
-            item =>
-              item.id !== 2.1 &&
-              item.id !== 3.3 &&
-              item.id !== 2.4 &&
-              item.id !== 2.5,
-          ),
-        }));
+        ...section,
+        data: section.data.filter(
+          item =>
+            item.id !== 2.1 &&
+            item.id !== 3.3 &&
+            item.id !== 2.4 &&
+            item.id !== 2.5 &&
+            item.id !== 2.6,
+        ),
+      }));
 
   const handlebtn = async (data: any) => {
     switch (data.id) {
       case 2.1: {
         if (CheckAdminRef) {
           navigation.navigate('AddMemberToGroup');
+        } else {
+          setisNotification(true);
+          setTimeout(() => {
+            setisNotification(false);
+          }, 5000);
+        }
+        break;
+      }
+
+      case 2.6: {
+        if (CheckAdminRef) {
+          navigation.navigate('MemberInGroups');
         } else {
           setisNotification(true);
           setTimeout(() => {
@@ -232,7 +252,7 @@ export default function OptionMessage({route}: {route: any}) {
     }
   };
 
-  const renderItem = ({item}: {item: any}) => {
+  const renderItem = ({ item }: { item: any }) => {
     return (
       <View key={item.id}>
         <View style={styles.viewtitle}>
@@ -240,22 +260,22 @@ export default function OptionMessage({route}: {route: any}) {
         </View>
         {item.data && Array.isArray(item.data)
           ? item.data.map((data: any) => (
-              <TouchableOpacity
-                style={styles.viewborder}
-                key={data.id}
-                onPress={() => {
-                  handlebtn(data);
-                }}>
-                <Image style={styles.image} source={data.icon} />
-                <Text
-                  style={[
-                    styles.textoption,
-                    {color: data.id === 3.3 ? '#e04f5f' : 'black'},
-                  ]}>
-                  {data.title}
-                </Text>
-              </TouchableOpacity>
-            ))
+            <TouchableOpacity
+              style={styles.viewborder}
+              key={data.id}
+              onPress={() => {
+                handlebtn(data);
+              }}>
+              <Image style={styles.image} source={data.icon} />
+              <Text
+                style={[
+                  styles.textoption,
+                  { color: data.id === 3.3 ? '#e04f5f' : 'black' },
+                ]}>
+                {data.title}
+              </Text>
+            </TouchableOpacity>
+          ))
           : null}
       </View>
     );
@@ -274,7 +294,7 @@ export default function OptionMessage({route}: {route: any}) {
       </View>
 
       <Image
-        source={groupAvatar ? {uri: groupAvatar} : screen.profile.usermale}
+        source={groupAvatar ? { uri: groupAvatar } : screen.profile.usermale}
         style={styles.groupAvatar}
       />
 

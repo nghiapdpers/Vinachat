@@ -21,6 +21,7 @@ import {
 import {RequestListActions} from '../../redux/actions/requestListAction';
 import {actionListGroupChatStart} from '../../redux/actions/listGroupChat';
 import {useNavigation} from '@react-navigation/native';
+import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
 
 const database = firestore();
 
@@ -97,7 +98,7 @@ const Friends = () => {
       .then(_ => {
         setTimeout(() => {
           dispatch(actionFriendListStart);
-          // dispatch(actionListGroupChatStart());
+          dispatch(actionListGroupChatStart());
         }, 200);
       })
       .catch(err => {

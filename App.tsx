@@ -52,6 +52,7 @@ import AddMemberToGroup from './src/screens/MessageScreen/OptionMessage/AddMembe
 import VerifyAccount from './src/screens/AccountScreen/OptionAccount/VerifyAccount';
 import CallScreen from './src/screens/Call';
 import {CallProvider} from './src/screens/Call/context';
+import MemberInGroups from './src/screens/MessageScreen/OptionMessage/MemberInGroups';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -169,6 +170,10 @@ export default function App() {
                   component={AddMemberToGroup}
                 />
                 <Stack.Screen name="VerifyAccount" component={VerifyAccount} />
+                <Stack.Screen
+                  name="MemberInGroups"
+                  component={MemberInGroups}
+                />
               </>
             )}
           </Stack.Navigator>

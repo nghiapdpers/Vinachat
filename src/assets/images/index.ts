@@ -101,6 +101,7 @@ export const screen = {
     warning: require('./Screen/OptionMessage/warning.png'),
     avatar: require('./Screen/OptionMessage/avatar.png'),
     text: require('./Screen/OptionMessage/text.png'),
+    team: require('./Screen/OptionMessage/team.png'),
   },
   verifyaccount: {
     banner: require('./Screen/VerifyAccount/bannerverify.png'),

@@ -23,7 +23,7 @@ import useNetworkErr from '../../config/hooks/useNetworkErr';
 import lottieHome from '../../assets/lottiefile/home/lottieHome.json';
 import lottieLoadingChat from '../../assets/lottiefile/home/lottieLoadingChat.json';
 import LottieView from 'lottie-react-native';
-import {SCREEN} from '../../global';
+import {SCREEN, getFirstLetters} from '../../global';
 import {RefreshControl} from 'react-native';
 import mainTheme from '../../assets/colors';
 import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
@@ -152,28 +152,12 @@ export default function HomeScreen() {
     };
   }, [networkErr, ref]);
 
-  const getFirstLetters = (inputString: any) => {
-    const words = inputString.trim().split(' ');
-    if (words.length === 0) {
-      return ''; // Chuỗi rỗng
-    } else if (words.length === 1) {
-      const firstLetter = words[0].charAt(0).toUpperCase(); // Lấy chữ cái đầu tiên của từ đầu tiên và chuyển thành chữ hoa
-      return firstLetter + firstLetter; // Lặp lại chữ cái đầu tiên 2 lần
-    } else {
-      const firstLetter = words[0].charAt(0).toUpperCase(); // Lấy chữ cái đầu tiên của từ đầu tiên và chuyển thành chữ hoa
-      const lastLetter = words[words.length - 1].charAt(0).toUpperCase(); // Lấy chữ cái đầu tiên của từ cuối cùng và chuyển thành chữ hoa
-      return firstLetter + lastLetter; // Kết hợp chữ cái đầu tiên của từ đầu tiên và từ cuối cùng
-    }
-  };
-
   const renderFriendActive = ({item}: {item: any}) => {
-    // console.log('friend active item', item);
-
     return (
       <TouchableOpacity
         style={styles.viewfriendActive}
         onPress={() => {
-          dispatch(DetailGroupChatActions.start(item.ref));
+          dispatch(DetailGroupChatActions.start(item.groupRef));
 
           navigation.navigate('MessageScreen', {
             groupRef: item.groupRef,
