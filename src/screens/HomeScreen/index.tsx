@@ -51,7 +51,7 @@ export default function HomeScreen() {
   const loadingGroupChat = useSelector(
     (state: any) => state.groupChat?.loading,
   );
-  
+
   const [refreshing, setRefreshing] = useState(false);
 
   // Refresh
@@ -135,10 +135,10 @@ export default function HomeScreen() {
         .doc(ref)
         .onSnapshot(
           res => {
-            if (res.data()?.groups.length != list.length) {
-              dispatch(actionListGroupChatStart());
-              dispatch(actionFriendListStart);
-            }
+            // if (res.data()?.groups.length != list.length) {
+            dispatch(actionListGroupChatStart());
+            dispatch(actionFriendListStart);
+            // }
           },
           err => {
             console.log('LISTEN GROUP ERROR >> ', err);

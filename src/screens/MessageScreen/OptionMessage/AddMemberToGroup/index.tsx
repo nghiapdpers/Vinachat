@@ -23,11 +23,13 @@ export default function AddMemberToGroup({ route }: { route: any }) {
     const [memberSelected, setmemberSelected] = useState([]);
     const navigation = useNavigation();
     const [search, setSearch] = useState('');
+    const yourRef = useRef(null);
+    const groupRef = useSelector((s: any) => s.detailGroup.ref);
     const data = useSelector(
         (state: any) => state?.friendlist?.friendlist?.data?.data,
     );
-    const yourRef = useRef(null);
-    const groupRef = route?.params?.groupRef;
+    const listmember = useSelector((s: any) => s.detailGroup.members);
+    const [newArray, setnewArray] = useState([]);
 
 
     const handleAddMemberToGroup = async () => {
@@ -37,6 +39,8 @@ export default function AddMemberToGroup({ route }: { route: any }) {
                 member_refs: JSON.stringify(memberSelected.map((item: any) => item.ref))
             })
                 .then((response: any) => {
+                    console.log(response);
+
                     navigation.goBack()
                 })
         } catch (error) {
@@ -44,9 +48,19 @@ export default function AddMemberToGroup({ route }: { route: any }) {
         }
     }
 
+    useEffect(() => {
+        // Kiểm tra và tạo danh sách bạn bè không có trong danh sách thành viên
+        const newUniqueFriends = data.filter((friend: any) => {
+            return !listmember.some((member: any) => member.ref === friend.ref);
+        });
+
+        setnewArray(newUniqueFriends);
+    }, [data, listmember]);
+
+
 
     // Research bạn bè theo tên và số điện thoại
-    const filterSearchFriend = data?.filter((item: any) => {
+    const filterSearchFriend = newArray?.filter((item: any) => {
         const searchTerm = search.toLowerCase();
         return (
             item?.fullname?.toLowerCase().includes(searchTerm) ||
@@ -83,15 +97,14 @@ export default function AddMemberToGroup({ route }: { route: any }) {
         );
 
         return (
-            <View style={styles.borderItem}>
+            <TouchableOpacity style={styles.borderItem} onPress={() => {
+                handleMemberSelection(item);
+            }}>
                 <View style={styles.SelectFlex}>
-                    <TouchableOpacity
-                        style={styles.SelectCheckbox}
-                        onPress={() => {
-                            handleMemberSelection(item);
-                        }}>
+                    <View
+                        style={styles.SelectCheckbox}>
                         {isSelected ? <View style={styles.memberSelected}></View> : null}
-                    </TouchableOpacity>
+                    </View>
                 </View>
                 <View style={styles.ImageFlex}>
                     {item.avatar ? (
@@ -104,7 +117,7 @@ export default function AddMemberToGroup({ route }: { route: any }) {
                     <Text style={styles.textnameItem}>{item.fullname}</Text>
                     <Text style={styles.textactive}>{item.mobile}</Text>
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     };
 
