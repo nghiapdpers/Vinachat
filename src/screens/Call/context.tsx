@@ -6,7 +6,7 @@ import {
   useEffect,
 } from 'react';
 import CallScreen from '.';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 
 // create context
@@ -20,18 +20,13 @@ const initialState = {
 };
 
 // providers
-export function CallProvider({ children }: any) {
+export function CallProvider({children}: any) {
   const [call, dispatch] = useReducer(CallReducer, initialState);
 
   const list = useSelector((state: any) => state.groupChat?.data);
   const myRef = useSelector((s: any) => s.user?.data?.ref);
   const callId = call.data?.callId;
   const callstatus = call?.status;
-  console.log('call ID', callId);
-  console.log('call status', callstatus);
-
-
-
 
   useEffect(() => {
     // nguyên nhân lỗi: useEffect có call.status là dependencies, nên khi có cuộc gọi mới thì đầu tiên sẽ gọi action hasNewCall => call.status thay đổi => effect thực hiện lại => call.status == 'lazy' => tự động hủy cuộc gọi.
@@ -40,7 +35,7 @@ export function CallProvider({ children }: any) {
     list.forEach((item: any) => {
       const isCalling = item?.latest_message_type?.includes('call');
       // console.log(item.latest_message_from != myRef);
-      
+
       if (isCalling && callstatus == 'freetime') {
         firestore()
           .collection('groups')
@@ -86,7 +81,7 @@ export function CallProvider({ children }: any) {
                 .doc(item.latest_message_ref)
                 .update({
                   call_status: 'dead',
-                  end_call_reason: 'Người dùng bận 1234',
+                  end_call_reason: 'Người dùng bận',
                 });
             }
           })

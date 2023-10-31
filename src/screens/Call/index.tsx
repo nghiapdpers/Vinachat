@@ -25,6 +25,11 @@ const contraints = {
     {
       urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
     },
+    {
+      urls: 'turn:relay1.expressturn.com:3478',
+      username: 'ef69U0HHMR6GCNIEN0',
+      credential: 'qdEAbwauz5NPLPNO',
+    },
   ],
 };
 
@@ -229,8 +234,24 @@ export default function CallScreen({
       }
     });
 
+    // listen change the calling status
+    const callingSubcribe = callMessage.onSnapshot(
+      snapshot => {
+        if (snapshot.get('call_status')?.toString() == 'dead') {
+          handleDisconnect(snapshot.get('end_call_reason'));
+        }
+      },
+      err => {
+        console.log(
+          ':::: CALL SCREEN / CALLING SUBCRIBE SIDE EFFECT ERROR ::::\n',
+          err,
+        );
+      },
+    );
+
     return () => {
       clearTimeout(timer);
+      callingSubcribe();
     };
   }, []);
 
@@ -312,28 +333,6 @@ export default function CallScreen({
     // dispatch action to end call
     callDispatch(CallActions.endCall());
   };
-
-  // side effect: listen change the calling status
-  useEffect(() => {
-    const callingSubcribe = callMessage.onSnapshot(
-      snapshot => {
-        if (snapshot.get('call_status') == 'dead') {
-          handleDisconnect(snapshot.get('end_call_reason'));
-        }
-      },
-      err => {
-        console.log(
-          ':::: CALL SCREEN / CALLING SUBCRIBE SIDE EFFECT ERROR ::::\n',
-          err,
-        );
-      },
-    );
-
-    return () => {
-      // destroy listener
-      callingSubcribe();
-    };
-  }, []);
 
   // event handler: turn on/off louded mode
   const handleLoudedMode = () => {
