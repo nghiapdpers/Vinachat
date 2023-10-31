@@ -106,7 +106,7 @@ export default function CallScreen({
         audio: true,
       });
 
-      if (type == 'voiceall') {
+      if (type == 'voicecall') {
         const localVideo = localStream.current.getVideoTracks()[0];
         localVideo.enabled = false;
       }
@@ -279,77 +279,55 @@ export default function CallScreen({
 
   // event handler: disconnect
   const handleDisconnect = async (reason: string) => {
-    // after craete offer success
-    if (answerIceCandidatesRef.current) {
-      // close peer connection
-      pc.close();
+    // close peer connection
+    pc.close();
 
-      // stop track from media
-      localStream.current.getTracks().forEach(track => {
-        track.stop();
-      });
-      remoteStream.current.getTracks().forEach(track => {
-        track.stop();
-      });
+    // stop track from media
+    localStream.current.getTracks().forEach(track => {
+      track.stop();
+    });
+    remoteStream.current.getTracks().forEach(track => {
+      track.stop();
+    });
 
-      // unlistening answer
-      answerListenRef.current
-        ? callRef.child('answer').off('value', answerListenRef.current)
-        : null;
+    // unlistening answer
+    answerListenRef.current
+      ? callRef.child('answer').off('value', answerListenRef.current)
+      : null;
 
-      // unlistening ice candidates change from realtime database
-      answerIceCandidatesRef.current
-        ? answerCandidates.off('child_added', answerIceCandidatesRef.current)
-        : null;
-      offerIceCandidatesRef.current
-        ? offerCandidates.off('child_added', offerIceCandidatesRef.current)
-        : null;
+    // unlistening ice candidates change from realtime database
+    answerIceCandidatesRef.current
+      ? answerCandidates.off('child_added', answerIceCandidatesRef.current)
+      : null;
+    offerIceCandidatesRef.current
+      ? offerCandidates.off('child_added', offerIceCandidatesRef.current)
+      : null;
 
-      // update message call status is 'dead'
-      await callMessage.update({
-        call_status: 'dead',
-        end_call_reason: reason,
-      });
+    // update message call status is 'dead'
+    await callMessage.update({
+      call_status: 'dead',
+      end_call_reason: reason,
+    });
 
-      // dispatch action to end call
-      callDispatch(CallActions.endCall());
-    }
+    // dispatch action to end call
+    callDispatch(CallActions.endCall());
   };
 
   // side effect: listen change the calling status
   useEffect(() => {
-    let callingSubcribe: () => void;
-
-    if (status == 'receive') {
-      // listen calling status
-      callingSubcribe = callMessage.onSnapshot(
-        snapshot => {
-          if (snapshot.get('call_status') == 'dead') {
-            handleDisconnect('Kết thúc');
-          }
-        },
-        err => {
-          console.log(
-            ':::: CALL SCREEN / CALLING SUBCRIBE SIDE EFFECT ERROR ::::\n',
-            err,
-          );
-        },
-      );
-    } else {
-      callingSubcribe = callMessage.onSnapshot(
-        snapshot => {
-          if (snapshot.get('call_status') == 'dead') {
-            handleDisconnect(snapshot.get('end_call_reason'));
-          }
-        },
-        err => {
-          console.log(
-            ':::: CALL SCREEN / CALLING SUBCRIBE SIDE EFFECT ERROR ::::\n',
-            err,
-          );
-        },
-      );
-    }
+    const callingSubcribe = callMessage.onSnapshot(
+      snapshot => {
+        if (snapshot.get('call_status') == 'dead') {
+          handleDisconnect(snapshot.get('end_call_reason'));
+        }
+      },
+      err => {
+        console.log(
+          ':::: CALL SCREEN / CALLING SUBCRIBE SIDE EFFECT ERROR ::::\n',
+          err,
+        );
+      },
+    );
 
     return () => {
       // destroy listener
@@ -505,7 +483,15 @@ export default function CallScreen({
 
         <TouchableOpacity
           hitSlop={20}
-          onPress={() => handleDisconnect('Kết thúc')}>
+          onPress={() =>
+            handleDisconnect(
+              status == 'receive'
+                ? success
+                  ? 'Kết thúc'
+                  : 'Từ chối cuộc gọi'
+                : 'Kết thúc',
+            )
+          }>
           <Image
             source={images.screen.voicecall.decline}
             style={styles.actionButton}

@@ -27,12 +27,13 @@ export function CallProvider({children}: any) {
   const myRef = useSelector((s: any) => s.user?.data?.ref);
 
   useEffect(() => {
+    // nguyên nhân lỗi: useEffect có call.status là dependencies, nên khi có cuộc gọi mới thì đầu tiên sẽ gọi action hasNewCall => call.status thay đổi => effect thực hiện lại => call.status == 'lazy' => tự động hủy cuộc gọi.
+    // fix lỗi: thiêm điều kiện kiểm tra cuộc gọi mới có phải là cuộc gọi hiện tại hay không.
+
     list.forEach((item: any) => {
-      const messageType = item.latest_message_type;
-      if (
-        (messageType === 'voicecall' && call.status == 'freetime') ||
-        (messageType === 'videocall' && call.status == 'freetime')
-      ) {
+      const isCalling = item?.latest_message_type?.includes('call');
+
+      if (isCalling && call.status == 'freetime') {
         firestore()
           .collection('groups')
           .doc(item.ref)
@@ -43,7 +44,7 @@ export function CallProvider({children}: any) {
             if (res.get('call_status')?.toString() == 'living') {
               dispatch(
                 CallActions.hasNewCall({
-                  type: messageType,
+                  type: item.latest_message_type,
                   name: item.name ? item.name : item.latest_message_from_name,
                   groupRef: item.ref,
                   callId: item.latest_message_ref,
@@ -57,12 +58,10 @@ export function CallProvider({children}: any) {
       }
 
       if (
-        (messageType === 'voicecall' &&
-          call.status == 'lazy' &&
-          item.latest_message_from != myRef) ||
-        (messageType === 'videocall' &&
-          call.status == 'lazy' &&
-          item.latest_message_from != myRef)
+        isCalling &&
+        call.status == 'lazy' &&
+        item.latest_message_from != myRef &&
+        item.latest_message_ref != call.data?.callId
       ) {
         firestore()
           .collection('groups')
@@ -88,7 +87,7 @@ export function CallProvider({children}: any) {
           });
       }
     });
-  }, [list, call.status, myRef]);
+  }, [list, call.status, call.data?.callId, myRef]);
 
   return (
     <CallContext.Provider value={call}>
