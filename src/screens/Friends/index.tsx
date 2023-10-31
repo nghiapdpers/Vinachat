@@ -1,10 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
   View,
   Text,
   ActivityIndicator,
+  RefreshControl
 } from 'react-native';
 import styles from './styes';
 import mainTheme from '../../assets/colors';
@@ -13,15 +14,15 @@ import CardRequest from '../../components/CardRequest';
 import CardFriends from '../../components/CardFriends';
 import apiReplyRequest from '../../apis/apiReplyRequest';
 import firestore from '@react-native-firebase/firestore';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   actionFriendListStart,
   actionFriendListRefresh,
 } from '../../redux/actions/friendAction';
-import {RequestListActions} from '../../redux/actions/requestListAction';
-import {actionListGroupChatStart} from '../../redux/actions/listGroupChat';
-import {useNavigation} from '@react-navigation/native';
-import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
+import { RequestListActions } from '../../redux/actions/requestListAction';
+import { actionListGroupChatStart } from '../../redux/actions/listGroupChat';
+import { useNavigation } from '@react-navigation/native';
+import { DetailGroupChatActions } from '../../redux/actions/getDetailGroupChatActions';
 
 const database = firestore();
 
@@ -34,21 +35,9 @@ const Friends = () => {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
-  const FetchGetFriendList = async () => {
-    try {
-      dispatch(actionFriendListStart);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    FetchGetFriendList();
-  }, [refreshing]);
-
   const ListEmptyComponent = () => {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={styles.textEmpty}>Chưa có bạn bè</Text>
       </View>
     );
@@ -136,7 +125,7 @@ const Friends = () => {
         }}
         contentContainerStyle={styles.requestContentList}
         showsVerticalScrollIndicator={false}
-        renderItem={({item}) => {
+        renderItem={({ item }) => {
           return (
             <CardRequest
               name={item.fullname}
@@ -169,11 +158,9 @@ const Friends = () => {
       <Text style={styles.title}>Friends</Text>
       <FlatList
         data={data}
-        style={{marginTop: 10, flex: 1}}
+        style={{ marginTop: 10, flex: 1 }}
         ListEmptyComponent={ListEmptyComponent}
-        refreshing={refreshing}
-        onRefresh={RefreshingFriendList}
-        renderItem={({item}: {item: any}) => {
+        renderItem={({ item }: { item: any }) => {
           return (
             <CardFriends
               key={item?.id}
@@ -192,6 +179,14 @@ const Friends = () => {
             />
           );
         }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            colors={[mainTheme.logo]}
+            progressBackgroundColor={mainTheme.background}
+            onRefresh={() => RefreshingFriendList()}
+          />
+        }
       />
     </SafeAreaView>
   );
