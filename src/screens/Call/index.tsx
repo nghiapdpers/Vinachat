@@ -15,10 +15,11 @@ import images from '../../assets/images';
 import {useEffect, useRef, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {CallActions, useCallDispatch} from './context';
-import {WINDOW} from '../../global';
+import {WINDOW, parseMsToSeconds} from '../../global';
 import mainTheme from '../../assets/colors';
 import FeatureButton from '../../components/CallScreen/FeatureButton';
 import apiUpdateLatestMessage from '../../apis/apiUpdateLatestMessage';
+import InCallManager from 'react-native-incall-manager';
 
 const contraints = {
   iceServers: [
@@ -81,6 +82,10 @@ export default function CallScreen({
 
   // check camera avaiable on device
   const cameraCount = useRef(0);
+
+  // start & end call Time (ms - milliseconds)
+  const startTime = useRef(0);
+  const endTime = useRef(0);
 
   // create message ref a.k.a call ref
   const callMessage = useRef(
@@ -150,6 +155,12 @@ export default function CallScreen({
 
     // after prepare device, we create offer and listen answer.
     const createOffer = async () => {
+      // manager calling, ringback
+      InCallManager.start({
+        media: type == 'voicecall' ? 'audio' : 'video',
+        ringback: '_DTMF_',
+      });
+
       // first, save my ICE candidates to realtime database server
       pc.addEventListener('icecandidate', e => {
         if (e.candidate) {
@@ -199,7 +210,12 @@ export default function CallScreen({
           const remoteDescription = new RTCSessionDescription(data);
           pc.setRemoteDescription(remoteDescription);
           await callRef.child('status').set('ok');
+
+          startTime.current = new Date().getTime();
           setSuccess(true);
+
+          // stop ringback
+          InCallManager.stopRingback();
         }
       });
 
@@ -224,21 +240,52 @@ export default function CallScreen({
             .once('value')
             .then(e => {
               if (!e.exists()) {
-                handleDisconnect('Người dùng không trả lời');
+                handleDisconnect('Người dùng không trả lời', true);
+                // busytone
+                InCallManager.stop({busytone: '_DTMF_'});
               }
             });
 
           // clear timeout
           clearTimeout(timer);
         }, 30000);
+      } else {
+        InCallManager.startRingtone('_DTMF_');
       }
     });
 
     // listen change the calling status
     const callingSubcribe = callMessage.onSnapshot(
       snapshot => {
-        if (snapshot.get('call_status')?.toString() == 'dead') {
-          handleDisconnect(snapshot.get('end_call_reason'));
+        if (
+          snapshot.get('call_status')?.toString() == 'dead' &&
+          snapshot.get('end_call_reason')?.toString()
+        ) {
+          handleDisconnect(snapshot.get('end_call_reason'), false);
+
+          // stop call manager
+          if (
+            'Người dùng bận, Từ chối cuộc gọi'.includes(
+              snapshot.get('end_call_reason')?.toString(),
+            ) &&
+            status == 'calling'
+          ) {
+            InCallManager.stop({busytone: '_DTMF_'});
+          }
+
+          if (
+            'Người dùng bận, Từ chối cuộc gọi'.includes(
+              snapshot.get('end_call_reason')?.toString(),
+            ) &&
+            status == 'receive'
+          ) {
+            InCallManager.stopRingtone();
+            InCallManager.stop();
+          }
+
+          if (snapshot.get('end_call_reason')?.toString() == 'Kết thúc') {
+            InCallManager.stop();
+          }
         }
       },
       err => {
@@ -296,10 +343,20 @@ export default function CallScreen({
       const candidate = new RTCIceCandidate(e.val());
       pc.addIceCandidate(candidate);
     });
+
+    InCallManager.stopRingtone();
+    InCallManager.start({media: type == 'voicecall' ? 'audio' : 'video'});
   };
 
   // event handler: disconnect
-  const handleDisconnect = async (reason: string) => {
+  const handleDisconnect = async (reason: string, isUpdated: boolean) => {
+    if (status == 'calling' && startTime.current != 0) {
+      endTime.current = new Date().getTime();
+    }
+
+    const callTimeMs = endTime.current - startTime.current;
+    const callTimeSec = parseMsToSeconds(callTimeMs);
+
     // close peer connection
     pc.close();
 
@@ -325,10 +382,17 @@ export default function CallScreen({
       : null;
 
     // update message call status is 'dead'
-    await callMessage.update({
+    const updateMessageData = {
       call_status: 'dead',
       end_call_reason: reason,
-    });
+      call_time: typeof callTimeSec == 'number' ? callTimeSec : undefined,
+    };
+
+    if (status == 'receive') {
+      delete updateMessageData.call_time;
+    }
+
+    if (isUpdated) await callMessage.update(updateMessageData);
 
     // dispatch action to end call
     callDispatch(CallActions.endCall());
@@ -482,15 +546,16 @@ export default function CallScreen({
 
         <TouchableOpacity
           hitSlop={20}
-          onPress={() =>
+          onPress={() => {
             handleDisconnect(
               status == 'receive'
                 ? success
                   ? 'Kết thúc'
                   : 'Từ chối cuộc gọi'
                 : 'Kết thúc',
-            )
-          }>
+              true,
+            );
+          }}>
           <Image
             source={images.screen.voicecall.decline}
             style={styles.actionButton}

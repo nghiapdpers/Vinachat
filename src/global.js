@@ -23,3 +23,30 @@ export const getFirstLetters = (inputString: any) => {
     return firstLetter + lastLetter; // Kết hợp chữ cái đầu tiên của từ đầu tiên và từ cuối cùng
   }
 };
+
+export const parseMsToSeconds = ms => {
+  const milliseconds = parseInt(ms);
+
+  const seconds = Math.floor(milliseconds / 1000);
+
+  return seconds;
+};
+
+/**
+ *
+ * @param {*} seconds - type number: số giây
+ * @returns kiểu thời gian: 'hh:mm:ss'
+ */
+export const parseSecondsToTime = seconds => {
+  const hh = Math.floor(seconds / 60 / 60)
+    .toString()
+    .padStart(2, '0');
+  const mm = Math.floor((seconds / 60) % 60)
+    .toString()
+    .padStart(2, '0');
+  const ss = Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, '0');
+
+  return `${hh}:${mm}:${ss}`;
+};

@@ -269,12 +269,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 160,
     borderTopLeftRadius: 20,
-    borderTopRightRadius: 20
+    borderTopRightRadius: 20,
   },
   avatar: {
     width: 50,
     height: 50,
-    borderRadius: 25
+    borderRadius: 25,
   },
   avatarNoMessage: {
     width: 50,
@@ -282,8 +282,15 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: mainTheme.lowerFillLogo,
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
+
+  callMessageTime: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#3d3d3d',
+    textAlign: 'center',
+  },
 });
 
 export default styles;

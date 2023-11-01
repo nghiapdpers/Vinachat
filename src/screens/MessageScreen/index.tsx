@@ -34,7 +34,7 @@ import apiSynchronous from '../../apis/apiSynchronous';
 import useNetworkErr from '../../config/hooks/useNetworkErr';
 import apiUpdateLatestMessage from '../../apis/apiUpdateLatestMessage';
 import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
-import {SCREEN, getFirstLetters} from '../../global';
+import {SCREEN, getFirstLetters, parseSecondsToTime} from '../../global';
 
 var groupJson = require('unicode-emoji-json/data-by-group.json');
 import {CallActions, useCallDispatch} from '../Call/context';
@@ -140,7 +140,21 @@ export default function MessageScreen() {
                               .images.map((url: any) => ({url: url}))
                           : [],
                       };
-                      groupChat.messages.push(newMessage);
+
+                      const isExist = groupChat.messages.findIndex(
+                        (object: any) => object.ref == item.doc.id,
+                      );
+
+                      if (isExist != -1) {
+                        console.log(
+                          'message is exist',
+                          groupChat.messages[isExist],
+                        );
+                        // --- update message is exist in here:
+                        // groupChat.messages[isExist]
+                      } else {
+                        groupChat.messages.push(newMessage);
+                      }
                     });
                   }
                 } else {
@@ -254,6 +268,11 @@ export default function MessageScreen() {
                     <Text style={styles.callMessageTitle}>{item.message}</Text>
                     <Text style={styles.callMessageReason}>
                       {item.end_call_reason}
+                    </Text>
+                    <Text style={styles.callMessageTime}>
+                      {item.call_time > 0
+                        ? parseSecondsToTime(item.call_time)
+                        : ''}
                     </Text>
                   </View>
                 </View>
