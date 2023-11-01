@@ -130,7 +130,7 @@ export default function HomeScreen() {
 
   // Gọi api Group Chat
   useEffect(() => {
-    let listenGroups: () => void;
+    let listenGroups: () => void = () => {};
     if (!networkErr) {
       listenGroups = firestore()
         .collection('users')

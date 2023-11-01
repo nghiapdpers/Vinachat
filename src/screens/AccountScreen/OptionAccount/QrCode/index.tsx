@@ -141,8 +141,14 @@ export default function QrCode({ route }: { route: any }) {
           </ViewShot>
         </View>
         <View style={styles.flexscreenshotinfo}>
-          <View style={styles.borderImage}></View>
-          <Text style={styles.textusername}>Nguyễn Trung Thịnh</Text>
+          <View style={styles.ImageInfo}>
+            {user.data.avatar ?
+              <Image style={styles.borderImage} source={{ uri: user.data.avatar }} />
+              : <Image style={styles.borderImage} source={require('../../../../assets/images/Screen/QRCode/avatar.png')} />}
+          </View>
+          <View style={styles.TextInfo}>
+            <Text style={styles.textusernamescreenshot}>{user?.data?.fullname}</Text>
+          </View>
         </View>
       </ViewShot>
       <View style={styles.ViewQrCode}>

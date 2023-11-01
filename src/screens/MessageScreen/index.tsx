@@ -91,7 +91,6 @@ export default function MessageScreen() {
     useState('Smileys & Emotion');
 
   const itemsPerRow = Platform.OS === 'android' ? 11 : 10; // Số emoji trên mỗi hàng
-  const [data, setData] = useState([]);
 
   // side effect: subcribe to listen chat
   useEffect(() => {
@@ -129,11 +128,14 @@ export default function MessageScreen() {
                       const newMessage = {
                         ref: item.doc.id,
                         status: 'sended',
+                        call_status: 'dead',
+                        end_call_reason: item.doc.data().end_call_reason,
                         from: item.doc.data().from,
                         from_name: item.doc.data().from_name,
                         message: item.doc.data().message,
                         sent_time: item.doc.data().sent_time.seconds,
                         type: item.doc.data().type,
+                        call_time: item.doc.data().call_time,
                         images: item.doc.data().images
                           ? item.doc
                               .data()
@@ -176,11 +178,14 @@ export default function MessageScreen() {
                       const newMessage = {
                         ref: item.doc.id,
                         status: 'sended',
+                        call_status: item.doc.data().call_status,
+                        end_call_reason: item.doc.data().end_call_reason,
                         from: item.doc.data().from,
                         from_name: item.doc.data().from_name,
                         message: item.doc.data().message,
                         sent_time: item.doc.data().sent_time.seconds,
                         type: item.doc.data().type,
+                        // call_time: item.doc.data().call_time.seconds,
                         images: item.doc.data().images
                           ? item.doc
                               .data()
@@ -208,7 +213,10 @@ export default function MessageScreen() {
             setIsReady(true);
           },
           err => {
-            console.warn(err);
+            console.warn(
+              ':::: MESSAGE SCREEN / LISTEN MESSAGE ERROR ::::N',
+              err,
+            );
           },
         );
     } else {
@@ -380,7 +388,7 @@ export default function MessageScreen() {
     const messages: any = getMessageLatest?.messages;
     const latestMessage = messages?.sorted('sent_time', true)[0];
     // console.log('Reposne', latestMessage?.ref);
-    // console.log(getMessageLatest);
+    // console.log(messages);
 
     // if had no internet, get message from realm
     if (networkErr) {
@@ -425,19 +433,22 @@ export default function MessageScreen() {
           response.data.map((item: any) => {
             const newMessage = {
               ref: item.ref,
+              call_status: 'dead',
+              end_call_reason: item.end_call_reason ? item.end_call_reason : '',
               from: item.from,
               from_name: item.from_name,
               message: item.message,
               sent_time: item.sent_time._seconds,
               type: item.type,
+              call_time: item?.call_time ? item.call_time : 0,
               images: item.images
                 ? item.images.map((url: any) => ({url: url}))
                 : [],
             };
+
             getMessageLatest.messages.push(newMessage);
           });
         });
-        // console.log(response);
       })
       .catch(err => {
         console.log(
@@ -611,13 +622,13 @@ export default function MessageScreen() {
   const handleLoadmore = () => {
     if (
       currentMessage < totalMessage &&
-      listChatData.length >= 20 &&
+      listChatData?.length >= 20 &&
       !networkErr
     ) {
       dispatch(
         listChatActions.loadmore_start(
           groupRef,
-          listChatData[listChatData.length - 1].ref,
+          listChatData[listChatData?.length - 1].ref,
         ),
       );
     }
@@ -714,7 +725,9 @@ export default function MessageScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : keyboard ? 25 : 0}>
       <SafeAreaView style={styles.container}>
-        {!isReady || detailGroupLoading ? <LoadingOverlay /> : null}
+        {(!isReady && !networkErr) || (detailGroupLoading && !networkErr) ? (
+          <LoadingOverlay />
+        ) : null}
         <View style={styles.header}>
           <Header
             Iconback={component.header.back}
@@ -758,7 +771,7 @@ export default function MessageScreen() {
               renderItem={renderItem}
               keyExtractor={item => item.ref}
               showsVerticalScrollIndicator={false}
-              inverted={listChatData.length === 0 ? false : true}
+              inverted={listChatData?.length === 0 ? false : true}
               ref={listRef}
               onEndReached={handleLoadmore}
               windowSize={21}

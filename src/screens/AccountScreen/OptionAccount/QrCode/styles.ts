@@ -114,6 +114,11 @@ const styles = StyleSheet.create({
         fontSize: 22,
         color: mainTheme.text
     },
+    textusernamescreenshot: {
+        fontSize: 22,
+        color: mainTheme.text,
+        marginLeft: 20
+    },
     textEmail: {
         fontSize: 16,
         color: mainTheme.text
