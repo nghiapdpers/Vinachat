@@ -106,6 +106,9 @@ export const screen = {
   verifyaccount: {
     banner: require('./Screen/VerifyAccount/bannerverify.png'),
     iconverify: require('./Screen/VerifyAccount/verifyicon.png'),
+    idcard: require('./Screen/VerifyAccount/id-card.png'),
+    camerapicker: require('./Screen/VerifyAccount/camerapicker.png'),
+    selfie: require('./Screen/VerifyAccount/selfie.png')
   },
   voicecall: {
     answer: require('./Screen/VoiceCall/answer.png'),

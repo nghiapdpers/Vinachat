@@ -11,17 +11,17 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles';
 import Header from '../../../../components/Header';
-import {screen, component} from '../../../../assets/images';
-import {useNavigation} from '@react-navigation/native';
+import { screen, component } from '../../../../assets/images';
+import { useNavigation } from '@react-navigation/native';
 import mainTheme from '../../../../assets/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import LottieView from 'lottie-react-native';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Header3 from '../../../../components/Header3';
 
 export default function Biometrics() {
@@ -32,6 +32,7 @@ export default function Biometrics() {
   const [password, setpassword] = useState('');
   const [confirmpassword, setconfirmpassword] = useState('');
   const [animation, setanimation] = useState(false);
+  const [wrongpassword, setwrongpassword] = useState(null);
 
   const rnBiometrics = new ReactNativeBiometrics({
     allowDeviceCredentials: true,
@@ -65,9 +66,11 @@ export default function Biometrics() {
   const HandleConfirmPass = async () => {
     await AsyncStorage.getItem('@PasswordUser', (error: any, password: any) => {
       if (confirmpassword === password) {
+        setwrongpassword(null);
         handleBiometric();
       } else {
         setModalVisible(true);
+        setwrongpassword(true);
       }
     });
   };
@@ -81,9 +84,9 @@ export default function Biometrics() {
 
   const handleBiometric = () => {
     rnBiometrics
-      .simplePrompt({promptMessage: 'Confirm biometrics'})
+      .simplePrompt({ promptMessage: 'Confirm biometrics' })
       .then(async (resultObject: any) => {
-        const {success} = resultObject;
+        const { success } = resultObject;
         if (success) {
           await Keychain.setGenericPassword(mobile, password, {
             service: `myKeychainService_${mobile}`,
@@ -165,7 +168,7 @@ export default function Biometrics() {
             {isSupported === 'FaceID is supported' ? 'FaceID' : 'TouchID'}
           </Text>
           <Switch
-            trackColor={{false: '#767577', true: mainTheme.lowerFillLogo}}
+            trackColor={{ false: '#767577', true: mainTheme.lowerFillLogo }}
             thumbColor={isEnabled ? mainTheme.logo : '#f4f3f4'}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleSwitch}
@@ -190,7 +193,7 @@ export default function Biometrics() {
                         ? require('../../../../assets/lottiefile/biometrics/faceid.json')
                         : require('../../../../assets/lottiefile/biometrics/touchid.json')
                     }
-                    style={{width: 100, height: 100}}
+                    style={{ width: 100, height: 100 }}
                     autoPlay
                     loop
                   />
@@ -198,7 +201,7 @@ export default function Biometrics() {
               ) : (
                 <>
                   <View style={styles.flexbodyModal}>
-                    <View style={styles.borderInputpass}>
+                    <View style={[styles.borderInputpass, { borderColor: wrongpassword === true ? 'red' : mainTheme.lowerFillLogo }]}>
                       <TextInput
                         style={styles.textinput}
                         placeholder="Password..."
@@ -219,12 +222,18 @@ export default function Biometrics() {
                         />
                       </TouchableOpacity>
                     </View>
+                    <View style={styles.wrongconfirmpass}>
+                      {wrongpassword === true ? (
+                        <Text style={styles.textwrong}>Mật khẩu không trùng khớp!</Text>
+                      ) : null}
+                    </View>
                   </View>
                   <View style={styles.flexboxbottomModal}>
                     <TouchableOpacity
                       style={styles.borderbtn}
                       onPress={() => {
                         setModalVisible(false);
+                        setwrongpassword(null);
                       }}>
                       <Text style={styles.textbtnModal}>Huỷ</Text>
                     </TouchableOpacity>

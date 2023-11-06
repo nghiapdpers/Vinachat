@@ -16,7 +16,7 @@ import mainTheme from '../../../../assets/colors';
 import { useNavigation } from '@react-navigation/native';
 
 export default function VerifyAccount() {
-
+    const navigation = useNavigation();
     const data = [
         {
             id: 1,
@@ -55,7 +55,7 @@ export default function VerifyAccount() {
                     ))}
                 </View>
                 <View style={styles.submitStart}>
-                    <TouchableOpacity style={styles.bordersubmit}>
+                    <TouchableOpacity style={styles.bordersubmit} onPress={() => { navigation.navigate('MultiStepVerify') }}>
                         <Text style={styles.textsubmit}>Bắt đầu</Text>
                     </TouchableOpacity>
                 </View>
