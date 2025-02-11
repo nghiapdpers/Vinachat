@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     flexbodyModal: {
         flex: 5.5,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     flexboxbottomModal: {
         flex: 2,
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
         width: '90%',
         height: 50,
         borderWidth: 2,
-        borderColor: mainTheme.lowerFillLogo,
+        // borderColor: mainTheme.lowerFillLogo,
         borderRadius: 40,
         justifyContent: 'center'
     },
@@ -95,17 +95,27 @@ const styles = StyleSheet.create({
     },
     hiddenButton: {
         position: 'absolute',
-        right :20
+        right: 20
     },
-    ViewAnimation : {
-        flex :7.5,
-        width :'100%',
-        height : '100%',
-        alignItems :"center",
-        justifyContent : 'center',
-        backgroundColor :'white',
-        borderBottomLeftRadius : 30 , 
-        borderBottomRightRadius  :30
+    ViewAnimation: {
+        flex: 7.5,
+        width: '100%',
+        height: '100%',
+        alignItems: "center",
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30
+    },
+    wrongconfirmpass: {
+        width: '100%',
+        height: 40,
+        justifyContent: 'center'
+    },
+    textwrong: {
+        color: 'red',
+        fontSize: 16,
+        marginLeft: 25
     }
 
 });
