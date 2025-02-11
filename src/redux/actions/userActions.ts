@@ -1,11 +1,16 @@
 import {CLEAR, LOGIN, LOGIN_EXTERNAL, LOGOUT, REGISTER} from './types';
 
 // LOGIN ACTION
-export const actionLoginStart = (mobile: string, password: string) => {
+export const actionLoginStart = (
+  mobile: string,
+  password: string,
+  fcmToken: string,
+) => {
   //Declare formdata to pass in axios post method
   const form = {
     mobile: mobile,
     password: password,
+    fcm_token: fcmToken,
   };
 
   return {

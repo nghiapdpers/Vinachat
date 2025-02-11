@@ -8,6 +8,7 @@ import RequestListReducer from './requestListReducer';
 import ListChatReducer from './listChatReducer';
 import FriendListReducer from './friendReducer';
 import detailGroupChatReducer from './detailGroupChatReducer';
+import CallReducer from './callReducer';
 
 const rootReducer = combineReducers({
   app: AppReducer,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   listChat: ListChatReducer,
   friendlist: FriendListReducer,
   detailGroup: detailGroupChatReducer,
+  call: CallReducer,
 });
 
 export default rootReducer;

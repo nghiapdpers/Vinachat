@@ -1,0 +1,3 @@
+Tạm dừng tại: Chức năng gọi điện thoại.
+	- Tiến trình: Lỗi khi gọi Linking.openURL không thể mở app.
+	

@@ -10,6 +10,7 @@ import friendlistEpic from './friendlistEpic';
 import listChatEpic from './listChatEpic';
 import getDetailUserEpic from './getDetailUserEpic';
 import getDetailGroupChatEpic from './getDetailGroupChatEpic';
+import callEpic from './callEpic';
 
 const rootEpic = combineEpics(
   initialEpic,
@@ -23,6 +24,7 @@ const rootEpic = combineEpics(
   listChatEpic,
   getDetailUserEpic,
   getDetailGroupChatEpic,
+  callEpic,
 );
 
 export default rootEpic;

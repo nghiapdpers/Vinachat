@@ -90,3 +90,11 @@ export enum GET_DETAIL_GROUP_CHAT {
   FAIL = 'GET-DETAIL-GROUP-CHAT-FAIL',
   CLEAR = 'GET-DETAIL-GROUP-CHAT-CLEAR',
 }
+
+export enum CALL {
+  CALL_SOME_ONE_START = 'call-some-one-start',
+  CALL_SOME_ONE_END = 'call-some-one-end',
+  CALL_SOME_ONE_FAIL = 'call-some-one-fail',
+  END_CALL = 'end-call',
+  HAS_NEW_CALL = 'has-new-call',
+}

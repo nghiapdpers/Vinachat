@@ -27,6 +27,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Keychain from 'react-native-keychain';
 import {User} from 'realm/dist/bundle';
 import {actionClearGroupChat} from '../../redux/actions/listGroupChat';
+import {getData} from '../../storage';
+import {LOCALSTORAGE} from '../../storage/direct';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -70,7 +72,9 @@ export default function LoginScreen() {
               // Gọi action đang nhập
               CheckPasswordIfNotExists(password);
               if (resultObject.success === true) {
-                dispatch(actionLoginStart(mobile, password));
+                const fcmToken = await getData(LOCALSTORAGE.fcmToken);
+
+                dispatch(actionLoginStart(mobile, password, fcmToken));
               } else {
                 console.log('Biometric undefined');
               }
@@ -137,13 +141,14 @@ export default function LoginScreen() {
   };
 
   // Đăng nhập Default
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!isPhone || !isPassword) {
       Alert.alert('Thông báo', 'Vui lòng điền đầy đủ thông tin');
       return;
     }
+    const fcmToken = await getData(LOCALSTORAGE.fcmToken);
     // Gọi action đang nhập
-    dispatch(actionLoginStart(isPhone, isPassword));
+    dispatch(actionLoginStart(isPhone, isPassword, fcmToken));
     // navigation.navigate('BottomScreen')
     CheckPasswordIfNotExists(isPassword);
   };

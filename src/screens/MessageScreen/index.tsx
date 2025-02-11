@@ -37,7 +37,6 @@ import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActi
 import {SCREEN, getFirstLetters, parseSecondsToTime} from '../../global';
 
 var groupJson = require('unicode-emoji-json/data-by-group.json');
-import {CallActions, useCallDispatch} from '../Call/context';
 
 // Màn hình chat:
 /**
@@ -63,8 +62,6 @@ export default function MessageScreen() {
 
   const {groupRef, total_member, groupName, adminRef, groupAvatar}: any =
     route.params;
-
-  const callDispatch = useCallDispatch();
 
   const dispatch = useDispatch();
   const ref = useSelector((s: any) => s.user.data.ref);
@@ -185,7 +182,7 @@ export default function MessageScreen() {
                         message: item.doc.data().message,
                         sent_time: item.doc.data().sent_time.seconds,
                         type: item.doc.data().type,
-                        // call_time: item.doc.data().call_time.seconds,
+                        call_time: item.doc.data().call_time,
                         images: item.doc.data().images
                           ? item.doc
                               .data()
@@ -709,13 +706,12 @@ export default function MessageScreen() {
   // event handler: handle calling (for friend)
   const handleCalling = (type: 'voicecall' | 'videocall') => {
     if (total_member == 2) {
-      callDispatch(
-        CallActions.callSomeOne({
-          type: type,
-          groupRef: groupRef,
-          name: groupName,
-        }),
-      );
+      navigation.navigate('CallScreen', {
+        type,
+        groupRef,
+        name: groupName,
+        status: 'calling',
+      });
     }
   };
 

@@ -12,4 +12,6 @@ export enum LOCALSTORAGE {
   groupChat = 'groupChat',
 
   friendList = 'friendList',
+
+  fcmToken = 'fcmToken',
 }

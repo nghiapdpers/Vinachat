@@ -18,6 +18,16 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.BIND_TELECOM_CONNECTION_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" /> 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -36,9 +46,36 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+        <intent-filter>
+          <action android:name="android.intent.action.VIEW"/>
+          <category android:name="android.intent.category.DEFAULT"/>
+          <category android:name="android.intent.category.BROWSABLE"/>
+          <data android:scheme="vinachat"/>
+      </intent-filter>
       </activity>
        <meta-data
           android:name="com.google.mlkit.vision.DEPENDENCIES"
           android:value="barcode" />
+        
+        <service 
+        android:name="io.wazo.callkeep.VoiceConnectionService"
+        android:label="Wazo"
+        android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
+        android:foregroundServiceType="phoneCall"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.telecom.ConnectionService" />
+        </intent-filter>
+      </service>
+      <service android:name="io.wazo.callkeep.RNCallKeepBackgroundMessagingService" />
+
+    </application>
+</manifest>
+pBackgroundMessagingService" />
+
+    </application>
+</manifest>
+pBackgroundMessagingService" />
+
     </application>
 </manifest>

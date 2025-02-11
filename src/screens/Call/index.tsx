@@ -13,62 +13,55 @@ import {
 import styles from './styles';
 import images from '../../assets/images';
 import {useEffect, useRef, useState} from 'react';
-import {useSelector} from 'react-redux';
-import {CallActions, useCallDispatch} from './context';
 import {WINDOW, parseMsToSeconds} from '../../global';
 import mainTheme from '../../assets/colors';
 import FeatureButton from '../../components/CallScreen/FeatureButton';
-import apiUpdateLatestMessage from '../../apis/apiUpdateLatestMessage';
 import InCallManager from 'react-native-incall-manager';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {CallActions} from '../../redux/actions/callActions';
+import {callKeep} from '../../config/utils/CallKeep';
+import PeerConnection4Call from '../../config/utils/PeerConnection4Call';
+import TheCaller from '../../config/utils/TheCaller';
 
-const contraints = {
-  iceServers: [
-    {
-      urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
-    },
-    {
-      urls: 'turn:relay1.expressturn.com:3478',
-      username: 'ef69U0HHMR6GCNIEN0',
-      credential: 'qdEAbwauz5NPLPNO',
-    },
-  ],
-};
+// const contraints = {
+//   iceServers: [
+//     {
+//       urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
+//     },
+//     {
+//       urls: 'turn:relay1.expressturn.com:3478',
+//       username: 'ef69U0HHMR6GCNIEN0',
+//       credential: 'qdEAbwauz5NPLPNO',
+//     },
+//   ],
+// };
 
 const rtdb = database();
 
 const fsdb = firestore();
 
-type Props = {
-  type: string;
-  groupRef: string;
-  name: string;
-  status: string;
-  callId: string;
-};
+export default function CallScreen() {
+  const dispatch = useDispatch();
 
-export default function CallScreen({
-  type,
-  groupRef,
-  name,
-  status,
-  callId,
-}: Props) {
-  // const call = useCall();
-  const callDispatch = useCallDispatch();
+  const navigation = useNavigation();
+  const route = useRoute();
 
-  const myRef = useSelector((s: any) => s.user.data.ref);
-  const myName = useSelector((s: any) => s.user.data.fullname);
+  const {type, groupRef, name, status, callId, reply}: any = route.params;
+
   const answerListenRef = useRef<any>(null);
   const answerIceCandidatesRef = useRef<any>(null);
   const offerIceCandidatesRef = useRef<any>(null);
 
+  // create peer connection for call instance
+  const pc4call = useRef(TheCaller.instance.current).current;
   // - peer connection instance a.k.a main core to handle webRTC
-  const pc = useRef(new RTCPeerConnection(contraints)).current;
+  const pc = useRef(pc4call.peerConnection).current;
   // - local stream a.k.a my media stream
-  const localStream = useRef<any | MediaStream>(null);
+  // const localStream = useRef<any | MediaStream>(null);
   const [localStreamUrl, setLocalStreamUrl] = useState('');
   // - remote stream a.k.a answer media stream (in case use video call)
-  const remoteStream = useRef<MediaStream>(new MediaStream());
+  // const remoteStream = useRef<MediaStream>(new MediaStream());
   const [remoteStreamUrl, setRemoteStreamUrl] = useState('');
 
   // calling is success state
@@ -109,49 +102,49 @@ export default function CallScreen({
     let timer: string | number | NodeJS.Timeout | undefined;
 
     // function prepare device before connection
-    const prepareDevice = async () => {
-      // get my media device stream
-      localStream.current = await mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
+    // const prepareDevice = async () => {
+    //   // get my media device stream
+    //   localStream.current = await mediaDevices.getUserMedia({
+    //     video: true,
+    //     audio: true,
+    //   });
 
-      if (type == 'voicecall') {
-        const localVideo = localStream.current.getVideoTracks()[0];
-        localVideo.enabled = false;
-      }
+    //   if (type == 'voicecall') {
+    //     const localVideo = localStream.current.getVideoTracks()[0];
+    //     localVideo.enabled = false;
+    //   }
 
-      // check total camera avaiable
-      const devices: any = await mediaDevices.enumerateDevices();
-      devices.map((device: any) => {
-        if (device.kind != 'videoinput') {
-          return;
-        }
+    //   // check total camera avaiable
+    //   const devices: any = await mediaDevices.enumerateDevices();
+    //   devices.map((device: any) => {
+    //     if (device.kind != 'videoinput') {
+    //       return;
+    //     }
 
-        cameraCount.current = cameraCount.current + 1;
-      });
+    //     cameraCount.current = cameraCount.current + 1;
+    //   });
 
-      // put my media track to peer connnection instance
-      localStream.current.getTracks().forEach(track => {
-        pc.addTrack(track, localStream.current);
-      });
+    //   // put my media track to peer connnection instance
+    //   localStream.current.getTracks().forEach(track => {
+    //     pc.addTrack(track, localStream.current);
+    //   });
 
-      // put my media track into remoteStream (in case video call)
-      pc.addEventListener(
-        'track',
-        event => {
-          event.streams[0].getTracks().forEach(track => {
-            remoteStream.current.addTrack(track);
-          });
-          setRemoteStreamUrl(remoteStream.current.toURL());
-        },
-        {
-          capture: false,
-        },
-      );
+    //   // put my media track into remoteStream (in case video call)
+    //   pc.addEventListener(
+    //     'track',
+    //     event => {
+    //       event.streams[0].getTracks().forEach(track => {
+    //         remoteStream.current.addTrack(track);
+    //       });
+    //       setRemoteStreamUrl(remoteStream.current.toURL());
+    //     },
+    //     {
+    //       capture: false,
+    //     },
+    //   );
 
-      setLocalStreamUrl(localStream.current.toURL());
-    };
+    //   setLocalStreamUrl(localStream.current.toURL());
+    // };
 
     // after prepare device, we create offer and listen answer.
     const createOffer = async () => {
@@ -173,33 +166,18 @@ export default function CallScreen({
       // and set this to RTCPeerconnection
       await pc.setLocalDescription(offerDescription);
 
-      // save offer decripstion to realtime database server
-      await callRef.child('offer').set({
-        sdp: offerDescription.sdp,
-        type: offerDescription.type,
-      });
+      // call api videocall or voiceccall
+      dispatch(
+        CallActions.call.start({
+          group_ref: groupRef,
+          callPath: callMessage.path,
+          callType: type,
+          callerOffer: JSON.stringify(offerDescription),
+        }),
+      );
 
-      // send a message to firestore
-      await callMessage.set({
-        from: myRef,
-        message: type == 'voicecall' ? 'Cuộc gọi thoại' : 'Cuộc gọi video',
-        sent_time: firestore.Timestamp.now(),
-        type: type,
-        from_name: myName,
-        call_status: 'living',
-      });
-
-      // update latest message (for production)
-      await apiUpdateLatestMessage({
-        group_ref: groupRef,
-        message_ref: callMessage.id,
-      })
-        .then(res => {
-          // console.log('update latest message', res);
-        })
-        .catch(err => {
-          console.log(':::: UPDATE-LATEST-MESSAGE ERROR :::: >>\n', err);
-        });
+      // start CallKeep
+      // callm.startCall(callMessage.id, name, name);
 
       // listening answer
       answerListenRef.current = callRef.child('answer').on('value', async e => {
@@ -227,10 +205,13 @@ export default function CallScreen({
     };
 
     // prepare device for the call
-    prepareDevice().then(() => {
+    pc4call.prepareDevices(type).then(() => {
       if (status == 'calling') {
         // create offer
         createOffer();
+
+        setLocalStreamUrl(pc4call.localStream.toURL());
+        setRemoteStreamUrl(pc4call.remoteStream.toURL());
 
         // wait for 30s, after that cancel the calling if not answer
         timer = setTimeout(() => {
@@ -241,6 +222,8 @@ export default function CallScreen({
             .then(e => {
               if (!e.exists()) {
                 handleDisconnect('Người dùng không trả lời', true);
+                // end call
+                callKeep.endCall(callMessage.id);
                 // busytone
                 InCallManager.stop({busytone: '_DTMF_'});
               }
@@ -250,7 +233,13 @@ export default function CallScreen({
           clearTimeout(timer);
         }, 30000);
       } else {
-        InCallManager.startRingtone('_DTMF_');
+        // InCallManager.startRingtone('_DTMF_');
+        if (reply == 'accept') {
+          handleAnswer();
+        } else if (reply == 'reject') {
+          handleDisconnect('Từ chối cuộc gọi', true);
+          callKeep.rejectCall(callMessage.id);
+        }
       }
     });
 
@@ -338,6 +327,9 @@ export default function CallScreen({
         }
       });
 
+    // answer imcoming call
+    callKeep.answerCall(callMessage.id);
+
     // listening offer cancdidates and add to peer connection
     offerIceCandidatesRef.current = offerCandidates.on('child_added', e => {
       const candidate = new RTCIceCandidate(e.val());
@@ -357,16 +349,19 @@ export default function CallScreen({
     const callTimeMs = endTime.current - startTime.current;
     const callTimeSec = parseMsToSeconds(callTimeMs);
 
-    // close peer connection
-    pc.close();
+    // // close peer connection
+    // pc.close();
 
-    // stop track from media
-    localStream.current.getTracks().forEach(track => {
-      track.stop();
-    });
-    remoteStream.current.getTracks().forEach(track => {
-      track.stop();
-    });
+    // // stop track from media
+    // localStream.current.getTracks().forEach(track => {
+    //   track.stop();
+    // });
+    // remoteStream.current.getTracks().forEach(track => {
+    //   track.stop();
+    // });
+
+    pc4call.closePeerConnection();
+    TheCaller.instance.delete();
 
     // unlistening answer
     answerListenRef.current
@@ -394,50 +389,42 @@ export default function CallScreen({
 
     if (isUpdated) await callMessage.update(updateMessageData);
 
-    // dispatch action to end call
-    callDispatch(CallActions.endCall());
+    // goback previous screen
+    navigation.goBack();
   };
 
   // event handler: turn on/off louded mode
   const handleLoudedMode = () => {
     if (f_louded) {
-      const remoteAudio = remoteStream.current.getAudioTracks()[0];
-      remoteAudio._setVolume(1);
+      pc4call.handleRemoteAudioVolume(1);
       setLouded(false);
     } else {
-      const remoteAudio = remoteStream.current.getAudioTracks()[0];
-      remoteAudio._setVolume(5);
+      pc4call.handleRemoteAudioVolume(5);
       setLouded(true);
     }
   };
 
   // event handler: turn on/off off-speaker mode
   const handleOffSpeakerMode = () => {
-    const remoteAudio = remoteStream.current.getAudioTracks()[0];
-    remoteAudio.enabled = !remoteAudio.enabled;
+    pc4call.handleSpeakerAudio(f_offSpeaker);
     setOffSpeaker(!f_offSpeaker);
   };
 
   // event handler: turn on/off off-mic mode
   const handleOffMicMode = () => {
-    const localAudio = localStream.current.getAudioTracks()[0];
-    localAudio.enabled = !localAudio.enabled;
+    pc4call.handleLocalMicro(f_offMic);
     setOffMic(!f_offMic);
   };
 
   // event handler: turn on/off off-camera mode
   const handleOffCameraMode = () => {
-    const localVideo = localStream.current.getVideoTracks()[0];
-    localVideo.enabled = !localVideo.enabled;
+    pc4call.handleLocalCamera(f_offCam);
     setOffCam(!f_offCam);
   };
 
   // event handler: turn on/off off-speaker mode
   const handleSwitchCamera = () => {
-    if (cameraCount.current > 1) {
-      const localVideo = localStream.current.getVideoTracks()[0];
-      localVideo._switchCamera();
-    }
+    pc4call.handleSwithCamera();
   };
 
   return (
@@ -547,14 +534,8 @@ export default function CallScreen({
         <TouchableOpacity
           hitSlop={20}
           onPress={() => {
-            handleDisconnect(
-              status == 'receive'
-                ? success
-                  ? 'Kết thúc'
-                  : 'Từ chối cuộc gọi'
-                : 'Kết thúc',
-              true,
-            );
+            handleDisconnect('Kết thúc', true);
+            callKeep.endCall(callMessage.id);
           }}>
           <Image
             source={images.screen.voicecall.decline}

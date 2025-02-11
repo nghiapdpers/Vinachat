@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import {screen} from '../../assets/images';
 import {useNavigation} from '@react-navigation/native';
@@ -27,9 +28,10 @@ import {SCREEN, getFirstLetters} from '../../global';
 import {RefreshControl} from 'react-native';
 import mainTheme from '../../assets/colors';
 import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
-import {CallActions, useCall, useCallDispatch} from '../Call/context';
+import message from '@react-native-firebase/messaging';
 
 const database = firestore();
+const fcm = message();
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -270,6 +272,27 @@ export default function HomeScreen() {
       </TouchableOpacity>
     );
   };
+
+  useEffect(() => {
+    const fcmUnsubcribe = fcm.onMessage(message => {
+      const {info, type, scheme}: any = message.data;
+      const information = JSON.parse(info);
+
+      console.log(information, type, scheme);
+
+      Linking.openURL(scheme);
+
+      if (type == 'CALLING') {
+        Linking.openURL(
+          `vinachat://calling/${information.type}/${information.status}/${information.name}/${information.groupRef}/${information.callId}/none`,
+        );
+      }
+    });
+
+    return () => {
+      fcmUnsubcribe();
+    };
+  }, []);
 
   // console.log('refreshing:>>', refreshing);
 

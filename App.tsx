@@ -4,9 +4,10 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
+import message from '@react-native-firebase/messaging';
 
 import SignUp from './src/screens/SignUp';
-import {NavigationContainer} from '@react-navigation/native';
+import {LinkingOptions, NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import CreateAccount from './src/screens/CreateAccount';
 import Friends from './src/screens/Friends';
@@ -21,7 +22,7 @@ import SearchScreen from './src/screens/SearchScreen';
 import {screen} from './src/assets/images';
 import mainTheme from './src/assets/colors';
 import SplashScreen from 'react-native-splash-screen';
-import {getData} from './src/storage';
+import {getData, storeData} from './src/storage';
 import {LOCALSTORAGE} from './src/storage/direct';
 import {
   actionLoginEnd,
@@ -51,8 +52,8 @@ import OptionMessage from './src/screens/MessageScreen/OptionMessage';
 import AddMemberToGroup from './src/screens/MessageScreen/OptionMessage/AddMemberToGroup';
 import VerifyAccount from './src/screens/AccountScreen/OptionAccount/VerifyAccount';
 import CallScreen from './src/screens/Call';
-import {CallProvider} from './src/screens/Call/context';
 import MemberInGroups from './src/screens/MessageScreen/OptionMessage/MemberInGroups';
+import RNCallKeep from 'react-native-callkeep';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -70,6 +71,20 @@ firestore().settings({
 });
 database().setPersistenceEnabled(false);
 
+const linkingOptions: LinkingOptions<RootStackParamList> = {
+  prefixes: ['vinachat://'],
+  config: {
+    screens: {
+      CallScreen: {
+        path: 'calling/:type/:status/:name/:groupRef/:callId/:reply',
+      },
+      ProfileScreen: {
+        path: 'home/',
+      },
+    },
+  },
+};
+
 export default function App() {
   const dispatch = useDispatch();
   const networkErr = useNetworkErr();
@@ -77,10 +92,11 @@ export default function App() {
 
   // Lấy dữ liệu dưới local và nạp lên Redux
   const getLocalData = async () => {
-    const [user, friendList, groupChat] = await Promise.all([
+    const [user, friendList, groupChat, fcmToken] = await Promise.all([
       getData(LOCALSTORAGE.user),
       getData(LOCALSTORAGE.friendList),
       getData(LOCALSTORAGE.groupChat),
+      getData(LOCALSTORAGE.fcmToken),
     ]);
 
     if (user) {
@@ -94,15 +110,61 @@ export default function App() {
     if (groupChat) {
       dispatch(actionListGroupChatEnd(groupChat));
     }
+
+    if (!fcmToken) {
+      const token = await message().getToken();
+      await storeData(LOCALSTORAGE.fcmToken, token);
+    }
+
+    return 0;
   };
 
-  // side effect: hide splash screen
+  // setup callkeep options:
+  const setupCallKeep = () => {
+    RNCallKeep.setup({
+      ios: {
+        appName: 'Vinachat',
+        supportsVideo: true,
+      },
+      android: {
+        alertTitle: 'Yêu cầu quyền truy cập',
+        alertDescription:
+          'Ứng dụng này sử dụng quyền quản lý truy cập cuộc gọi để nhận được các cuộc gọi đến',
+        cancelButton: 'Từ chối',
+        okButton: 'Cấp quyền',
+        additionalPermissions: [
+          'android.permission.RECORD_AUDIO',
+          'android.permission.ACCESS_NETWORK_STATE',
+          'android.permission.CHANGE_NETWORK_STATE',
+          'android.permission.MODIFY_AUDIO_SETTINGS',
+          'android.permission.USE_BIOMETRIC',
+          'android.permission.USE_FINGERPRINT',
+          'android.permission.INTERNET',
+          'android.permission.CAMERA',
+          'android.permission.READ_MEDIA_IMAGES',
+          'android.permission.READ_MEDIA_VIDEO',
+          'android.permission.READ_EXTERNAL_STORAGE',
+          'android.permission.WRITE_EXTERNAL_STORAGE',
+          'android.permission.BIND_TELECOM_CONNECTION_SERVICE',
+          'android.permission.FOREGROUND_SERVICE',
+          'android.permission.READ_PHONE_STATE',
+          'android.permission.CALL_PHONE',
+          'android.permission.SYSTEM_ALERT_WINDOW',
+          'android.permission.ACTION_MANAGE_OVERLAY_PERMISSION',
+          'android.permission.WAKE_LOCK',
+        ],
+      },
+    });
+  };
+
+  // side effect: run after initial rendered
   useEffect(() => {
     if (Platform.OS === 'android') {
       StatusBar.setBackgroundColor(mainTheme.background);
       StatusBar.setBarStyle('dark-content');
     }
 
+    // hide splash screen after get local data
     getLocalData()
       .then(() => {
         setTimeout(() => {
@@ -112,73 +174,79 @@ export default function App() {
       .catch(err => {
         console.log(':::: GET LOCAL DATA ERROR :::: >> N', err);
       });
+
+    // setup options for CallKeep
+    setupCallKeep();
   }, []);
+
+  useEffect(() => {
+    if (isLogin) {
+      RNCallKeep.setAvailable(true);
+    } else {
+      RNCallKeep.setAvailable(false);
+    }
+  }, [isLogin]);
 
   return (
     <RealmProvider schema={[GroupChat, Message, User, Images]}>
       {networkErr && (
         <Text style={styles.networkError}>Lỗi mạng, đang kết nối lại...</Text>
       )}
-      <CallProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              // gestureEnabled: true,
-              // gestureDirection: 'horizontal',
-              headerShown: false,
-            }}>
-            {!isLogin ? (
-              <>
-                <Stack.Screen name="LoginScreen" component={LoginScreen} />
-                <Stack.Screen name="CreateAccount" component={CreateAccount} />
-                <Stack.Screen name="SignUp" component={SignUp} />
-              </>
-            ) : (
-              <>
-                <Stack.Screen name="BottomScreen" component={BottomScreen} />
-                <Stack.Screen name="MessageScreen" component={MessageScreen} />
-                <Stack.Screen name="SearchScreen" component={SearchScreen} />
-                <Stack.Screen name="Friends" component={Friends} />
-                <Stack.Screen name="QrCode" component={QrCode} />
-                <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
-                <Stack.Screen name="Biometrics" component={Biometrics} />
-                <Stack.Screen
-                  name="CreateGroupChat"
-                  component={CreateGroupChat}
-                />
-                <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-                <Stack.Screen
-                  name="EditUserScreen"
-                  component={EditUserScreen}
-                />
-                <Stack.Screen
-                  name="DetailImageScreen"
-                  component={DetailImageScreen}
-                />
-                <Stack.Screen
-                  name="AccountSecurity"
-                  component={AccountSecurity}
-                />
-                <Stack.Screen
-                  name="ChangePassword"
-                  component={ChangePassword}
-                />
-                <Stack.Screen name="Privacy" component={Privacy} />
-                <Stack.Screen name="OptionMessage" component={OptionMessage} />
-                <Stack.Screen
-                  name="AddMemberToGroup"
-                  component={AddMemberToGroup}
-                />
-                <Stack.Screen name="VerifyAccount" component={VerifyAccount} />
-                <Stack.Screen
-                  name="MemberInGroups"
-                  component={MemberInGroups}
-                />
-              </>
-            )}
-          </Stack.Navigator>
-        </NavigationContainer>
-      </CallProvider>
+      <NavigationContainer
+        onReady={() => SplashScreen.hide()}
+        fallback={<Text>Loading...</Text>}
+        linking={linkingOptions}>
+        <Stack.Navigator
+          screenOptions={{
+            // gestureEnabled: true,
+            // gestureDirection: 'horizontal',
+            headerShown: false,
+          }}>
+          {!isLogin ? (
+            <>
+              <Stack.Screen name="LoginScreen" component={LoginScreen} />
+              <Stack.Screen name="CreateAccount" component={CreateAccount} />
+              <Stack.Screen name="SignUp" component={SignUp} />
+              <Stack.Screen name="CallScreen" component={CallScreen} />
+              <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+            </>
+          ) : (
+            <>
+              <Stack.Screen name="BottomScreen" component={BottomScreen} />
+              <Stack.Screen name="MessageScreen" component={MessageScreen} />
+              <Stack.Screen name="SearchScreen" component={SearchScreen} />
+              <Stack.Screen name="Friends" component={Friends} />
+              <Stack.Screen name="QrCode" component={QrCode} />
+              <Stack.Screen name="ScanQrCode" component={ScanQrCode} />
+              <Stack.Screen name="Biometrics" component={Biometrics} />
+              <Stack.Screen
+                name="CreateGroupChat"
+                component={CreateGroupChat}
+              />
+              <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+              <Stack.Screen name="EditUserScreen" component={EditUserScreen} />
+              <Stack.Screen
+                name="DetailImageScreen"
+                component={DetailImageScreen}
+              />
+              <Stack.Screen
+                name="AccountSecurity"
+                component={AccountSecurity}
+              />
+              <Stack.Screen name="ChangePassword" component={ChangePassword} />
+              <Stack.Screen name="Privacy" component={Privacy} />
+              <Stack.Screen name="OptionMessage" component={OptionMessage} />
+              <Stack.Screen
+                name="AddMemberToGroup"
+                component={AddMemberToGroup}
+              />
+              <Stack.Screen name="VerifyAccount" component={VerifyAccount} />
+              <Stack.Screen name="MemberInGroups" component={MemberInGroups} />
+              <Stack.Screen name="CallScreen" component={CallScreen} />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
     </RealmProvider>
   );
 }
@@ -339,6 +407,7 @@ export type RootStackParamList = {
   OptionMessage: any;
   AddMemberToGroup: any;
   CallScreen: any;
+  ProfileScreen: any;
 };
 
 declare global {
