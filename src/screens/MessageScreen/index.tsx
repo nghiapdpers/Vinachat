@@ -175,7 +175,7 @@ export default function MessageScreen() {
                       const newMessage = {
                         ref: item.doc.id,
                         status: 'sended',
-                        call_status: item.doc.data().call_status,
+                        call_status: item.doc.data().call_status ? item.doc.data().call_status : "dead",
                         end_call_reason: item.doc.data().end_call_reason ? item.doc.data().end_call_reason : "",
                         from: item.doc.data().from,
                         from_name: item.doc.data().from_name,

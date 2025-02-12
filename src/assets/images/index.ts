@@ -104,7 +104,7 @@ export const screen = {
     team: require('./Screen/OptionMessage/team.png'),
   },
   verifyaccount: {
-    banner: require('./Screen/VerifyAccount/bannerverify.png'),
+    banner: require('./Screen/VerifyAccount/bannerverify.jpg'),
     iconverify: require('./Screen/VerifyAccount/verifyicon.png'),
     idcard: require('./Screen/VerifyAccount/id-card.png'),
     camerapicker: require('./Screen/VerifyAccount/camerapicker.png'),
