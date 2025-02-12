@@ -1,7 +1,7 @@
 // develop domain
-const DOMAIN = 'http://192.168.0.123:3000';
+// const DOMAIN = 'http://192.168.110.113:3000';
 // production domain
-// const DOMAIN = 'https://red-difficult-cobra.cyclic.app';
+const DOMAIN = 'https://vinachat-functioncloud.onrender.com';
 
 export const LOGIN_URL = `${DOMAIN}/api/user/login`;
 export const LOGIN_EXTERNAL_URL = `${DOMAIN}/api/user/loginWithExternal`;
