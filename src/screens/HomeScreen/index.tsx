@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
   actionClearGroupChat,
   actionListGroupChatStart,
   actionUpdateLatestMessage,
-} from '../../redux/actions/listGroupChat';
-import firestore from '@react-native-firebase/firestore';
-import styles from './styles';
+} from "../../redux/actions/listGroupChat";
+import firestore from "@react-native-firebase/firestore";
+import styles from "./styles";
 import {
   Image,
   SafeAreaView,
@@ -15,20 +15,20 @@ import {
   FlatList,
   ActivityIndicator,
   Linking,
-} from 'react-native';
-import {screen} from '../../assets/images';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {actionFriendListStart} from '../../redux/actions/friendAction';
-import useNetworkErr from '../../config/hooks/useNetworkErr';
-import lottieHome from '../../assets/lottiefile/home/lottieHome.json';
-import lottieLoadingChat from '../../assets/lottiefile/home/lottieLoadingChat.json';
-import LottieView from 'lottie-react-native';
-import {SCREEN, getFirstLetters} from '../../global';
-import {RefreshControl} from 'react-native';
-import mainTheme from '../../assets/colors';
-import {DetailGroupChatActions} from '../../redux/actions/getDetailGroupChatActions';
-import message from '@react-native-firebase/messaging';
+} from "react-native";
+import { screen } from "../../assets/images";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { actionFriendListStart } from "../../redux/actions/friendAction";
+import useNetworkErr from "../../config/hooks/useNetworkErr";
+import lottieHome from "../../assets/lottiefile/home/lottieHome.json";
+import lottieLoadingChat from "../../assets/lottiefile/home/lottieLoadingChat.json";
+import LottieView from "lottie-react-native";
+import { SCREEN, getFirstLetters } from "../../global";
+import { RefreshControl } from "react-native";
+import mainTheme from "../../assets/colors";
+import { DetailGroupChatActions } from "../../redux/actions/getDetailGroupChatActions";
+import message from "@react-native-firebase/messaging";
 
 const database = firestore();
 const fcm = message();
@@ -40,7 +40,7 @@ export default function HomeScreen() {
   const networkErr = useNetworkErr();
 
   const datafriend = useSelector(
-    (state: any) => state?.friendlist?.friendlist?.data?.data,
+    (state: any) => state?.friendlist?.friendlist?.data?.data
   );
   const loadingFriend = useSelector((state: any) => state?.friendlist?.loading);
 
@@ -52,7 +52,7 @@ export default function HomeScreen() {
   const list = useSelector((state: any) => state.groupChat?.data);
   const status = useSelector((state: any) => state.groupChat?.status);
   const loadingGroupChat = useSelector(
-    (state: any) => state.groupChat?.loading,
+    (state: any) => state.groupChat?.loading
   );
 
   const [refreshing, setRefreshing] = useState(false);
@@ -84,14 +84,14 @@ export default function HomeScreen() {
 
   // Khi lỗi
   function onErrorGroups(error: any) {
-    console.log('Error get realtime:>>', error);
+    console.log("Error get realtime:>>", error);
   }
 
   useEffect(() => {
     const listListener: (() => void)[] = [];
 
     if (!networkErr) {
-      if (status === 'done') {
+      if (status === "done") {
         const listRef = list.map((e: any) => e.ref);
 
         // console.log('listRef:>>', listRef);
@@ -102,8 +102,8 @@ export default function HomeScreen() {
             const newListRef = listRef.slice(i, i + 10);
 
             const listener = database
-              .collection('groups')
-              .where(firestore.FieldPath.documentId(), 'in', newListRef)
+              .collection("groups")
+              .where(firestore.FieldPath.documentId(), "in", newListRef)
               .onSnapshot(onResultGroups, onErrorGroups);
 
             listListener.push(listener);
@@ -111,13 +111,13 @@ export default function HomeScreen() {
 
           // Bắt đầu lắng nghe dữ liệu từ collection "groups"
         } else {
-          console.log('ListRef Is Empty');
+          console.log("ListRef Is Empty");
         }
       }
     }
 
     return () => {
-      listListener.forEach(item => {
+      listListener.forEach((item) => {
         item();
       });
     };
@@ -135,16 +135,16 @@ export default function HomeScreen() {
     let listenGroups: () => void = () => {};
     if (!networkErr) {
       listenGroups = firestore()
-        .collection('users')
+        .collection("users")
         .doc(ref)
         .onSnapshot(
-          res => {
+          (res) => {
             dispatch(actionListGroupChatStart());
             dispatch(actionFriendListStart);
           },
-          err => {
-            console.log('LISTEN GROUP ERROR >> ', err);
-          },
+          (err) => {
+            console.log("LISTEN GROUP ERROR >> ", err);
+          }
         );
     }
 
@@ -154,22 +154,23 @@ export default function HomeScreen() {
     };
   }, [networkErr, ref]);
 
-  const renderFriendActive = ({item}: {item: any}) => {
+  const renderFriendActive = ({ item }: { item: any }) => {
     return (
       <TouchableOpacity
         style={styles.viewfriendActive}
         onPress={() => {
           dispatch(DetailGroupChatActions.start(item.groupRef));
 
-          navigation.navigate('MessageScreen', {
+          navigation.navigate("MessageScreen", {
             groupRef: item.groupRef,
             total_member: 2,
             groupName: item.fullname,
           });
-        }}>
+        }}
+      >
         {item.avatar ? (
           <Image
-            source={{uri: item.avatar}}
+            source={{ uri: item.avatar }}
             style={styles.borderfriendActive}
           />
         ) : (
@@ -184,25 +185,26 @@ export default function HomeScreen() {
     );
   };
 
-  const Flatlistrender = ({item}: {item: any}) => {
+  const Flatlistrender = ({ item }: { item: any }) => {
     return item?.latest_message_type ? (
       <TouchableOpacity
         style={styles.BorderMessage}
         onPress={() => {
           dispatch(DetailGroupChatActions.start(item.ref));
 
-          navigation.navigate('MessageScreen', {
+          navigation.navigate("MessageScreen", {
             groupRef: item.ref,
             total_member: item.total_member,
             groupName: item.name,
             adminRef: item.adminRef,
             groupAvatar: item.groupAvatar,
           });
-        }}>
+        }}
+      >
         <View style={styles.MessageAvatar}>
           {item.groupAvatar ? (
             <Image
-              source={{uri: item.groupAvatar}}
+              source={{ uri: item.groupAvatar }}
               style={styles.borderfriendActive}
             />
           ) : (
@@ -215,16 +217,16 @@ export default function HomeScreen() {
           <Text style={styles.textnameMessage}>
             {item.total_member > 2 && (
               <Text style={styles.groupText}>[Nhóm]</Text>
-            )}{' '}
+            )}{" "}
             {item.name}
           </Text>
           <Text numberOfLines={1} ellipsizeMode="tail">
             {(user?.data?.fullname || userExternal?.data?.fullname) ===
             item?.latest_message_from_name
-              ? item?.latest_message_type === 'image'
+              ? item?.latest_message_type === "image"
                 ? `You: Hình ảnh`
                 : `You: ${item.latest_message_text}`
-              : item?.latest_message_type === 'image'
+              : item?.latest_message_type === "image"
               ? `${item.latest_message_from_name}: Hình ảnh`
               : `${item.latest_message_from_name}: ${item.latest_message_text}`}
           </Text>
@@ -236,18 +238,19 @@ export default function HomeScreen() {
         onPress={() => {
           dispatch(DetailGroupChatActions.start(item.ref));
 
-          navigation.navigate('MessageScreen', {
+          navigation.navigate("MessageScreen", {
             groupRef: item.ref,
             total_member: item.total_member,
             groupName: item.name,
             adminRef: item.adminRef,
             groupAvatar: item.groupAvatar,
           });
-        }}>
+        }}
+      >
         <View style={styles.MessageAvatar}>
           {item.groupAvatar ? (
             <Image
-              source={{uri: item.groupAvatar}}
+              source={{ uri: item.groupAvatar }}
               style={styles.borderfriendActive}
             />
           ) : (
@@ -260,13 +263,13 @@ export default function HomeScreen() {
           <Text style={styles.textnameMessage}>
             {item.total_member > 2 && (
               <Text style={styles.groupText}>[Nhóm]</Text>
-            )}{' '}
+            )}{" "}
             {item.name}
           </Text>
           <Text>
             {item.total_member == 2
               ? ` Bạn vừa kết bạn với ${item?.name}`
-              : 'Nhóm vừa được tạo ra'}
+              : "Nhóm vừa được tạo ra"}
           </Text>
         </View>
       </TouchableOpacity>
@@ -274,17 +277,17 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
-    const fcmUnsubcribe = fcm.onMessage(message => {
-      const {info, type, scheme}: any = message.data;
+    const fcmUnsubcribe = fcm.onMessage((message) => {
+      const { info, type, scheme }: any = message.data;
       const information = JSON.parse(info);
 
       console.log(information, type, scheme);
 
       Linking.openURL(scheme);
 
-      if (type == 'CALLING') {
+      if (type == "CALLING") {
         Linking.openURL(
-          `vinachat://calling/${information.type}/${information.status}/${information.name}/${information.groupRef}/${information.callId}/none`,
+          `vinachat://calling/${information.type}/${information.status}/${information.name}/${information.groupRef}/${information.callId}/none`
         );
       }
     });
@@ -303,8 +306,9 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={styles.searchBorder}
           onPress={() => {
-            navigation.navigate('SearchScreen');
-          }}>
+            navigation.navigate("SearchScreen");
+          }}
+        >
           <Image style={styles.searchIcon} source={screen.home.search} />
         </TouchableOpacity>
       </View>
@@ -331,7 +335,7 @@ export default function HomeScreen() {
               style={{
                 width: SCREEN.width * 0.3,
                 height: 100,
-                alignSelf: 'center',
+                alignSelf: "center",
               }}
               speed={1}
             />
@@ -345,8 +349,9 @@ export default function HomeScreen() {
           <Text style={styles.texttitleMessage}>Message</Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('CreateGroupChat');
-            }}>
+              navigation.navigate("CreateGroupChat");
+            }}
+          >
             <Image
               style={styles.createGroupIcon}
               source={screen.home.creategroup}
@@ -367,7 +372,7 @@ export default function HomeScreen() {
                   loadingGroupChat === false && (
                     <ActivityIndicator
                       size="large"
-                      style={{flex: 1, justifyContent: 'center'}}
+                      style={{ flex: 1, justifyContent: "center" }}
                     />
                   )
                 );
@@ -390,7 +395,7 @@ export default function HomeScreen() {
                 flex: 1,
                 width: SCREEN.width * 0.9,
                 height: SCREEN.height * 0.6,
-                alignSelf: 'center',
+                alignSelf: "center",
                 margin: -50,
               }}
               speed={1}
@@ -399,7 +404,7 @@ export default function HomeScreen() {
         ) : (
           <ActivityIndicator
             size="large"
-            style={{flex: 1, alignItems: 'center'}}
+            style={{ flex: 1, alignItems: "center" }}
           />
         )}
       </View>

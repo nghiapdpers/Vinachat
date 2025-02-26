@@ -1,61 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import 'react-native-gesture-handler';
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
-import storage from '@react-native-firebase/storage';
-import database from '@react-native-firebase/database';
-import message from '@react-native-firebase/messaging';
+import React, { useState, useEffect } from "react";
+import "react-native-gesture-handler";
+import firestore from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
+import storage from "@react-native-firebase/storage";
+import database from "@react-native-firebase/database";
+import message from "@react-native-firebase/messaging";
 
-import SignUp from './src/screens/SignUp';
-import { LinkingOptions, NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import CreateAccount from './src/screens/CreateAccount';
-import Friends from './src/screens/Friends';
-import { Image, StyleSheet, View, Platform, StatusBar, Text } from 'react-native';
-import LoginScreen from './src/screens/LoginScreen';
-import { useDispatch, useSelector } from 'react-redux';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../Vinachat/src/screens/HomeScreen';
-import AccountScreen from './src/screens/AccountScreen';
-import MessageScreen from './src/screens/MessageScreen';
-import SearchScreen from './src/screens/SearchScreen';
-import { screen } from './src/assets/images';
-import mainTheme from './src/assets/colors';
-import SplashScreen from 'react-native-splash-screen';
-import { getData, storeData } from './src/storage';
-import { LOCALSTORAGE } from './src/storage/direct';
+import SignUp from "./src/screens/SignUp";
+import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import CreateAccount from "./src/screens/CreateAccount";
+import Friends from "./src/screens/Friends";
+import {
+  Image,
+  StyleSheet,
+  View,
+  Platform,
+  StatusBar,
+  Text,
+} from "react-native";
+import LoginScreen from "./src/screens/LoginScreen";
+import { useDispatch, useSelector } from "react-redux";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import HomeScreen from "../Vinachat/src/screens/HomeScreen";
+import AccountScreen from "./src/screens/AccountScreen";
+import MessageScreen from "./src/screens/MessageScreen";
+import SearchScreen from "./src/screens/SearchScreen";
+import { screen } from "./src/assets/images";
+import mainTheme from "./src/assets/colors";
+import SplashScreen from "react-native-splash-screen";
+import { getData, storeData } from "./src/storage";
+import { LOCALSTORAGE } from "./src/storage/direct";
 import {
   actionLoginEnd,
   actionLoginExternalEnd,
-} from './src/redux/actions/userActions';
-import QrCode from './src/screens/AccountScreen/OptionAccount/QrCode';
-import ScanQrCode from './src/screens/ScanQrCode';
-import Biometrics from './src/screens/AccountScreen/OptionAccount/Biometrics';
-import CreateGroupChat from './src/screens/CreateGroupChat';
-import 'react-native-reanimated';
-import { RealmProvider } from '@realm/react';
-import GroupChat from './src/realm/GroupChat';
-import Message from './src/realm/Message';
-import User from './src/realm/User';
-import Images from './src/realm/Images';
-import ProfileScreen from './src/screens/AccountScreen/OptionAccount/Profile';
-import EditUserScreen from './src/screens/AccountScreen/OptionAccount/EditUser';
-import DetailImageScreen from './src/screens/DetailImageScreen';
-import useNetworkErr from './src/config/hooks/useNetworkErr';
-import { actionFriendListEnd } from './src/redux/actions/friendAction';
-import { actionListGroupChatEnd } from './src/redux/actions/listGroupChat';
-import AccountSecurity from './src/screens/AccountScreen/OptionAccount/Account&Security';
-import ChangePassword from './src/screens/AccountScreen/OptionAccount/ChangePassword';
-import Privacy from './src/screens/AccountScreen/OptionAccount/Privacy';
-import useLogin from './src/config/hooks/useLogin';
-import OptionMessage from './src/screens/MessageScreen/OptionMessage';
-import AddMemberToGroup from './src/screens/MessageScreen/OptionMessage/AddMemberToGroup';
-import VerifyAccount from './src/screens/AccountScreen/OptionAccount/VerifyAccount';
-import CallScreen from './src/screens/Call';
-import RNCallKeep from 'react-native-callkeep';
-import { CallProvider } from './src/screens/Call/context';
-import MemberInGroups from './src/screens/MessageScreen/OptionMessage/MemberInGroups';
-import MultiStepVerify from './src/screens/AccountScreen/OptionAccount/MultiStepVerify';
+} from "./src/redux/actions/userActions";
+import QrCode from "./src/screens/AccountScreen/OptionAccount/QrCode";
+import ScanQrCode from "./src/screens/ScanQrCode";
+import Biometrics from "./src/screens/AccountScreen/OptionAccount/Biometrics";
+import CreateGroupChat from "./src/screens/CreateGroupChat";
+import "react-native-reanimated";
+import { RealmProvider } from "@realm/react";
+import GroupChat from "./src/realm/GroupChat";
+import Message from "./src/realm/Message";
+import User from "./src/realm/User";
+import Images from "./src/realm/Images";
+import ProfileScreen from "./src/screens/AccountScreen/OptionAccount/Profile";
+import EditUserScreen from "./src/screens/AccountScreen/OptionAccount/EditUser";
+import DetailImageScreen from "./src/screens/DetailImageScreen";
+import useNetworkErr from "./src/config/hooks/useNetworkErr";
+import { actionFriendListEnd } from "./src/redux/actions/friendAction";
+import { actionListGroupChatEnd } from "./src/redux/actions/listGroupChat";
+import AccountSecurity from "./src/screens/AccountScreen/OptionAccount/Account&Security";
+import ChangePassword from "./src/screens/AccountScreen/OptionAccount/ChangePassword";
+import Privacy from "./src/screens/AccountScreen/OptionAccount/Privacy";
+import useLogin from "./src/config/hooks/useLogin";
+import OptionMessage from "./src/screens/MessageScreen/OptionMessage";
+import AddMemberToGroup from "./src/screens/MessageScreen/OptionMessage/AddMemberToGroup";
+import VerifyAccount from "./src/screens/AccountScreen/OptionAccount/VerifyAccount";
+import CallScreen from "./src/screens/Call";
+import RNCallKeep from "react-native-callkeep";
+import { CallProvider } from "./src/screens/Call/context";
+import MemberInGroups from "./src/screens/MessageScreen/OptionMessage/MemberInGroups";
+import MultiStepVerify from "./src/screens/AccountScreen/OptionAccount/MultiStepVerify";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -74,14 +81,14 @@ firestore().settings({
 database().setPersistenceEnabled(false);
 
 const linkingOptions: LinkingOptions<RootStackParamList> = {
-  prefixes: ['vinachat://'],
+  prefixes: ["vinachat://"],
   config: {
     screens: {
       CallScreen: {
-        path: 'calling/:type/:status/:name/:groupRef/:callId/:reply',
+        path: "calling/:type/:status/:name/:groupRef/:callId/:reply",
       },
       ProfileScreen: {
-        path: 'home/',
+        path: "home/",
       },
     },
   },
@@ -113,10 +120,10 @@ export default function App() {
       dispatch(actionListGroupChatEnd(groupChat));
     }
 
-    if (!fcmToken) {
-      const token = await message().getToken();
-      await storeData(LOCALSTORAGE.fcmToken, token);
-    }
+    // if (!fcmToken) {
+    //   const token = await message().getToken();
+    //   await storeData(LOCALSTORAGE.fcmToken, token);
+    // }
 
     return 0;
   };
@@ -125,35 +132,35 @@ export default function App() {
   const setupCallKeep = () => {
     RNCallKeep.setup({
       ios: {
-        appName: 'Vinachat',
+        appName: "Vinachat",
         supportsVideo: true,
       },
       android: {
-        alertTitle: 'Yêu cầu quyền truy cập',
+        alertTitle: "Yêu cầu quyền truy cập",
         alertDescription:
-          'Ứng dụng này sử dụng quyền quản lý truy cập cuộc gọi để nhận được các cuộc gọi đến',
-        cancelButton: 'Từ chối',
-        okButton: 'Cấp quyền',
+          "Ứng dụng này sử dụng quyền quản lý truy cập cuộc gọi để nhận được các cuộc gọi đến",
+        cancelButton: "Từ chối",
+        okButton: "Cấp quyền",
         additionalPermissions: [
-          'android.permission.RECORD_AUDIO',
-          'android.permission.ACCESS_NETWORK_STATE',
-          'android.permission.CHANGE_NETWORK_STATE',
-          'android.permission.MODIFY_AUDIO_SETTINGS',
-          'android.permission.USE_BIOMETRIC',
-          'android.permission.USE_FINGERPRINT',
-          'android.permission.INTERNET',
-          'android.permission.CAMERA',
-          'android.permission.READ_MEDIA_IMAGES',
-          'android.permission.READ_MEDIA_VIDEO',
-          'android.permission.READ_EXTERNAL_STORAGE',
-          'android.permission.WRITE_EXTERNAL_STORAGE',
-          'android.permission.BIND_TELECOM_CONNECTION_SERVICE',
-          'android.permission.FOREGROUND_SERVICE',
-          'android.permission.READ_PHONE_STATE',
-          'android.permission.CALL_PHONE',
-          'android.permission.SYSTEM_ALERT_WINDOW',
-          'android.permission.ACTION_MANAGE_OVERLAY_PERMISSION',
-          'android.permission.WAKE_LOCK',
+          "android.permission.RECORD_AUDIO",
+          "android.permission.ACCESS_NETWORK_STATE",
+          "android.permission.CHANGE_NETWORK_STATE",
+          "android.permission.MODIFY_AUDIO_SETTINGS",
+          "android.permission.USE_BIOMETRIC",
+          "android.permission.USE_FINGERPRINT",
+          "android.permission.INTERNET",
+          "android.permission.CAMERA",
+          "android.permission.READ_MEDIA_IMAGES",
+          "android.permission.READ_MEDIA_VIDEO",
+          "android.permission.READ_EXTERNAL_STORAGE",
+          "android.permission.WRITE_EXTERNAL_STORAGE",
+          "android.permission.BIND_TELECOM_CONNECTION_SERVICE",
+          "android.permission.FOREGROUND_SERVICE",
+          "android.permission.READ_PHONE_STATE",
+          "android.permission.CALL_PHONE",
+          "android.permission.SYSTEM_ALERT_WINDOW",
+          "android.permission.ACTION_MANAGE_OVERLAY_PERMISSION",
+          "android.permission.WAKE_LOCK",
         ],
       },
     });
@@ -161,9 +168,9 @@ export default function App() {
 
   // side effect: run after initial rendered
   useEffect(() => {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
       StatusBar.setBackgroundColor(mainTheme.background);
-      StatusBar.setBarStyle('dark-content');
+      StatusBar.setBarStyle("dark-content");
     }
 
     // hide splash screen after get local data
@@ -173,8 +180,8 @@ export default function App() {
           SplashScreen.hide();
         }, 100);
       })
-      .catch(err => {
-        console.log(':::: GET LOCAL DATA ERROR :::: >> N', err);
+      .catch((err) => {
+        console.log(":::: GET LOCAL DATA ERROR :::: >> N", err);
       });
 
     // setup options for CallKeep
@@ -201,7 +208,8 @@ export default function App() {
               // gestureEnabled: true,
               // gestureDirection: 'horizontal',
               headerShown: false,
-            }}>
+            }}
+          >
             {!isLogin ? (
               <>
                 <Stack.Screen name="LoginScreen" component={LoginScreen} />
@@ -249,7 +257,10 @@ export default function App() {
                   name="MemberInGroups"
                   component={MemberInGroups}
                 />
-                <Stack.Screen name="MultiStepVerify" component={MultiStepVerify} />
+                <Stack.Screen
+                  name="MultiStepVerify"
+                  component={MultiStepVerify}
+                />
               </>
             )}
           </Stack.Navigator>
@@ -260,23 +271,24 @@ export default function App() {
 }
 
 function BottomScreen() {
-  const [focusbottom, setFocusbottom] = useState('HomeScreen');
+  const [focusbottom, setFocusbottom] = useState("HomeScreen");
 
   useEffect(() => {
-    setFocusbottom('HomeScreen');
+    setFocusbottom("HomeScreen");
   }, []);
 
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: styles.BottomTabStyle,
-      }}>
+      }}
+    >
       <Tab.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{
           tabBarIcon: () =>
-            focusbottom === 'HomeScreen' ? (
+            focusbottom === "HomeScreen" ? (
               <>
                 <View style={styles.borderFocus} />
                 <Image
@@ -298,7 +310,7 @@ function BottomScreen() {
           headerShown: false,
         }}
         listeners={{
-          focus: () => setFocusbottom('HomeScreen'),
+          focus: () => setFocusbottom("HomeScreen"),
         }}
       />
       <Tab.Screen
@@ -306,7 +318,7 @@ function BottomScreen() {
         component={Friends}
         options={{
           tabBarIcon: () =>
-            focusbottom === 'Friends' ? (
+            focusbottom === "Friends" ? (
               <>
                 <View style={styles.borderFocus} />
                 <Image
@@ -327,7 +339,7 @@ function BottomScreen() {
           headerShown: false,
         }}
         listeners={{
-          focus: () => setFocusbottom('Friends'),
+          focus: () => setFocusbottom("Friends"),
         }}
       />
       <Tab.Screen
@@ -335,7 +347,7 @@ function BottomScreen() {
         component={AccountScreen}
         options={{
           tabBarIcon: () =>
-            focusbottom === 'AccountScreen' ? (
+            focusbottom === "AccountScreen" ? (
               <>
                 <View style={styles.borderFocus} />
                 <Image
@@ -356,7 +368,7 @@ function BottomScreen() {
           headerShown: false,
         }}
         listeners={{
-          focus: () => setFocusbottom('AccountScreen'),
+          focus: () => setFocusbottom("AccountScreen"),
         }}
       />
     </Tab.Navigator>
@@ -365,13 +377,13 @@ function BottomScreen() {
 
 const styles = StyleSheet.create({
   borderFocus: {
-    width: '100%',
+    width: "100%",
     height: 4,
     backgroundColor: mainTheme.logo,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 5,
-    position: 'absolute',
+    position: "absolute",
     top: 0,
   },
   imageIconBottom: {
@@ -379,22 +391,22 @@ const styles = StyleSheet.create({
     height: 30,
   },
   BottomTabStyle: {
-    justifyContent: 'center',
-    height: Platform.OS === 'ios' ? 90 : 60,
+    justifyContent: "center",
+    height: Platform.OS === "ios" ? 90 : 60,
     backgroundColor: mainTheme.background,
   },
   activeLabel: {
     color: mainTheme.logo,
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   networkError: {
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: "500",
     color: mainTheme.logo,
     paddingVertical: 3,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 
@@ -420,6 +432,6 @@ export type RootStackParamList = {
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList { }
+    interface RootParamList extends RootStackParamList {}
   }
 }
